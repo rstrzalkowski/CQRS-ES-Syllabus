@@ -1,0 +1,51 @@
+version: '3.8'
+services:
+  axonserver:
+    image: axoniq/axonserver:latest
+    hostname: axonserver
+    volumes:
+      - axonserver-data:/data
+      - axonserver-events:/eventdata
+      - axonserver-config:/config:ro
+    ports:
+      - '8024:8024'
+      - '8124:8124'
+      - '8224:8224'
+    networks:
+      - axon
+
+  postgres:
+    container_name: postgres-dev
+    image: postgres:15
+    environment:
+      POSTGRES_DB: db
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres:/var/lib/postgresql/data
+
+volumes:
+  axonserver-data:
+    driver: local
+    driver_opts:
+      type: none
+      device: ${PWD}/data
+      o: bind
+  axonserver-events:
+    driver: local
+    driver_opts:
+      type: none
+      device: ${PWD}/events
+      o: bind
+  axonserver-config:
+    driver: local
+    driver_opts:
+      type: none
+      device: ${PWD}/config
+      o: bind
+  postgres:
+
+networks:
+  axon:

@@ -1,0 +1,27 @@
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/db
+    username: user
+    password: password
+
+
+  sql:
+    init:
+      mode: always
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    defer-datasource-initialization: true
+
+
+server:
+  servlet:
+    context-path: /api
+
+jwt:
+  expiration:
+    time: 3600000
+
+  secret: ${JWT_SECRET:frejjjfiureffwer}
