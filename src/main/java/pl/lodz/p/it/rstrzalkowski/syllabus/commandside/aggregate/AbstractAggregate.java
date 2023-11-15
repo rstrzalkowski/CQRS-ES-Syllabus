@@ -1,4 +1,4 @@
-package pl.lodz.p.it.rstrzalkowski.syllabus.aggregate;
+package pl.lodz.p.it.rstrzalkowski.syllabus.commandside.aggregate;
 
 import lombok.Data;
 import org.axonframework.modelling.command.AggregateIdentifier;

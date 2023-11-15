@@ -1,4 +1,4 @@
-package pl.lodz.p.it.rstrzalkowski.syllabus.aggregate;
+package pl.lodz.p.it.rstrzalkowski.syllabus.commandside.aggregate;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -7,10 +7,9 @@ import org.axonframework.commandhandling.CommandHandler;
 import org.axonframework.eventsourcing.EventSourcingHandler;
 import org.axonframework.modelling.command.AggregateLifecycle;
 import org.axonframework.spring.stereotype.Aggregate;
-import pl.lodz.p.it.rstrzalkowski.syllabus.command.CreateSubjectCommand;
-import pl.lodz.p.it.rstrzalkowski.syllabus.event.SubjectCreatedEvent;
+import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.CreateSubjectCommand;
+import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.SubjectCreatedEvent;
 
-import java.util.List;
 import java.util.UUID;
 
 @EqualsAndHashCode(callSuper = true)
@@ -20,7 +19,6 @@ import java.util.UUID;
 public class Subject extends AbstractAggregate {
     private String name;
     private String abbreviation;
-    private List<Subject> subjects;
 
     @CommandHandler
     public Subject(CreateSubjectCommand cmd) {
@@ -29,8 +27,8 @@ public class Subject extends AbstractAggregate {
 
     @EventSourcingHandler
     public void on(SubjectCreatedEvent event) {
-        setId(event.id());
-        this.name = event.name();
-        this.abbreviation = event.abbreviation();
+        setId(event.getId());
+        this.name = event.getName();
+        this.abbreviation = event.getAbbreviation();
     }
 }

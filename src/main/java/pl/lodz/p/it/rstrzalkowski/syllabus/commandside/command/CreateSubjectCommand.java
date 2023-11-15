@@ -1,4 +1,4 @@
-package pl.lodz.p.it.rstrzalkowski.syllabus.command;
+package pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

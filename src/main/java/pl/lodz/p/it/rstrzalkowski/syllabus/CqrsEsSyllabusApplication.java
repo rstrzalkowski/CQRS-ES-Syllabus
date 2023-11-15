@@ -9,5 +9,4 @@ public class CqrsEsSyllabusApplication {
     public static void main(String[] args) {
         SpringApplication.run(CqrsEsSyllabusApplication.class, args);
     }
-
 }

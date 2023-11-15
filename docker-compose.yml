@@ -15,7 +15,7 @@ services:
       - axon
 
   postgres:
-    container_name: postgres-dev
+    container_name: postgres
     image: postgres:15
     environment:
       POSTGRES_DB: db
