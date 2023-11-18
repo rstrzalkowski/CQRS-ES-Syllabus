@@ -14,7 +14,7 @@ services:
     networks:
       - axon
 
-  postgres:
+  postgres-read:
     container_name: postgres
     image: postgres:15
     environment:
@@ -26,26 +26,46 @@ services:
     volumes:
       - postgres:/var/lib/postgresql/data
 
+  postgres-keycloak:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: keycloak_db
+      POSTGRES_USER: keycloak_user
+      POSTGRES_PASSWORD: keycloak_password
+    networks:
+      - keycloak
+
+  keycloak:
+    depends_on:
+      - postgres-keycloak
+    environment:
+      DB_VENDOR: postgres
+      DB_ADDR: postgres-keycloak
+      DB_DATABASE: keycloak_db
+      DB_USER: keycloak_user
+      DB_PASSWORD: keycloak_password
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+    image: keycloak/keycloak:latest
+    ports:
+      - "18080:8080"
+    command:
+      - "start-dev"
+    networks:
+      - keycloak
+
 volumes:
   axonserver-data:
     driver: local
-    driver_opts:
-      type: none
-      device: ${PWD}/data
-      o: bind
+
   axonserver-events:
     driver: local
-    driver_opts:
-      type: none
-      device: ${PWD}/events
-      o: bind
+
   axonserver-config:
     driver: local
-    driver_opts:
-      type: none
-      device: ${PWD}/config
-      o: bind
+
   postgres:
 
 networks:
   axon:
+  keycloak:
