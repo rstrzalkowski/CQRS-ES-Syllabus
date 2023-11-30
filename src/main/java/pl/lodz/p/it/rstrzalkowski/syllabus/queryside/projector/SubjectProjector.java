@@ -6,9 +6,11 @@ import org.springframework.stereotype.Service;
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.entity.SubjectEntity;
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.repository.SubjectRepository;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.SubjectCreatedEvent;
+import pl.lodz.p.it.rstrzalkowski.syllabus.shared.util.ReadApplicationBean;
 
 @Service
 @RequiredArgsConstructor
+@ReadApplicationBean
 public class SubjectProjector {
     private final SubjectRepository subjectRepository;
 

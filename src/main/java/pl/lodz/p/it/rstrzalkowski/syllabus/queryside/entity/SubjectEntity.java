@@ -1,6 +1,7 @@
 package pl.lodz.p.it.rstrzalkowski.syllabus.queryside.entity;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -15,8 +16,13 @@ import java.util.UUID;
 @Data
 public class SubjectEntity extends AbstractEntity {
     private String name;
+
     private String abbreviation;
-    private boolean archived = false;
+
+    private boolean archived;
+
+    @Transient
+    private Integer activeRealisationsCount;
 
     public SubjectEntity(UUID id, String name, String abbreviation) {
         super(id);

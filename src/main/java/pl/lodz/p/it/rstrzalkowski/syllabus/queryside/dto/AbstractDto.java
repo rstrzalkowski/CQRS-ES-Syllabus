@@ -10,5 +10,5 @@ import java.util.UUID;
 @NoArgsConstructor
 @Data
 public abstract class AbstractDto {
-    private UUID uuid;
+    private UUID id;
 }

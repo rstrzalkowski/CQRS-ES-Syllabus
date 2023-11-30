@@ -7,6 +7,8 @@ services:
       - axonserver-data:/data
       - axonserver-events:/eventdata
       - axonserver-config:/config:ro
+    environment:
+      - AXONIQ_AXONSERVER_DEVMODE_ENABLED=true
     ports:
       - '8024:8024'
       - '8124:8124'
@@ -14,13 +16,23 @@ services:
     networks:
       - axon
 
-  postgres-read:
-    container_name: postgres
+  postgres-lookup-db:
+    container_name: postgres-lookup
     image: postgres:15
     environment:
-      POSTGRES_DB: db
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
+      POSTGRES_DB: lookup_db
+      POSTGRES_USER: lookup_user
+      POSTGRES_PASSWORD: lookup_password
+    ports:
+      - "15432:5432"
+
+  postgres-read:
+    container_name: postgres-read
+    image: postgres:15
+    environment:
+      POSTGRES_DB: read_db
+      POSTGRES_USER: read_user
+      POSTGRES_PASSWORD: read_password
     ports:
       - "5432:5432"
     volumes:
