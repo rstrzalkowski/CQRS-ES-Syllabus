@@ -23,6 +23,9 @@ public class CreateGradeCommand {
     @NotNull
     private UUID studentId;
 
+    @NotNull
+    private UUID teacherId;
+
     @Length(max = 100)
     private String comment;
 

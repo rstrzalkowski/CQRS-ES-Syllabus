@@ -11,7 +11,7 @@ import java.util.UUID;
 @Data
 public class SchoolClassCreatedEvent {
     private UUID id;
-    private UUID levelId;
+    private Integer level;
     private UUID teacherId;
     private String name;
     private String fullName;

@@ -8,6 +8,7 @@ import jakarta.persistence.Version;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 import java.util.UUID;
 
@@ -15,6 +16,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
+@SuperBuilder
 public abstract class AbstractEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

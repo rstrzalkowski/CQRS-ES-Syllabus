@@ -21,8 +21,8 @@ import java.util.UUID;
 @WriteApplicationBean
 public class SchoolClass extends AbstractAggregate {
 
-    private UUID levelId;
     private UUID teacherId;
+    private Integer level;
     private String name;
     private String fullName;
 
@@ -33,7 +33,7 @@ public class SchoolClass extends AbstractAggregate {
     public SchoolClass(CreateSchoolClassCommand cmd) {
         AggregateLifecycle.apply(new SchoolClassCreatedEvent(
                 UUID.randomUUID(),
-                cmd.getLevelId(),
+                cmd.getLevel(),
                 cmd.getTeacherId(),
                 cmd.getShortName(),
                 cmd.getFullName()));
@@ -42,7 +42,7 @@ public class SchoolClass extends AbstractAggregate {
     @EventSourcingHandler
     public void on(SchoolClassCreatedEvent event) {
         setId(event.getId());
-        this.levelId = event.getLevelId();
+        this.level = event.getLevel();
         this.teacherId = event.getTeacherId();
         this.name = event.getName();
         this.fullName = event.getFullName();

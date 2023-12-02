@@ -19,8 +19,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Data
 public class SchoolClassEntity extends AbstractEntity {
-    @ManyToOne
-    private LevelEntity level;
+    private Integer level;
 
     private String name;
 
@@ -34,7 +33,7 @@ public class SchoolClassEntity extends AbstractEntity {
     @OneToMany(mappedBy = "schoolClass")
     private Set<UserEntity> students = new LinkedHashSet<>();
 
-    public SchoolClassEntity(UUID id, LevelEntity level, UserEntity supervisingTeacher, String name, String fullName) {
+    public SchoolClassEntity(UUID id, Integer level, UserEntity supervisingTeacher, String name, String fullName) {
         super(id);
         this.level = level;
         this.supervisingTeacher = supervisingTeacher;
@@ -44,6 +43,6 @@ public class SchoolClassEntity extends AbstractEntity {
 
     @JsonIgnore
     public String getSchoolClassName() {
-        return level.getValue() + " " + name;
+        return level + " " + name;
     }
 }

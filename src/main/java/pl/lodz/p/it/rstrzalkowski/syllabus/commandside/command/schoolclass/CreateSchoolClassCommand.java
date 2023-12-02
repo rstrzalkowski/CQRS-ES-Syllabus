@@ -14,7 +14,7 @@ import java.util.UUID;
 public class CreateSchoolClassCommand {
 
     @NotNull
-    private UUID levelId;
+    private Integer level;
 
     @NotNull
     private UUID teacherId;

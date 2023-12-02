@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.time.Year;
 import java.util.UUID;
 
@@ -12,8 +13,10 @@ import java.util.UUID;
 @Data
 public class ActivityCreatedEvent {
     private UUID id;
-    private UUID subjectId;
-    private UUID schoolClassId;
+    private UUID realisationId;
     private UUID teacherId;
-    private Year year;
+    private Integer weight;
+    private LocalDateTime date;
+    private String description;
+    private String name;
 }

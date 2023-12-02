@@ -9,6 +9,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import java.util.UUID;
+
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @NoArgsConstructor
@@ -31,4 +33,12 @@ public class PostEntity extends AbstractEntity {
     private boolean edited;
 
     private boolean archived;
+
+    public PostEntity(UUID id, RealisationEntity realisation, UserEntity teacher, String title, String content) {
+        super(id);
+        this.realisation = realisation;
+        this.teacher = teacher;
+        this.title = title;
+        this.content = content;
+    }
 }

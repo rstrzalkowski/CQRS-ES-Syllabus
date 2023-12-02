@@ -18,9 +18,14 @@ public class Grade extends AbstractEntity {
 
     private LocalDateTime date;
 
-    private Integer weight;
-
     private String comment;
 
-    private boolean edited;
+    public Grade(UUID id, UUID teacherId, UUID studentId, Integer value, LocalDateTime date, String comment) {
+        setId(id);
+        this.teacherId = teacherId;
+        this.studentId = studentId;
+        this.value = value;
+        this.date = date;
+        this.comment = comment;
+    }
 }

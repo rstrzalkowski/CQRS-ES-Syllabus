@@ -9,10 +9,14 @@ import org.axonframework.modelling.command.AggregateLifecycle;
 import org.axonframework.spring.stereotype.Aggregate;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.boundedcontext.AbstractAggregate;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.boundedcontext.grades.entity.Grade;
+import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.activity.CreateActivityCommand;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.grade.CreateGradeCommand;
+import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.ActivityCreatedEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.GradeCreatedEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.util.WriteApplicationBean;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -25,6 +29,10 @@ public class Activity extends AbstractAggregate {
 
     private UUID teacherId;
 
+    private LocalDateTime date;
+
+    private Integer weight;
+
     private List<Grade> grades;
 
 
@@ -34,11 +42,29 @@ public class Activity extends AbstractAggregate {
                 UUID.randomUUID(),
                 cmd.getActivityId(),
                 cmd.getStudentId(),
+                cmd.getTeacherId(),
+                LocalDateTime.now(),
+                cmd.getComment(),
                 cmd.getValue()));
     }
 
     @EventSourcingHandler
     public void on(GradeCreatedEvent event) {
-        //this.grades.add(new Grade(event.getId()));
+        this.grades.add(new Grade(
+            event.getId(),
+            event.getTeacherId(),
+            event.getStudentId(),
+            event.getValue(),
+            event.getDate(),
+            event.getComment()));
+    }
+
+    @EventSourcingHandler
+    public void on(ActivityCreatedEvent event) {
+        setId(event.getId());
+        this.date = event.getDate();
+        this.weight = event.getWeight();
+        this.teacherId = event.getTeacherId();
+        this.grades = new ArrayList<>();
     }
 }
