@@ -8,6 +8,8 @@ import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.entity.UserEntity;
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.repository.SchoolClassRepository;
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.repository.UserRepository;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.SchoolClassCreatedEvent;
+import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.StudentAssignedToClassEvent;
+import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.StudentUnassignedFromClassEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.util.ReadApplicationBean;
 
 @Service
@@ -29,5 +31,29 @@ public class SchoolClassProjector {
                 event.getFullName());
 
         schoolClassRepository.save(schoolClassEntity);
+    }
+
+    @EventHandler
+    public void assignStudent(StudentAssignedToClassEvent event) {
+        UserEntity student = userRepository.findById(event.getStudentId()).orElseThrow();
+        SchoolClassEntity schoolClass = schoolClassRepository.findById(event.getSchoolClassId()).orElseThrow();
+
+        student.setSchoolClass(schoolClass);
+        schoolClass.getStudents().add(student);
+
+        userRepository.save(student);
+        schoolClassRepository.save(schoolClass);
+    }
+
+    @EventHandler
+    public void unassignStudent(StudentUnassignedFromClassEvent event) {
+        UserEntity student = userRepository.findById(event.getStudentId()).orElseThrow();
+        SchoolClassEntity schoolClass = schoolClassRepository.findById(event.getSchoolClassId()).orElseThrow();
+
+        student.setSchoolClass(null);
+        schoolClass.getStudents().remove(student);
+
+        userRepository.save(student);
+        schoolClassRepository.save(schoolClass);
     }
 }

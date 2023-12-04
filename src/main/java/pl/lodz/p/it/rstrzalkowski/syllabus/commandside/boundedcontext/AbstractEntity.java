@@ -1,4 +1,4 @@
-package pl.lodz.p.it.rstrzalkowski.syllabus.shared;
+package pl.lodz.p.it.rstrzalkowski.syllabus.commandside.boundedcontext;
 
 import lombok.Data;
 import org.axonframework.modelling.command.EntityId;

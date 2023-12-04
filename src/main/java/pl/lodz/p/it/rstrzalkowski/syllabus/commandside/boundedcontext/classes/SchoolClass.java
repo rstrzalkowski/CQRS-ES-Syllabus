@@ -8,10 +8,19 @@ import org.axonframework.eventsourcing.EventSourcingHandler;
 import org.axonframework.modelling.command.AggregateLifecycle;
 import org.axonframework.spring.stereotype.Aggregate;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.boundedcontext.AbstractAggregate;
+import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.boundedcontext.classes.entity.Student;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.schoolclass.CreateSchoolClassCommand;
+import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.user.AssignStudentCommand;
+import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.user.UnassignStudentCommand;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.SchoolClassCreatedEvent;
+import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.StudentAssignedToClassEvent;
+import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.StudentUnassignedFromClassEvent;
+import pl.lodz.p.it.rstrzalkowski.syllabus.shared.exception.user.StudentAlreadyAssignedException;
+import pl.lodz.p.it.rstrzalkowski.syllabus.shared.exception.user.StudentNotAssignedException;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.util.WriteApplicationBean;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @EqualsAndHashCode(callSuper = true)
@@ -25,9 +34,7 @@ public class SchoolClass extends AbstractAggregate {
     private Integer level;
     private String name;
     private String fullName;
-
-    //AddStudentCommand
-    //RemoveStudentCommand
+    private List<Student> students;
 
     @CommandHandler
     public SchoolClass(CreateSchoolClassCommand cmd) {
@@ -39,6 +46,34 @@ public class SchoolClass extends AbstractAggregate {
                 cmd.getFullName()));
     }
 
+    @CommandHandler
+    public void handle(AssignStudentCommand cmd) {
+        Student student = new Student(cmd.getStudentId());
+
+        if (students.contains(student)) {
+            throw new StudentAlreadyAssignedException();
+        }
+
+        AggregateLifecycle.apply(new StudentAssignedToClassEvent(
+                cmd.getStudentId(),
+                cmd.getSchoolClassId()
+        ));
+    }
+
+    @CommandHandler
+    public void handle(UnassignStudentCommand cmd) {
+        Student student = new Student(cmd.getStudentId());
+
+        if (!students.contains(student)) {
+            throw new StudentNotAssignedException();
+        }
+
+        AggregateLifecycle.apply(new StudentUnassignedFromClassEvent(
+                cmd.getStudentId(),
+                cmd.getSchoolClassId()
+        ));
+    }
+
     @EventSourcingHandler
     public void on(SchoolClassCreatedEvent event) {
         setId(event.getId());
@@ -46,5 +81,16 @@ public class SchoolClass extends AbstractAggregate {
         this.teacherId = event.getTeacherId();
         this.name = event.getName();
         this.fullName = event.getFullName();
+        this.students = new ArrayList<>();
+    }
+
+    @EventSourcingHandler
+    public void on(StudentAssignedToClassEvent event) {
+        this.students.add(new Student(event.getStudentId()));
+    }
+
+    @EventSourcingHandler
+    public void on(StudentUnassignedFromClassEvent event) {
+        this.students.remove(new Student(event.getStudentId()));
     }
 }

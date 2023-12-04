@@ -5,20 +5,20 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.Year;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.UUID;
 
-@EqualsAndHashCode(callSuper = true)
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
+@Getter
+@Setter
 public class RealisationEntity extends AbstractEntity {
     @ManyToOne
     private SubjectEntity subject;

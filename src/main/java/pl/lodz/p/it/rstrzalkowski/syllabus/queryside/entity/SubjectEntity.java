@@ -3,17 +3,17 @@ package pl.lodz.p.it.rstrzalkowski.syllabus.queryside.entity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Transient;
 import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.UUID;
 
-@EqualsAndHashCode(callSuper = true)
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
+@Getter
+@Setter
 public class SubjectEntity extends AbstractEntity {
     private String name;
 

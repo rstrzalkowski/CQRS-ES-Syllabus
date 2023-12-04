@@ -1,7 +1,7 @@
 package pl.lodz.p.it.rstrzalkowski.syllabus.commandside.boundedcontext.grades.entity;
 
 import lombok.AllArgsConstructor;
-import pl.lodz.p.it.rstrzalkowski.syllabus.shared.AbstractEntity;
+import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.boundedcontext.AbstractEntity;
 
 import java.time.LocalDateTime;
 import java.util.UUID;

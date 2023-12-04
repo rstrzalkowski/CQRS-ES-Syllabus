@@ -5,15 +5,19 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.axonframework.modelling.command.TargetAggregateIdentifier;
+
+import java.util.UUID;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-public class AssignCommand {
+public class UnassignStudentCommand {
 
     @NotNull
-    private Long classId;
+    @TargetAggregateIdentifier
+    private UUID schoolClassId;
 
-    private Long studentId;
+    private UUID studentId;
 }

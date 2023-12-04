@@ -27,17 +27,14 @@ public class GradeProjector {
         ActivityEntity activity = activityRepository.findById(event.getActivityId()).orElse(null);
 
         GradeEntity grade = new GradeEntity(
-            event.getId(),
-            activity,
-            teacher,
-            student,
-            event.getValue(),
-            event.getDate(),
-            event.getComment()
+                event.getId(),
+                activity,
+                teacher,
+                student,
+                event.getValue(),
+                event.getDate(),
+                event.getComment()
         );
-
-        GradeEntity.builder()
-                .build();
 
         gradeRepository.save(grade);
     }
