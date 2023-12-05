@@ -26,7 +26,7 @@ public class SchoolClassCommandController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public void createSchoolClass(@Valid @RequestBody CreateSchoolClassCommand command) {
-        commandGateway.send(command);
+        commandGateway.sendAndWait(command);
     }
 
     @ResponseStatus(HttpStatus.OK)
@@ -38,6 +38,6 @@ public class SchoolClassCommandController {
     @ResponseStatus(HttpStatus.OK)
     @PutMapping("/students/unassign")
     public void unassignStudent(@Valid @RequestBody UnassignStudentCommand command) {
-        commandGateway.send(command);
+        commandGateway.sendAndWait(command);
     }
 }

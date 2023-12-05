@@ -13,8 +13,9 @@ import java.util.UUID;
 @AllArgsConstructor
 @Data
 public class SubjectNameEntity {
-    @Id
-    public String subjectName;
 
-    public UUID subjectId;
+    @Id
+    private UUID id;
+
+    private String subjectName;
 }

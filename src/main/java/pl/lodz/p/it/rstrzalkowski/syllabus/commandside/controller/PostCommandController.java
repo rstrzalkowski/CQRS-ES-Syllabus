@@ -23,6 +23,6 @@ public class PostCommandController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public void createPost(@Valid @RequestBody CreatePostCommand command) {
-        commandGateway.send(command);
+        commandGateway.sendAndWait(command);
     }
 }

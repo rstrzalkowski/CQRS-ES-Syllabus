@@ -23,6 +23,6 @@ public class ActivityCommandController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public void createActivity(@Valid @RequestBody CreateActivityCommand command) {
-        commandGateway.send(command);
+        commandGateway.sendAndWait(command);
     }
 }

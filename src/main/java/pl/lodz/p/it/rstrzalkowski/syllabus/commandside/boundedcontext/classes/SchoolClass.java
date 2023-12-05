@@ -16,7 +16,7 @@ import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.SchoolClassCreatedEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.StudentAssignedToClassEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.StudentUnassignedFromClassEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.exception.user.StudentAlreadyAssignedException;
-import pl.lodz.p.it.rstrzalkowski.syllabus.shared.exception.user.StudentNotAssignedException;
+import pl.lodz.p.it.rstrzalkowski.syllabus.shared.exception.user.StudentNotAssignedCommandExecutionException;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.util.WriteApplicationBean;
 
 import java.util.ArrayList;
@@ -65,7 +65,7 @@ public class SchoolClass extends AbstractAggregate {
         Student student = new Student(cmd.getStudentId());
 
         if (!students.contains(student)) {
-            throw new StudentNotAssignedException();
+            throw new StudentNotAssignedCommandExecutionException();
         }
 
         AggregateLifecycle.apply(new StudentUnassignedFromClassEvent(

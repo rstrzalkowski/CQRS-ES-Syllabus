@@ -5,8 +5,9 @@ import org.axonframework.commandhandling.CommandMessage;
 import org.axonframework.messaging.MessageDispatchInterceptor;
 import org.springframework.stereotype.Component;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.subject.CreateSubjectCommand;
+import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.subject.UpdateSubjectCommand;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.persistence.subject.SubjectNameRepository;
-import pl.lodz.p.it.rstrzalkowski.syllabus.shared.exception.subject.SubjectAlreadyExistsException;
+import pl.lodz.p.it.rstrzalkowski.syllabus.shared.exception.subject.SubjectAlreadyExistsCommandExecutionException;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.util.WriteApplicationBean;
 
 import java.util.List;
@@ -24,10 +25,18 @@ public class SubjectCommandDispatchInterceptor implements MessageDispatchInterce
         return (i, m) -> {
             if (CreateSubjectCommand.class.equals(m.getPayloadType())) {
                 final CreateSubjectCommand createSubjectCommand = (CreateSubjectCommand) m.getPayload();
-                if (subjectNameRepository.existsById(createSubjectCommand.getName())) {
-                    throw new SubjectAlreadyExistsException();
+                if (subjectNameRepository.findBySubjectName(createSubjectCommand.getName()).isPresent()) {
+                    throw new SubjectAlreadyExistsCommandExecutionException();
                 }
             }
+
+            if (UpdateSubjectCommand.class.equals(m.getPayloadType())) {
+                final UpdateSubjectCommand updateSubjectCommand = (UpdateSubjectCommand) m.getPayload();
+                if (subjectNameRepository.findBySubjectName(updateSubjectCommand.getName()).isPresent()) {
+                    throw new SubjectAlreadyExistsCommandExecutionException();
+                }
+            }
+
             return m;
         };
     }

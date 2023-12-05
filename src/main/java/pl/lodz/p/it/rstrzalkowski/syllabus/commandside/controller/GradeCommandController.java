@@ -23,6 +23,6 @@ public class GradeCommandController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public void createGrade(@Valid @RequestBody CreateGradeCommand command) {
-        commandGateway.send(command);
+        commandGateway.sendAndWait(command);
     }
 }

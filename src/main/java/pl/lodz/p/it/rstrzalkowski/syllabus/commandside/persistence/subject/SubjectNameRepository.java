@@ -4,7 +4,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.util.WriteApplicationBean;
 
+import java.util.Optional;
+
 @Repository
 @WriteApplicationBean
 public interface SubjectNameRepository extends JpaRepository<SubjectNameEntity, String> {
+    Optional<SubjectNameEntity> findBySubjectName(String name);
 }

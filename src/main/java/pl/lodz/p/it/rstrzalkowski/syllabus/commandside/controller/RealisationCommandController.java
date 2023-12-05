@@ -23,6 +23,6 @@ public class RealisationCommandController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public void createRealisation(@Valid @RequestBody CreateRealisationCommand command) {
-        commandGateway.send(command);
+        commandGateway.sendAndWait(command);
     }
 }

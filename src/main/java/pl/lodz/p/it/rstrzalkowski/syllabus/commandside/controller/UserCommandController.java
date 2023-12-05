@@ -23,6 +23,6 @@ public class UserCommandController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public void register(@Valid @RequestBody RegisterCommand command) {
-        commandGateway.send(command);
+        commandGateway.sendAndWait(command);
     }
 }

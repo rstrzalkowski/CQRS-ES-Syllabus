@@ -23,6 +23,6 @@ public class LevelCommandController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public void createLevel(@Valid @RequestBody CreateLevelCommand command) {
-        commandGateway.send(command);
+        commandGateway.sendAndWait(command);
     }
 }

@@ -16,8 +16,14 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler({CommandExecutionException.class})
     protected ResponseEntity<Object> handleCommandExecution(final CommandExecutionException cex, final WebRequest request) {
-        Object details = cex.getDetails().orElse(new ErrorObject(HttpStatus.INTERNAL_SERVER_ERROR.value()));
-        ErrorObject errorObject = (ErrorObject) details;
+        logger.error("Exception occurred: " + cex);
+        ErrorObject errorObject = null;
+        try {
+            Object details = cex.getDetails().get();
+            errorObject = (ErrorObject) details;
+        } catch (Exception e) {
+            errorObject = new ErrorObject(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        }
 
         return handleExceptionInternal(
                 cex,
