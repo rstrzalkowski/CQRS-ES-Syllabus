@@ -28,7 +28,7 @@ public class SubjectEventHandler {
 
     @EventHandler
     public void on(SubjectUpdatedEvent event) {
-        SubjectNameEntity subjectNameEntity = subjectNameRepository.findById(event.getName())
+        SubjectNameEntity subjectNameEntity = subjectNameRepository.findById(event.getId())
                 .orElseThrow(SubjectNotFoundCommandExecutionException::new);
 
         if (Objects.equals(subjectNameEntity.getSubjectName(), event.getName())) {

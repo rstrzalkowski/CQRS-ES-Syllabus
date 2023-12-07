@@ -1,11 +1,13 @@
 package pl.lodz.p.it.rstrzalkowski.syllabus.commandside.boundedcontext.realisations.entity;
 
+import lombok.AllArgsConstructor;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.boundedcontext.AbstractEntity;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 
+@AllArgsConstructor
 public class Activity extends AbstractEntity {
 
     private UUID teacherId;

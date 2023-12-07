@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -30,5 +31,9 @@ public class CreateActivityCommand {
     private LocalDateTime date;
 
     @NotNull
-    private Long realisationId;
+    private UUID realisationId;
+
+    @NotNull
+    //TODO Get from JWT
+    private UUID teacherId;
 }

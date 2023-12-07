@@ -13,7 +13,7 @@ import java.util.UUID;
 public class UpdateSubjectCommand {
 
     @TargetAggregateIdentifier
-    private UUID id;
+    private UUID subjectId;
 
     private String name;
 

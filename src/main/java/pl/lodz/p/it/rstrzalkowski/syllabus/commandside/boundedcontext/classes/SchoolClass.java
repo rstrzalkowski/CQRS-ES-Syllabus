@@ -4,17 +4,21 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.axonframework.commandhandling.CommandHandler;
+import org.axonframework.common.Assert;
 import org.axonframework.eventsourcing.EventSourcingHandler;
 import org.axonframework.modelling.command.AggregateLifecycle;
 import org.axonframework.spring.stereotype.Aggregate;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.boundedcontext.AbstractAggregate;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.boundedcontext.classes.entity.Student;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.schoolclass.CreateSchoolClassCommand;
+import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.schoolclass.UpdateSchoolClassCommand;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.user.AssignStudentCommand;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.user.UnassignStudentCommand;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.SchoolClassCreatedEvent;
+import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.SchoolClassUpdatedEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.StudentAssignedToClassEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.StudentUnassignedFromClassEvent;
+import pl.lodz.p.it.rstrzalkowski.syllabus.shared.exception.schoolclass.SchoolClassNotFoundCommandExecutionException;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.exception.user.StudentAlreadyAssignedException;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.exception.user.StudentNotAssignedCommandExecutionException;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.util.WriteApplicationBean;
@@ -72,6 +76,18 @@ public class SchoolClass extends AbstractAggregate {
                 cmd.getStudentId(),
                 cmd.getSchoolClassId()
         ));
+    }
+
+    @CommandHandler
+    public void handle(UpdateSchoolClassCommand cmd) {
+        Assert.assertNonNull(getId(), SchoolClassNotFoundCommandExecutionException::new);
+
+        AggregateLifecycle.apply(new SchoolClassUpdatedEvent(
+                getId(),
+                cmd.getTeacherId() != null ? cmd.getTeacherId() : this.teacherId,
+                cmd.getLevel() != null ? cmd.getLevel() : this.level,
+                cmd.getName() != null ? cmd.getName() : this.name,
+                cmd.getFullName() != null ? cmd.getFullName() : this.fullName));
     }
 
     @EventSourcingHandler

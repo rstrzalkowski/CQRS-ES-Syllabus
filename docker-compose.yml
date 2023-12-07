@@ -66,6 +66,15 @@ services:
     networks:
       - keycloak
 
+  nginx:
+    image: nginx:latest
+    volumes:
+      - ./nginx-conf:/etc/nginx
+    ports:
+      - "8080:80"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
 volumes:
   axonserver-data:
     driver: local

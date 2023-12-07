@@ -10,8 +10,10 @@ import org.axonframework.spring.stereotype.Aggregate;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.boundedcontext.AbstractAggregate;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.boundedcontext.realisations.entity.Activity;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.boundedcontext.realisations.entity.Post;
+import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.activity.CreateActivityCommand;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.post.CreatePostCommand;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.realisation.CreateRealisationCommand;
+import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.ActivityCreatedEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.PostCreatedEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.RealisationCreatedEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.util.WriteApplicationBean;
@@ -62,6 +64,18 @@ public class Realisation extends AbstractAggregate {
                 cmd.getContent()));
     }
 
+    @CommandHandler
+    public void on(CreateActivityCommand cmd) {
+        AggregateLifecycle.apply(new ActivityCreatedEvent(
+                UUID.randomUUID(),
+                cmd.getRealisationId(),
+                cmd.getTeacherId(),
+                cmd.getWeight(),
+                cmd.getDate(),
+                cmd.getDescription(),
+                cmd.getName()));
+    }
+
     @EventSourcingHandler
     public void on(RealisationCreatedEvent event) {
         setId(event.getId());
@@ -73,9 +87,27 @@ public class Realisation extends AbstractAggregate {
 
     @EventSourcingHandler
     public void on(PostCreatedEvent event) {
-        Post post = new Post(event.getTeacherId(), event.getTitle(), event.getContent(), false);
+        Post post = new Post(
+                event.getTeacherId(),
+                event.getTitle(),
+                event.getContent(),
+                false);
+
         post.setId(event.getId());
         this.posts.add(post);
-        System.out.println(posts);
+    }
+
+    @EventSourcingHandler
+    public void on(ActivityCreatedEvent event) {
+        Activity activity = new Activity(
+                event.getTeacherId(),
+                event.getName(),
+                event.getDate(),
+                event.getWeight(),
+                event.getDescription(),
+                false);
+
+        activity.setId(event.getId());
+        this.activities.add(activity);
     }
 }

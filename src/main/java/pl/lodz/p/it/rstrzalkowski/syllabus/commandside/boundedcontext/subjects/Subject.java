@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.axonframework.commandhandling.CommandHandler;
+import org.axonframework.common.Assert;
 import org.axonframework.eventsourcing.EventSourcingHandler;
 import org.axonframework.modelling.command.AggregateLifecycle;
 import org.axonframework.spring.stereotype.Aggregate;
@@ -37,13 +38,12 @@ public class Subject extends AbstractAggregate {
     }
 
     @CommandHandler
-    public Subject(UpdateSubjectCommand cmd) {
-        if (getId() == null) { // Dla agregatu nie został zaaplikowany SubjectCreatedEvent, więc przedmiot o danym ID nie istnieje
-            throw new SubjectNotFoundCommandExecutionException();
-        }
+    public void handle(UpdateSubjectCommand cmd) {
+        // Jeśli dla agregatu nie został zaaplikowany SubjectCreatedEvent, to znaczy, że przedmiot o danym ID nie istnieje
+        Assert.assertNonNull(getId(), SubjectNotFoundCommandExecutionException::new);
 
         AggregateLifecycle.apply(new SubjectUpdatedEvent(
-                UUID.randomUUID(),
+                getId(),
                 cmd.getName() != null ? cmd.getName() : this.name,
                 cmd.getAbbreviation() != null ? cmd.getAbbreviation() : this.abbreviation));
     }
