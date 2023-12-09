@@ -7,13 +7,14 @@ import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 public class UpdateActivityCommand {
 
-    private Long id;
+    private UUID id;
 
     @Length(max = 40)
     private String name;

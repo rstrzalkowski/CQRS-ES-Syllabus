@@ -1,4 +1,6 @@
 package pl.lodz.p.it.rstrzalkowski.syllabus.queryside.query.grade;
 
-public record GetGradeByIdQuery(Long id) {
+import java.util.UUID;
+
+public record GetGradeByIdQuery(UUID id) {
 }

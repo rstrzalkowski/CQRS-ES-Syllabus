@@ -8,16 +8,20 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
+import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.config.JwtFilter;
 
 @Configuration
 @RequiredArgsConstructor
 @EnableMethodSecurity(
-        securedEnabled = true,
-        jsr250Enabled = true)
+    securedEnabled = true,
+    jsr250Enabled = true)
 public class SecurityConfig {
+
+    private final JwtFilter jwtFilter;
 
     @Bean
     public Filter corsFilter() {
@@ -33,9 +37,8 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .authorizeHttpRequests((auth) -> auth
-                        .anyRequest().permitAll())
-                .csrf(AbstractHttpConfigurer::disable);
+            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+            .csrf(AbstractHttpConfigurer::disable);
         return http.build();
     }
 }

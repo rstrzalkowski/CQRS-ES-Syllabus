@@ -13,4 +13,6 @@ import java.util.UUID;
 @ReadApplicationBean
 public interface SubjectRepository extends JpaRepository<SubjectEntity, UUID> {
     Page<SubjectEntity> findAllByArchived(boolean archived, Pageable pageable);
+
+    Page<SubjectEntity> findSubjectByNameContainingIgnoreCase(String name, Pageable pageable);
 }

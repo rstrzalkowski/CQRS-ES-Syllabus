@@ -27,6 +27,7 @@ public class Subject extends AbstractAggregate {
 
     private String name;
     private String abbreviation;
+    private String imageUrl;
 
 
     @CommandHandler
@@ -42,10 +43,13 @@ public class Subject extends AbstractAggregate {
         // Jeśli dla agregatu nie został zaaplikowany SubjectCreatedEvent, to znaczy, że przedmiot o danym ID nie istnieje
         Assert.assertNonNull(getId(), SubjectNotFoundCommandExecutionException::new);
 
+        //TODO save image
+
         AggregateLifecycle.apply(new SubjectUpdatedEvent(
                 getId(),
                 cmd.getName() != null ? cmd.getName() : this.name,
-                cmd.getAbbreviation() != null ? cmd.getAbbreviation() : this.abbreviation));
+                cmd.getAbbreviation() != null ? cmd.getAbbreviation() : this.abbreviation,
+                cmd.getImageUrl() != null ? cmd.getImageUrl() : this.imageUrl));
     }
 
     @EventSourcingHandler

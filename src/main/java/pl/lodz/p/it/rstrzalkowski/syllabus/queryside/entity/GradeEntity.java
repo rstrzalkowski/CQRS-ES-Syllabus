@@ -33,6 +33,7 @@ public class GradeEntity extends AbstractEntity {
     private String comment;
 
     private boolean archived = false;
+    private boolean edited = false;
 
     public GradeEntity(UUID id, ActivityEntity activity, UserEntity teacher, UserEntity student, Integer value, LocalDateTime date, String comment) {
         super(id);

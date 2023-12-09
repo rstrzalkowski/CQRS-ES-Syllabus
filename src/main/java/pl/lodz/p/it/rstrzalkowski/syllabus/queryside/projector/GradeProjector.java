@@ -3,6 +3,7 @@ package pl.lodz.p.it.rstrzalkowski.syllabus.queryside.projector;
 import lombok.RequiredArgsConstructor;
 import org.axonframework.eventhandling.EventHandler;
 import org.springframework.stereotype.Service;
+import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.boundedcontext.grades.entity.Grade;
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.entity.ActivityEntity;
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.entity.GradeEntity;
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.entity.UserEntity;
@@ -10,6 +11,7 @@ import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.repository.ActivityReposito
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.repository.GradeRepository;
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.repository.UserRepository;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.GradeCreatedEvent;
+import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.GradeUpdatedEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.util.ReadApplicationBean;
 
 @Service
@@ -21,7 +23,7 @@ public class GradeProjector {
     private final ActivityRepository activityRepository;
 
     @EventHandler
-    public void createGrade(GradeCreatedEvent event) {
+    public void on(GradeCreatedEvent event) {
         UserEntity teacher = userRepository.findById(event.getTeacherId()).orElse(null);
         UserEntity student = userRepository.findById(event.getStudentId()).orElse(null);
         ActivityEntity activity = activityRepository.findById(event.getActivityId()).orElse(null);
@@ -35,6 +37,18 @@ public class GradeProjector {
                 event.getDate(),
                 event.getComment()
         );
+
+        gradeRepository.save(grade);
+    }
+
+    @EventHandler
+    public void on(GradeUpdatedEvent event) {
+        GradeEntity grade = gradeRepository.findById(event.getId()).orElseThrow();
+
+        grade.setValue(event.getValue());
+        grade.setComment(event.getComment());
+        grade.setDate(event.getDate());
+        grade.setEdited(true);
 
         gradeRepository.save(grade);
     }

@@ -10,6 +10,7 @@ import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.repository.ActivityReposito
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.repository.RealisationRepository;
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.repository.UserRepository;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.ActivityCreatedEvent;
+import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.ActivityUpdatedEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.util.ReadApplicationBean;
 
 @Service
@@ -21,7 +22,7 @@ public class ActivityProjector {
     private final ActivityRepository activityRepository;
 
     @EventHandler
-    public void createActivity(ActivityCreatedEvent event) {
+    public void on(ActivityCreatedEvent event) {
         UserEntity teacher = userRepository.findById(event.getTeacherId()).orElse(null);
         RealisationEntity realisation = realisationRepository.findById(event.getRealisationId()).orElse(null);
 
@@ -34,6 +35,20 @@ public class ActivityProjector {
             event.getWeight(),
             event.getDescription()
         );
+
+        activityRepository.save(activity);
+    }
+
+    @EventHandler
+    public void on(ActivityUpdatedEvent event) {
+        ActivityEntity activity = activityRepository.findById(event.getId()).orElseThrow();
+
+        activity.setName(event.getName());
+        activity.setDescription(event.getDescription());
+        activity.setWeight(event.getWeight());
+        activity.setDate(event.getDate());
+
+        activity.setEdited(true);
 
         activityRepository.save(activity);
     }

@@ -1,4 +1,6 @@
 package pl.lodz.p.it.rstrzalkowski.syllabus.queryside.query.subject;
 
-public record GetSubjectByIdQuery(Long id) {
+import java.util.UUID;
+
+public record GetSubjectByIdQuery(UUID id) {
 }

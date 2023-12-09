@@ -4,13 +4,22 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.grade.ArchiveGradeCommand;
+import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.grade.UpdateGradeCommand;
+import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.post.ArchivePostCommand;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.post.CreatePostCommand;
+import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.post.UpdatePostCommand;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.util.WriteApplicationBean;
+
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -24,5 +33,17 @@ public class PostCommandController {
     @PostMapping
     public void createPost(@Valid @RequestBody CreatePostCommand command) {
         commandGateway.sendAndWait(command);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @PutMapping
+    public void updatePost(@Valid @RequestBody UpdatePostCommand command) {
+        commandGateway.sendAndWait(command);
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @DeleteMapping("/{id}")
+    public void archiveById(@PathVariable("id") UUID id) {
+        commandGateway.sendAndWait(new ArchivePostCommand(id));
     }
 }

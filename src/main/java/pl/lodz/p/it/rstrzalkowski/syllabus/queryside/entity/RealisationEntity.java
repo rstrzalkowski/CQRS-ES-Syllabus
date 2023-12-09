@@ -34,6 +34,8 @@ public class RealisationEntity extends AbstractEntity {
 
     private boolean archived;
 
+    private boolean edited;
+
     @OneToMany(mappedBy = "realisation")
     private Set<PostEntity> posts = new LinkedHashSet<>();
 

@@ -12,5 +12,8 @@ import java.util.UUID;
 @Repository
 @ReadApplicationBean
 public interface PostRepository extends JpaRepository<PostEntity, UUID> {
-    Page<PostEntity> findAllByArchived(boolean archived, Pageable pageable);
+    Page<PostEntity> findByRealisationIdAndArchived(UUID realisationId, boolean archived, Pageable pageable);
+
+    Page<PostEntity> findByRealisation_SchoolClass_Students_IdAndArchived(UUID studentId, boolean archived,
+                                                                          Pageable pageable);
 }

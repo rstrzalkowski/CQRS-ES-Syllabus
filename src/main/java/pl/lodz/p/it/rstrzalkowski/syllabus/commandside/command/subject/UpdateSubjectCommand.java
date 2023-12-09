@@ -18,4 +18,6 @@ public class UpdateSubjectCommand {
     private String name;
 
     private String abbreviation;
+
+    private String imageUrl;
 }
