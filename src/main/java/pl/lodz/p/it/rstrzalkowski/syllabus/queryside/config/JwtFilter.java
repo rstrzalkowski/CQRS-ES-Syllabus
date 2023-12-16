@@ -16,6 +16,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
@@ -23,7 +24,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-        throws ServletException, IOException {
+            throws ServletException, IOException {
 
         List<GrantedAuthority> authorities = new ArrayList<>();
         authorities.add(new SimpleGrantedAuthority("STUDENT"));
@@ -33,9 +34,9 @@ public class JwtFilter extends OncePerRequestFilter {
         authorities.add(new SimpleGrantedAuthority("ADMIN"));
 
         Authentication authentication = new UsernamePasswordAuthenticationToken(
-            "TEMP",
-            null,
-            authorities);
+                UUID.fromString("bae61baa-0eb7-4dfd-9d92-14efae319363"),
+                null,
+                authorities);
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
         filterChain.doFilter(request, response);

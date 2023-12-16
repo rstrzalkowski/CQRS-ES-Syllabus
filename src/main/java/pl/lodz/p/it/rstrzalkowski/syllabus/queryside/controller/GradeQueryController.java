@@ -4,14 +4,15 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.dto.GradeDTO;
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.handler.GradeQueryHandler;
+import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.query.grade.GetActiveGradesByStudentQuery;
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.query.grade.GetGradeByIdQuery;
-import pl.lodz.p.it.rstrzalkowski.syllabus.shared.NotImplementedException;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.util.ReadApplicationBean;
 
 import java.util.UUID;
@@ -35,7 +36,7 @@ public class GradeQueryController {
     @GetMapping("/own")
     @Secured({"STUDENT"})
     public Page<GradeDTO> getRecentGrades(Pageable pageable) {
-        throw new NotImplementedException();
-        //return gradeQueryHandler.handle(new GetActiveGradesByStudentQuery(pageable));
+        UUID userId = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return gradeQueryHandler.handle(new GetActiveGradesByStudentQuery(userId, pageable));
     }
 }

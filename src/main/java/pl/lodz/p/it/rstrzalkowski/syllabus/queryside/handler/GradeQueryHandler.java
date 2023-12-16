@@ -24,27 +24,26 @@ public class GradeQueryHandler {
 
     @QueryHandler
     public Page<GradeDTO> handle(GetActiveGradesByStudentQuery query) {
-        throw new NotImplementedException();
-//        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-//        return gradeRepository.findAllByArchivedAndStudentId(false, user.getId(), pageable);
+        return gradeRepository.findAllByArchivedAndStudentId(false, query.studentId(), query.pageable())
+                .map(gradeEntity -> new GradeDTO(gradeEntity.getActivity(), gradeEntity));
     }
 
     @QueryHandler
     public Page<GradeDTO> handle(GetArchivedGradesByStudentQuery query) {
         return gradeRepository.findAllByArchivedAndStudentId(true, query.studentId(), query.pageable())
-            .map(gradeEntity -> new GradeDTO(gradeEntity.getActivity(), gradeEntity));
+                .map(gradeEntity -> new GradeDTO(gradeEntity.getActivity(), gradeEntity));
     }
 
     @QueryHandler
     public GradeDTO handle(GetGradeByActivityAndStudentQuery query) {
         return new GradeDTO(gradeRepository.findByActivityIdAndStudentId(query.activityId(), query.studentId())
-            .orElseThrow(GradeNotFoundException::new));
+                .orElseThrow(GradeNotFoundException::new));
     }
 
     @QueryHandler
     public GradeDTO handle(GetGradeByIdQuery query) {
         return new GradeDTO(gradeRepository.findById(query.id())
-            .orElseThrow(GradeNotFoundException::new));
+                .orElseThrow(GradeNotFoundException::new));
     }
 
     @QueryHandler

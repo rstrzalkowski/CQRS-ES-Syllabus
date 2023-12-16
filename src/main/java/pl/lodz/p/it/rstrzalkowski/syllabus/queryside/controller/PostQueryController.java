@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,6 +36,7 @@ public class PostQueryController {
     @GetMapping("/recent")
     @Secured({"STUDENT"})
     public Page<PostDTO> getRecentPosts(Pageable pageable) {
-        return postQueryHandler.handle(new GetRecentActivePostsQuery(pageable));
+        UUID userId = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return postQueryHandler.handle(new GetRecentActivePostsQuery(userId, pageable));
     }
 }

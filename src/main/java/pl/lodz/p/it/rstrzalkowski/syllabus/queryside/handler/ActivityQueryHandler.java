@@ -34,7 +34,7 @@ public class ActivityQueryHandler {
     @QueryHandler
     public Page<ActivityDTO> handle(GetActiveActivitiesByRealisationQuery query) {
         Page<ActivityEntity> activities =
-            activityRepository.findByRealisationIdAndArchived(query.realisationId(), false, query.pageable());
+                activityRepository.findByRealisationIdAndArchived(query.realisationId(), false, query.pageable());
 
         return activities.map((ActivityDTO::new));
     }
@@ -42,9 +42,9 @@ public class ActivityQueryHandler {
     @QueryHandler
     public Page<ActivityDTO> handle(GetIncomingActivitiesByRealisationQuery query) {
         Page<ActivityEntity> activities =
-            activityRepository.findByRealisationIdAndArchivedAndDateAfter(query.realisationId(), false,
-                LocalDateTime.now(),
-                query.pageable());
+                activityRepository.findByRealisationIdAndArchivedAndDateAfter(query.realisationId(), false,
+                        LocalDateTime.now(),
+                        query.pageable());
         return activities.map((ActivityDTO::new));
     }
 
@@ -58,7 +58,7 @@ public class ActivityQueryHandler {
     @QueryHandler
     public ActivityEntity handle(GetActivityByIdQuery query) {
         return activityRepository.findById(query.id())
-            .orElseThrow(ActivityNotFoundException::new);
+                .orElseThrow(ActivityNotFoundException::new);
     }
 
     @QueryHandler
@@ -66,17 +66,16 @@ public class ActivityQueryHandler {
         ActivityEntity activity = handle(new GetActivityByIdQuery(query.activityId()));
         SchoolClassEntity schoolClass = activity.getRealisation().getSchoolClass();
         return schoolClass
-            .getStudents().stream()
-            .sorted(Comparator.comparing(UserEntity::getLastName))
-            .map((student) -> new GradeOfActivityDTO(student, query.activityId()))
-            .collect(Collectors.toList());
+                .getStudents().stream()
+                .sorted(Comparator.comparing(UserEntity::getLastName))
+                .map((student) -> new GradeOfActivityDTO(student, query.activityId()))
+                .collect(Collectors.toList());
     }
 
     @QueryHandler
     public Page<ActivityDTO> handle(GetIncomingActivitiesQuery query) {
-        throw new RuntimeException("Not implemented yet");
-//        return activityRepository.findByRealisation_SchoolClass_Students_IdAndArchivedAndDateGreaterThanEqual(query, false,
-//                LocalDateTime.now(), pageable)
-//            .map(ActivityDTO::new);
+        return activityRepository.findByRealisation_SchoolClass_Students_IdAndArchivedAndDateGreaterThanEqual(query.studentId(), false,
+                        LocalDateTime.now(), query.pageable())
+                .map(ActivityDTO::new);
     }
 }

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -103,12 +104,14 @@ public class RealisationQueryController {
     @Secured("STUDENT")
     public AverageGradeDTO getRealisationAverageGrade(@PathVariable("id") UUID id) {
         accessGuard.checkAccessToRealisation(id);
-        return realisationQueryHandler.handle(new GetRealisationAverageGradeQuery(id));
+        UUID userId = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return realisationQueryHandler.handle(new GetRealisationAverageGradeQuery(id, userId));
     }
 
     @GetMapping("/me")
     @Secured({"STUDENT", "TEACHER"})
     public List<SubjectDTO> getOwnRealisations() {
-        return realisationQueryHandler.handle(new GetOwnRealisationsQuery());
+        UUID userId = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return realisationQueryHandler.handle(new GetOwnRealisationsQuery(userId));
     }
 }

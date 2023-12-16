@@ -15,6 +15,8 @@ public class AuthTempController {
 
     @PostMapping("/authorize")
     public JwtResponse login(@Valid @RequestBody LoginCommand command) {
-        return new JwtResponse();
+        JwtResponse jwtResponse = new JwtResponse();
+        jwtResponse.setToken("eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50Iiwicm9sZSI6IlNUVURFTlQiLCJpYXQiOjE3MDI3NjIzNTAsImV4cCI6MTcwMjc2NTk1MH0.cCeQvwM_AHkD4TBenxWWIDrDG1_Jin-CyGKnZ4mzJRebWTUfQTc1YEhxENYsTLxByDY-BhQtErfSbQGxeI-OUQ");
+        return jwtResponse;
     }
 }

@@ -12,7 +12,6 @@ import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.query.post.GetArchivedPosts
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.query.post.GetPostByIdQuery;
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.query.post.GetRecentActivePostsQuery;
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.repository.PostRepository;
-import pl.lodz.p.it.rstrzalkowski.syllabus.shared.NotImplementedException;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.util.ReadApplicationBean;
 
 @Service
@@ -25,27 +24,25 @@ public class PostQueryHandler {
     @QueryHandler
     public Page<PostDTO> handle(GetActivePostsByRealisationQuery query) {
         Page<PostEntity> posts =
-            postRepository.findByRealisationIdAndArchived(query.realisationId(), false, query.pageable());
+                postRepository.findByRealisationIdAndArchived(query.realisationId(), false, query.pageable());
         return posts.map((PostDTO::new));
     }
 
     @QueryHandler
     public Page<PostDTO> handle(GetArchivedPostsByRealisationQuery query) {
         return postRepository.findByRealisationIdAndArchived(query.realisationId(), true, query.pageable())
-            .map(PostDTO::new);
+                .map(PostDTO::new);
     }
 
     @QueryHandler
     public PostDTO handle(GetPostByIdQuery query) {
         return new PostDTO(postRepository.findById(query.id())
-            .orElseThrow(PostNotFoundException::new));
+                .orElseThrow(PostNotFoundException::new));
     }
 
     @QueryHandler
     public Page<PostDTO> handle(GetRecentActivePostsQuery query) {
-//        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-//        return postRepository.findByRealisation_SchoolClass_Students_IdAndArchived(user.getId(), false, pageable)
-//            .map(PostDTO::new);
-        throw new NotImplementedException();
+        return postRepository.findByRealisation_SchoolClass_Students_IdAndArchived(query.studentId(), false, query.pageable())
+                .map(PostDTO::new);
     }
 }

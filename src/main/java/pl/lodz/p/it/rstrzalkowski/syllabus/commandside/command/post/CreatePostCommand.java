@@ -26,5 +26,6 @@ public class CreatePostCommand {
     @TargetAggregateIdentifier
     private UUID realisationId;
 
+    @NotNull
     private UUID teacherId;
 }

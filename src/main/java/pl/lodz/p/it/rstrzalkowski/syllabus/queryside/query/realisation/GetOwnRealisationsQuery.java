@@ -1,5 +1,7 @@
 package pl.lodz.p.it.rstrzalkowski.syllabus.queryside.query.realisation;
 
 
-public record GetOwnRealisationsQuery() {
+import java.util.UUID;
+
+public record GetOwnRealisationsQuery(UUID studentId) {
 }

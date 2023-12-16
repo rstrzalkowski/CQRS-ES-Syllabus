@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -44,6 +45,7 @@ public class ActivityQueryController {
     @GetMapping("/incoming")
     @Secured({"STUDENT"})
     public Page<ActivityDTO> getIncomingActivities(Pageable pageable) {
-        return activityQueryHandler.handle(new GetIncomingActivitiesQuery(pageable));
+        UUID userId = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return activityQueryHandler.handle(new GetIncomingActivitiesQuery(userId, pageable));
     }
 }
