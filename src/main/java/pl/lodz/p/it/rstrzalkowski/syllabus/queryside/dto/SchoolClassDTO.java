@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.entity.SchoolClassEntity;
 
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -18,13 +19,19 @@ public class SchoolClassDTO {
 
     private String fullName;
 
-    private UUID supervisingTeacherId;
+    private UserDTO supervisingTeacher;
+
+    private List<UserDTO> students;
+
+    private Integer level;
 
 
     public SchoolClassDTO(SchoolClassEntity schoolClass) {
         this.id = schoolClass.getId();
         this.name = schoolClass.getName();
         this.fullName = schoolClass.getFullName();
-        this.supervisingTeacherId = schoolClass.getSupervisingTeacher().getId();
+        this.supervisingTeacher = new UserDTO(schoolClass.getSupervisingTeacher());
+        this.level = schoolClass.getLevel();
+        this.students = schoolClass.getStudents().stream().map(UserDTO::new).toList();
     }
 }

@@ -5,6 +5,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.axonframework.modelling.command.TargetAggregateIdentifier;
 import org.hibernate.validator.constraints.Length;
 
 import java.time.LocalDateTime;
@@ -31,9 +33,9 @@ public class CreateActivityCommand {
     private LocalDateTime date;
 
     @NotNull
+    @TargetAggregateIdentifier
     private UUID realisationId;
 
-    @NotNull
-    //TODO Get from JWT
+    @Setter
     private UUID teacherId;
 }

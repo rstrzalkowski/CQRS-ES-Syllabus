@@ -16,14 +16,16 @@ public class UserProjector {
 
     @EventHandler
     public void createUser(UserCreatedEvent event) {
-        UserEntity userEntity = new UserEntity(
-                event.getId(),
-                event.getEmail(),
-                event.getFirstName(),
-                event.getLastName(),
-                event.getPersonalId(),
-                "");
+        UserEntity user = new UserEntity(
+            event.getId(),
+            event.getEmail(),
+            event.getFirstName(),
+            event.getLastName(),
+            event.getPersonalId(),
+            event.getDescription(),
+            event.getImageUrl());
+        user.setCreatedAt(event.getCreatedAt());
 
-        userRepository.save(userEntity);
+        userRepository.save(user);
     }
 }

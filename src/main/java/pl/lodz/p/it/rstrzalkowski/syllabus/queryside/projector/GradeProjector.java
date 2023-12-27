@@ -3,7 +3,6 @@ package pl.lodz.p.it.rstrzalkowski.syllabus.queryside.projector;
 import lombok.RequiredArgsConstructor;
 import org.axonframework.eventhandling.EventHandler;
 import org.springframework.stereotype.Service;
-import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.boundedcontext.grades.entity.Grade;
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.entity.ActivityEntity;
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.entity.GradeEntity;
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.entity.UserEntity;
@@ -29,14 +28,15 @@ public class GradeProjector {
         ActivityEntity activity = activityRepository.findById(event.getActivityId()).orElse(null);
 
         GradeEntity grade = new GradeEntity(
-                event.getId(),
-                activity,
-                teacher,
-                student,
-                event.getValue(),
-                event.getDate(),
-                event.getComment()
+            event.getId(),
+            activity,
+            teacher,
+            student,
+            event.getValue(),
+            event.getDate(),
+            event.getComment()
         );
+        grade.setCreatedAt(event.getCreatedAt());
 
         gradeRepository.save(grade);
     }

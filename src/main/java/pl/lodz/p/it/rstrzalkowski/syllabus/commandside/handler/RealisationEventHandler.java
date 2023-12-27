@@ -10,15 +10,15 @@ import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.RealisationCreatedEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.util.WriteApplicationBean;
 
 @Component
-@ProcessingGroup("subject")
+@ProcessingGroup("realisation")
 @WriteApplicationBean
 public class RealisationEventHandler {
     @EventHandler
     public void on(RealisationCreatedEvent event, RealisedSubjectRepository realisedSubjectRepository) {
         realisedSubjectRepository.save(
-                new RealisedSubjectEntity(
-                        new RealisedSubjectId(
-                                event.getSubjectId(),
-                                event.getSchoolClassId())));
+            new RealisedSubjectEntity(
+                new RealisedSubjectId(
+                    event.getSubjectId(),
+                    event.getSchoolClassId())));
     }
 }

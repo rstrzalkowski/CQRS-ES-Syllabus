@@ -25,12 +25,15 @@ public class SubjectDTO {
 
     private String schoolClassName;
 
+    private Integer activeRealisationsCount;
+
     public SubjectDTO(RealisationEntity realisation) {
         this.realisationId = realisation.getId();
         this.subjectName = realisation.getSubject().getName();
         this.subjectAbbreviation = realisation.getSubject().getAbbreviation();
         this.schoolClassName = realisation.getSchoolClass().getSchoolClassName();
         this.imageUrl = realisation.getSubject().getImageUrl();
+        this.activeRealisationsCount = realisation.getSubject().getActiveRealisationsCount();
     }
 
     public SubjectDTO(SubjectEntity subjectEntity) {
@@ -38,5 +41,6 @@ public class SubjectDTO {
         this.subjectName = subjectEntity.getName();
         this.subjectAbbreviation = subjectEntity.getAbbreviation();
         this.imageUrl = subjectEntity.getImageUrl();
+        this.activeRealisationsCount = subjectEntity.getActiveRealisationsCount();
     }
 }

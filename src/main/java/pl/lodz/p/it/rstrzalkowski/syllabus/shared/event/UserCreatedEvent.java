@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.sql.Timestamp;
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -15,4 +16,7 @@ public class UserCreatedEvent {
     private String firstName;
     private String lastName;
     private String personalId;
+    private String imageUrl;
+    private String description;
+    private Timestamp createdAt;
 }

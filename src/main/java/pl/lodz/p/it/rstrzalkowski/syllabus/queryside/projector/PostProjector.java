@@ -3,10 +3,8 @@ package pl.lodz.p.it.rstrzalkowski.syllabus.queryside.projector;
 import lombok.RequiredArgsConstructor;
 import org.axonframework.eventhandling.EventHandler;
 import org.springframework.stereotype.Service;
-import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.entity.ActivityEntity;
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.entity.PostEntity;
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.entity.RealisationEntity;
-import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.entity.SubjectEntity;
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.entity.UserEntity;
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.repository.PostRepository;
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.repository.RealisationRepository;
@@ -30,13 +28,15 @@ public class PostProjector {
         UserEntity teacher = userRepository.findById(event.getTeacherId()).orElse(null);
         RealisationEntity realisation = realisationRepository.findById(event.getRealisationId()).orElse(null);
 
-        PostEntity postEntity = new PostEntity(
+        PostEntity post = new PostEntity(
             event.getId(),
             realisation,
             teacher,
             event.getTitle(),
             event.getContent());
-        postRepository.save(postEntity);
+        post.setCreatedAt(event.getCreatedAt());
+
+        postRepository.save(post);
     }
 
     @EventHandler

@@ -16,6 +16,8 @@ import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.SubjectUpdatedEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.exception.subject.SubjectNotFoundCommandExecutionException;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.util.WriteApplicationBean;
 
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.UUID;
 
 @EqualsAndHashCode(callSuper = true)
@@ -33,9 +35,11 @@ public class Subject extends AbstractAggregate {
     @CommandHandler
     public Subject(CreateSubjectCommand cmd) {
         AggregateLifecycle.apply(new SubjectCreatedEvent(
-                UUID.randomUUID(),
-                cmd.getName(),
-                cmd.getAbbreviation()));
+            UUID.randomUUID(),
+            cmd.getName(),
+            cmd.getAbbreviation(),
+            Timestamp.from(Instant.now()))
+        );
     }
 
     @CommandHandler
@@ -43,13 +47,11 @@ public class Subject extends AbstractAggregate {
         // Jeśli dla agregatu nie został zaaplikowany SubjectCreatedEvent, to znaczy, że przedmiot o danym ID nie istnieje
         Assert.assertNonNull(getId(), SubjectNotFoundCommandExecutionException::new);
 
-        //TODO save image
-
         AggregateLifecycle.apply(new SubjectUpdatedEvent(
-                getId(),
-                cmd.getName() != null ? cmd.getName() : this.name,
-                cmd.getAbbreviation() != null ? cmd.getAbbreviation() : this.abbreviation,
-                cmd.getImageUrl() != null ? cmd.getImageUrl() : this.imageUrl));
+            getId(),
+            cmd.getName() != null ? cmd.getName() : this.name,
+            cmd.getAbbreviation() != null ? cmd.getAbbreviation() : this.abbreviation,
+            cmd.getImageUrl() != null ? cmd.getImageUrl() : this.imageUrl));
     }
 
     @EventSourcingHandler

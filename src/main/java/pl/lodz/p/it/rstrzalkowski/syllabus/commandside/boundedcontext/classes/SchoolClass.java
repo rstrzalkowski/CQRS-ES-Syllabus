@@ -23,6 +23,8 @@ import pl.lodz.p.it.rstrzalkowski.syllabus.shared.exception.user.StudentAlreadyA
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.exception.user.StudentNotAssignedCommandExecutionException;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.util.WriteApplicationBean;
 
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -43,11 +45,12 @@ public class SchoolClass extends AbstractAggregate {
     @CommandHandler
     public SchoolClass(CreateSchoolClassCommand cmd) {
         AggregateLifecycle.apply(new SchoolClassCreatedEvent(
-                UUID.randomUUID(),
-                cmd.getLevel(),
-                cmd.getTeacherId(),
-                cmd.getShortName(),
-                cmd.getFullName()));
+            UUID.randomUUID(),
+            cmd.getLevel(),
+            cmd.getTeacherId(),
+            cmd.getShortName(),
+            cmd.getFullName(),
+            Timestamp.from(Instant.now())));
     }
 
     @CommandHandler
@@ -59,8 +62,8 @@ public class SchoolClass extends AbstractAggregate {
         }
 
         AggregateLifecycle.apply(new StudentAssignedToClassEvent(
-                cmd.getStudentId(),
-                cmd.getSchoolClassId()
+            cmd.getStudentId(),
+            cmd.getSchoolClassId()
         ));
     }
 
@@ -73,8 +76,8 @@ public class SchoolClass extends AbstractAggregate {
         }
 
         AggregateLifecycle.apply(new StudentUnassignedFromClassEvent(
-                cmd.getStudentId(),
-                cmd.getSchoolClassId()
+            cmd.getStudentId(),
+            cmd.getSchoolClassId()
         ));
     }
 
@@ -83,11 +86,11 @@ public class SchoolClass extends AbstractAggregate {
         Assert.assertNonNull(getId(), SchoolClassNotFoundCommandExecutionException::new);
 
         AggregateLifecycle.apply(new SchoolClassUpdatedEvent(
-                getId(),
-                cmd.getTeacherId() != null ? cmd.getTeacherId() : this.teacherId,
-                cmd.getLevel() != null ? cmd.getLevel() : this.level,
-                cmd.getName() != null ? cmd.getName() : this.name,
-                cmd.getFullName() != null ? cmd.getFullName() : this.fullName));
+            getId(),
+            cmd.getTeacherId() != null ? cmd.getTeacherId() : this.teacherId,
+            cmd.getLevel() != null ? cmd.getLevel() : this.level,
+            cmd.getName() != null ? cmd.getName() : this.name,
+            cmd.getFullName() != null ? cmd.getFullName() : this.fullName));
     }
 
     @EventSourcingHandler

@@ -31,14 +31,15 @@ public class SchoolClassProjector {
     public void on(SchoolClassCreatedEvent event) {
         UserEntity teacher = userRepository.findById(event.getTeacherId()).orElseThrow();
 
-        SchoolClassEntity schoolClassEntity = new SchoolClassEntity(
+        SchoolClassEntity schoolClass = new SchoolClassEntity(
             event.getId(),
             event.getLevel(),
             teacher,
             event.getName(),
             event.getFullName());
+        schoolClass.setCreatedAt(event.getCreatedAt());
 
-        schoolClassRepository.save(schoolClassEntity);
+        schoolClassRepository.save(schoolClass);
     }
 
     @EventHandler

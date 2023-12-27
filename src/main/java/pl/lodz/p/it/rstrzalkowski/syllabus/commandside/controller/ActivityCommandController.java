@@ -4,7 +4,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.activity.ArchiveActivityCommand;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.activity.CreateActivityCommand;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.activity.UpdateActivityCommand;
+import pl.lodz.p.it.rstrzalkowski.syllabus.shared.keycloak.dto.UserInfo;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.util.WriteApplicationBean;
 
 import java.util.UUID;
@@ -31,11 +32,13 @@ public class ActivityCommandController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public void createActivity(@Valid @RequestBody CreateActivityCommand command) {
+        UserInfo userInfo = (UserInfo) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        command.setTeacherId(userInfo.getId());
         commandGateway.sendAndWait(command);
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @PutMapping("/{id}")
+    @PutMapping
     public void updateActivity(@Valid @RequestBody UpdateActivityCommand command) {
         commandGateway.sendAndWait(command);
     }

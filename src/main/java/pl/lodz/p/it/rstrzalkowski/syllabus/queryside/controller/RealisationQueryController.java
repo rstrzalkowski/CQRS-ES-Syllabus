@@ -30,6 +30,7 @@ import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.query.realisation.GetOwnRea
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.query.realisation.GetRealisationAverageGradeQuery;
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.query.realisation.GetRealisationByIdQuery;
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.query.realisation.GetRealisationInfoByIdQuery;
+import pl.lodz.p.it.rstrzalkowski.syllabus.shared.keycloak.dto.UserInfo;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.util.ReadApplicationBean;
 
 import java.util.List;
@@ -103,15 +104,15 @@ public class RealisationQueryController {
     @GetMapping("/{id}/average")
     @Secured("STUDENT")
     public AverageGradeDTO getRealisationAverageGrade(@PathVariable("id") UUID id) {
+        UserInfo userInfo = (UserInfo) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         accessGuard.checkAccessToRealisation(id);
-        UUID userId = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return realisationQueryHandler.handle(new GetRealisationAverageGradeQuery(id, userId));
+        return realisationQueryHandler.handle(new GetRealisationAverageGradeQuery(id, userInfo.getId()));
     }
 
     @GetMapping("/me")
     @Secured({"STUDENT", "TEACHER"})
     public List<SubjectDTO> getOwnRealisations() {
-        UUID userId = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return realisationQueryHandler.handle(new GetOwnRealisationsQuery(userId));
+        UserInfo userInfo = (UserInfo) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return realisationQueryHandler.handle(new GetOwnRealisationsQuery(userInfo.getId()));
     }
 }

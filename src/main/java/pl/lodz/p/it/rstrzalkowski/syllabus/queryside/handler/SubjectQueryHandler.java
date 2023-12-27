@@ -26,10 +26,8 @@ public class SubjectQueryHandler {
     @QueryHandler
     public Page<SubjectDTO> handle(GetActiveSubjectsQuery query) {
         Page<SubjectEntity> subjects = subjectRepository.findAllByArchived(false, query.pageable());
-        subjects.forEach((subject -> {
-            subject.setActiveRealisationsCount(
-                realisationRepository.countByArchivedAndSubjectId(false, subject.getId()));
-        }));
+        subjects.forEach((subject -> subject.setActiveRealisationsCount(
+            realisationRepository.countByArchivedAndSubjectId(false, subject.getId()))));
         return subjects.map(SubjectDTO::new);
     }
 

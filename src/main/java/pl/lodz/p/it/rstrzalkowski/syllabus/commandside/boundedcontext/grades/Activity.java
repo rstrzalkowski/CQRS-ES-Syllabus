@@ -9,12 +9,13 @@ import org.axonframework.modelling.command.AggregateLifecycle;
 import org.axonframework.spring.stereotype.Aggregate;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.boundedcontext.AbstractAggregate;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.boundedcontext.grades.entity.Grade;
-import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.activity.CreateActivityCommand;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.grade.CreateGradeCommand;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.ActivityCreatedEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.GradeCreatedEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.util.WriteApplicationBean;
 
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,13 +40,15 @@ public class Activity extends AbstractAggregate {
     @CommandHandler
     public void handle(CreateGradeCommand cmd) {
         AggregateLifecycle.apply(new GradeCreatedEvent(
-                UUID.randomUUID(),
-                cmd.getActivityId(),
-                cmd.getStudentId(),
-                cmd.getTeacherId(),
-                LocalDateTime.now(),
-                cmd.getComment(),
-                cmd.getValue()));
+            UUID.randomUUID(),
+            cmd.getActivityId(),
+            cmd.getStudentId(),
+            cmd.getTeacherId(),
+            LocalDateTime.now(),
+            cmd.getComment(),
+            cmd.getValue(),
+            Timestamp.from(Instant.now()))
+        );
     }
 
     @EventSourcingHandler

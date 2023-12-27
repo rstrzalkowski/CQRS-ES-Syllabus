@@ -33,8 +33,15 @@ public class RealisationProjector {
         SubjectEntity subject = subjectRepository.findById(event.getSubjectId()).orElse(null);
         UserEntity teacher = userRepository.findById(event.getTeacherId()).orElse(null);
 
-        RealisationEntity realisationEntity = new RealisationEntity(event.getId(), subject, schoolClass, teacher, event.getYear());
-        realisationRepository.save(realisationEntity);
+        RealisationEntity realisation = new RealisationEntity(
+            event.getId(),
+            subject,
+            schoolClass,
+            teacher,
+            event.getYear());
+        realisation.setCreatedAt(event.getCreatedAt());
+
+        realisationRepository.save(realisation);
     }
 
     @EventHandler

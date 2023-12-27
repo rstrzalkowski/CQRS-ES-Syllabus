@@ -18,6 +18,8 @@ import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.PostCreatedEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.RealisationCreatedEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.util.WriteApplicationBean;
 
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.time.Year;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,33 +49,39 @@ public class Realisation extends AbstractAggregate {
     public Realisation(CreateRealisationCommand cmd) {
         //TODO check if subject, schoolclass and teacher exist
         AggregateLifecycle.apply(new RealisationCreatedEvent(
-                UUID.randomUUID(),
-                cmd.getSubjectId(),
-                cmd.getClassId(),
-                cmd.getTeacherId(),
-                cmd.getYear()));
+            UUID.randomUUID(),
+            cmd.getSubjectId(),
+            cmd.getClassId(),
+            cmd.getTeacherId(),
+            cmd.getYear(),
+            Timestamp.from(Instant.now()))
+        );
     }
 
     @CommandHandler
     public void on(CreatePostCommand cmd) {
         AggregateLifecycle.apply(new PostCreatedEvent(
-                UUID.randomUUID(),
-                cmd.getRealisationId(),
-                cmd.getTeacherId(),
-                cmd.getTitle(),
-                cmd.getContent()));
+            UUID.randomUUID(),
+            cmd.getRealisationId(),
+            cmd.getTeacherId(),
+            cmd.getTitle(),
+            cmd.getContent(),
+            Timestamp.from(Instant.now()))
+        );
     }
 
     @CommandHandler
     public void on(CreateActivityCommand cmd) {
         AggregateLifecycle.apply(new ActivityCreatedEvent(
-                UUID.randomUUID(),
-                cmd.getRealisationId(),
-                cmd.getTeacherId(),
-                cmd.getWeight(),
-                cmd.getDate(),
-                cmd.getDescription(),
-                cmd.getName()));
+            UUID.randomUUID(),
+            cmd.getRealisationId(),
+            cmd.getTeacherId(),
+            cmd.getWeight(),
+            cmd.getDate(),
+            cmd.getDescription(),
+            cmd.getName(),
+            Timestamp.from(Instant.now()))
+        );
     }
 
     @EventSourcingHandler
@@ -88,10 +96,10 @@ public class Realisation extends AbstractAggregate {
     @EventSourcingHandler
     public void on(PostCreatedEvent event) {
         Post post = new Post(
-                event.getTeacherId(),
-                event.getTitle(),
-                event.getContent(),
-                false);
+            event.getTeacherId(),
+            event.getTitle(),
+            event.getContent(),
+            false);
 
         post.setId(event.getId());
         this.posts.add(post);
@@ -100,12 +108,12 @@ public class Realisation extends AbstractAggregate {
     @EventSourcingHandler
     public void on(ActivityCreatedEvent event) {
         Activity activity = new Activity(
-                event.getTeacherId(),
-                event.getName(),
-                event.getDate(),
-                event.getWeight(),
-                event.getDescription(),
-                false);
+            event.getTeacherId(),
+            event.getName(),
+            event.getDate(),
+            event.getWeight(),
+            event.getDescription(),
+            false);
 
         activity.setId(event.getId());
         this.activities.add(activity);

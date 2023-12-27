@@ -3,16 +3,12 @@ package pl.lodz.p.it.rstrzalkowski.syllabus.queryside.projector;
 import lombok.RequiredArgsConstructor;
 import org.axonframework.eventhandling.EventHandler;
 import org.springframework.stereotype.Service;
-import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.boundedcontext.grades.entity.Grade;
-import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.boundedcontext.realisations.Realisation;
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.entity.GradeEntity;
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.entity.RealisationEntity;
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.entity.SubjectEntity;
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.repository.GradeRepository;
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.repository.RealisationRepository;
-import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.repository.SchoolClassRepository;
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.repository.SubjectRepository;
-import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.repository.UserRepository;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.SubjectArchivedEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.SubjectCreatedEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.SubjectUpdatedEvent;
@@ -30,8 +26,13 @@ public class SubjectProjector {
 
     @EventHandler
     public void on(SubjectCreatedEvent event) {
-        SubjectEntity subjectEntity = new SubjectEntity(event.getId(), event.getName(), event.getAbbreviation());
-        subjectRepository.save(subjectEntity);
+        SubjectEntity subject = new SubjectEntity(
+            event.getId(),
+            event.getName(),
+            event.getAbbreviation());
+        subject.setCreatedAt(event.getCreatedAt());
+
+        subjectRepository.save(subject);
     }
 
     @EventHandler

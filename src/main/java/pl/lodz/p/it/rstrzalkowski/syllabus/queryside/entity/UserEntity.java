@@ -30,18 +30,22 @@ public class UserEntity extends AbstractEntity {
 
     private String description = "";
 
+    private String imageUrl;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JsonIgnore
     private SchoolClassEntity schoolClass;
 
     private boolean archived = false;
 
-    public UserEntity(UUID id, String email, String firstName, String lastName, String personalId, String description) {
+    public UserEntity(UUID id, String email, String firstName, String lastName, String personalId, String description,
+                      String imageUrl) {
         super(id);
         this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
         this.personalId = personalId;
         this.description = description;
+        this.imageUrl = imageUrl;
     }
 }

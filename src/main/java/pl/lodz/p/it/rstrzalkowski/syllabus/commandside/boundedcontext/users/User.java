@@ -10,8 +10,12 @@ import org.axonframework.spring.stereotype.Aggregate;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.boundedcontext.AbstractAggregate;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.user.RegisterCommand;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.UserCreatedEvent;
+import pl.lodz.p.it.rstrzalkowski.syllabus.shared.keycloak.KeycloakService;
+import pl.lodz.p.it.rstrzalkowski.syllabus.shared.keycloak.dto.CreateUserDto;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.util.WriteApplicationBean;
 
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.UUID;
 
 @EqualsAndHashCode(callSuper = true)
@@ -31,14 +35,24 @@ public class User extends AbstractAggregate {
 
 
     @CommandHandler
-    public User(RegisterCommand cmd) {
-        //TODO check if email is unique
-        AggregateLifecycle.apply(new UserCreatedEvent(
-                UUID.randomUUID(),
+    public User(RegisterCommand cmd, KeycloakService keycloakService) {
+        String uuid =
+            keycloakService.createUser(new CreateUserDto(
                 cmd.getEmail(),
                 cmd.getFirstName(),
                 cmd.getLastName(),
-                cmd.getPersonalId()));
+                cmd.getPassword()));
+
+        AggregateLifecycle.apply(new UserCreatedEvent(
+            UUID.fromString(uuid),
+            cmd.getEmail(),
+            cmd.getFirstName(),
+            cmd.getLastName(),
+            cmd.getPersonalId(),
+            "https://cdn-icons-png.flaticon.com/512/149/149071.png",
+            "",
+            Timestamp.from(Instant.now()))
+        );
     }
 
     @EventSourcingHandler

@@ -4,8 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.time.Year;
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -19,4 +19,5 @@ public class ActivityCreatedEvent {
     private LocalDateTime date;
     private String description;
     private String name;
+    private Timestamp createdAt;
 }

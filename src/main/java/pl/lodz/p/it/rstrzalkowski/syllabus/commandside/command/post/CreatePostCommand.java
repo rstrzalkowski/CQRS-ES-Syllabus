@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.axonframework.modelling.command.TargetAggregateIdentifier;
 import org.hibernate.validator.constraints.Length;
 
@@ -26,6 +27,6 @@ public class CreatePostCommand {
     @TargetAggregateIdentifier
     private UUID realisationId;
 
-    @NotNull
+    @Setter
     private UUID teacherId;
 }

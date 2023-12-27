@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.interceptor.LogCommandDispatchInterceptor;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.interceptor.SubjectCommandDispatchInterceptor;
+import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.interceptor.UserCommandDispatchInterceptor;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.util.WriteApplicationBean;
 
 @Configuration
@@ -17,23 +18,26 @@ public class AxonConfig {
     @Bean
     public CommandGateway commandGateway(CommandBus commandBus,
                                          SubjectCommandDispatchInterceptor subjectCommandDispatchInterceptor,
+                                         UserCommandDispatchInterceptor userCommandDispatchInterceptor,
                                          LogCommandDispatchInterceptor logCommandDispatchInterceptor) {
         return DefaultCommandGateway.builder()
-                .commandBus(commandBus)
-                .dispatchInterceptors(
-                        subjectCommandDispatchInterceptor,
-                        logCommandDispatchInterceptor
-                )
-                .build();
+            .commandBus(commandBus)
+            .dispatchInterceptors(
+                subjectCommandDispatchInterceptor,
+                userCommandDispatchInterceptor,
+                logCommandDispatchInterceptor
+            )
+            .build();
     }
 
     @Bean
     public ConfigurerModule subscribingProcessorsConfigurerModule() {
         return configurer -> configurer.eventProcessing(
-                // To configure a processor to be subscribing ...
-                processingConfigurer -> processingConfigurer
-                        .registerSubscribingEventProcessor("subject")
-                        .registerSubscribingEventProcessor("realisation")
+            // To configure a processor to be subscribing ...
+            processingConfigurer -> processingConfigurer
+                .registerSubscribingEventProcessor("subject")
+                .registerSubscribingEventProcessor("realisation")
+                .registerSubscribingEventProcessor("user")
         );
     }
 }

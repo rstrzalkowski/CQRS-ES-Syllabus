@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.sql.Timestamp;
 import java.time.Year;
 import java.util.UUID;
 
@@ -16,4 +17,5 @@ public class RealisationCreatedEvent {
     private UUID schoolClassId;
     private UUID teacherId;
     private Year year;
+    private Timestamp createdAt;
 }

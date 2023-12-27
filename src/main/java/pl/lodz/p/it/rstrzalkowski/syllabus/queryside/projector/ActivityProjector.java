@@ -35,6 +35,7 @@ public class ActivityProjector {
             event.getWeight(),
             event.getDescription()
         );
+        activity.setCreatedAt(event.getCreatedAt());
 
         activityRepository.save(activity);
     }
