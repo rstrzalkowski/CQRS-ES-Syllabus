@@ -1,6 +1,7 @@
-package pl.lodz.p.it.rstrzalkowski.syllabus.commandside.boundedcontext.grades.entity;
+package pl.lodz.p.it.rstrzalkowski.syllabus.commandside.boundedcontext.realisations.entity;
 
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.boundedcontext.AbstractEntity;
 
 import java.time.LocalDateTime;
@@ -8,6 +9,7 @@ import java.util.UUID;
 
 
 @AllArgsConstructor
+@Data
 public class Grade extends AbstractEntity {
 
     private UUID teacherId;
@@ -19,13 +21,4 @@ public class Grade extends AbstractEntity {
     private LocalDateTime date;
 
     private String comment;
-
-    public Grade(UUID id, UUID teacherId, UUID studentId, Integer value, LocalDateTime date, String comment) {
-        setId(id);
-        this.teacherId = teacherId;
-        this.studentId = studentId;
-        this.value = value;
-        this.date = date;
-        this.comment = comment;
-    }
 }

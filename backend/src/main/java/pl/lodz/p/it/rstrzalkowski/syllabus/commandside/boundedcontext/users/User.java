@@ -7,7 +7,6 @@ import org.axonframework.commandhandling.CommandHandler;
 import org.axonframework.eventsourcing.EventSourcingHandler;
 import org.axonframework.modelling.command.AggregateLifecycle;
 import org.axonframework.spring.stereotype.Aggregate;
-import org.springframework.web.reactive.function.client.WebClientResponseException;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.boundedcontext.AbstractAggregate;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.user.AssignRoleCommand;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.user.RegisterCommand;
@@ -15,7 +14,6 @@ import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.user.UnassignRole
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.RoleAssignedToUserEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.RoleUnassignedFromUserEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.UserCreatedEvent;
-import pl.lodz.p.it.rstrzalkowski.syllabus.shared.exception.SyllabusCommandExecutionException;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.exception.user.RoleAlreadyAssignedCommandExecutionException;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.exception.user.RoleNotCurrentlyAssignedCommandExecutionException;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.keycloak.KeycloakService;
@@ -24,6 +22,7 @@ import pl.lodz.p.it.rstrzalkowski.syllabus.shared.util.WriteApplicationBean;
 
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -42,7 +41,7 @@ public class User extends AbstractAggregate {
 
     private String personalId;
 
-    private List<String> roles;
+    private List<String> roles = new ArrayList<>();
 
 
     @CommandHandler

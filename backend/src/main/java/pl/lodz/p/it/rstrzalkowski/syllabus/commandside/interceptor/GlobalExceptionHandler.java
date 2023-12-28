@@ -15,7 +15,8 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler({CommandExecutionException.class})
-    protected ResponseEntity<Object> handleCommandExecution(final CommandExecutionException cex, final WebRequest request) {
+    protected ResponseEntity<Object> handleCommandExecution(final CommandExecutionException cex,
+                                                            final WebRequest request) {
         logger.error("Exception occurred: " + cex);
         ErrorObject errorObject = null;
         try {
@@ -26,11 +27,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         }
 
         return handleExceptionInternal(
-                cex,
-                errorObject,
-                new HttpHeaders(),
-                HttpStatus.valueOf(errorObject.getStatusCode()),
-                request
+            cex,
+            errorObject,
+            new HttpHeaders(),
+            HttpStatus.valueOf(errorObject.getStatusCode()),
+            request
         );
     }
 }

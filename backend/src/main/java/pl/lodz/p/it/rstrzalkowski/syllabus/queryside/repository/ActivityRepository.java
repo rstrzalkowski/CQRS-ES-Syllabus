@@ -13,7 +13,7 @@ import java.util.UUID;
 @Repository
 @ReadApplicationBean
 public interface ActivityRepository extends JpaRepository<ActivityEntity, UUID> {
-    
+
     Page<ActivityEntity> findByRealisationIdAndArchived(UUID realisationId, boolean archived, Pageable pageable);
 
     Page<ActivityEntity> findByRealisationIdAndArchivedAndDateAfter(UUID realisationId, boolean archived,

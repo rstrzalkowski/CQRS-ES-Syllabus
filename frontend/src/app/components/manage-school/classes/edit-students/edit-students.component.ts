@@ -41,7 +41,7 @@ export class EditStudentsComponent implements OnInit {
 
   unassign() {
     if (this.studentIdToBeUnassigned) {
-      this.userService.unassignStudent(this.studentIdToBeUnassigned).subscribe((result) => {
+      this.userService.unassignStudent(this.studentIdToBeUnassigned, this.class?.id).subscribe((result) => {
         this.alertService.showAlert("success", "Student has been successfully unassigned.")
         this.refreshUnassignedStudents()
         this.ngOnInit()

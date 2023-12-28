@@ -26,7 +26,6 @@ import pl.lodz.p.it.rstrzalkowski.syllabus.shared.util.ReadApplicationBean;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -63,8 +62,9 @@ public class RealisationQueryHandler {
     @QueryHandler
     public AverageGradeDTO handle(GetRealisationAverageGradeQuery query) {
         List<GradeEntity> grades =
-                gradeRepository.findAllByArchivedAndActivityArchivedAndActivityRealisationIdAndStudentId(false, false, query.id(),
-                        query.studentId());
+            gradeRepository.findAllByArchivedAndActivityArchivedAndActivityRealisationIdAndStudentId(false, false,
+                query.id(),
+                query.studentId());
 
         double sum = 0;
         double weights = 0;
@@ -88,14 +88,14 @@ public class RealisationQueryHandler {
         }
         realisations = realisationRepository.findAllByArchivedAndSchoolClassId(false, schoolClassEntity.getId());
         return realisations.stream()
-                .map(SubjectDTO::new)
-                .collect(Collectors.toList());
+            .map(SubjectDTO::new)
+            .collect(Collectors.toList());
     }
 
     @QueryHandler
     public RealisationDTO handle(GetRealisationInfoByIdQuery query) {
         RealisationEntity realisation = realisationRepository.findById(query.id())
-                .orElseThrow(RealisationNotFoundException::new);
+            .orElseThrow(RealisationNotFoundException::new);
 
         return new RealisationDTO(realisation);
     }

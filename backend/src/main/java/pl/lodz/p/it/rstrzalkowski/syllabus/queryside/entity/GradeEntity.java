@@ -35,8 +35,10 @@ public class GradeEntity extends AbstractEntity {
     private boolean archived = false;
     private boolean edited = false;
 
-    public GradeEntity(UUID id, ActivityEntity activity, UserEntity teacher, UserEntity student, Integer value, LocalDateTime date, String comment) {
+    public GradeEntity(UUID id, ActivityEntity activity, UserEntity teacher, UserEntity student, Integer value,
+                       LocalDateTime date, String comment) {
         super(id);
+        this.activity = activity;
         this.teacher = teacher;
         this.student = student;
         this.value = value;

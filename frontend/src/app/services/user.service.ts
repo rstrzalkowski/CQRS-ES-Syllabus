@@ -45,6 +45,14 @@ export class UserService {
     return this.http.get<UserPage>(`${environment.apiUrl}/users/teachers?sort=lastName,firstName`)
   }
 
+  getActiveUnassignedUsers(page: number | undefined) {
+    return this.http.get<UserPage>(`${environment.apiUrl}/users/unassigned?size=10&page=${page}&sort=lastName,firstName`)
+  }
+
+  getArchivedUnassignedUsers(page: number | undefined) {
+    return this.http.get<UserPage>(`${environment.apiUrl}/users/unassigned/archived?size=10&page=${page}&sort=lastName,firstName`)
+  }
+
   getActiveUsers(page: number | undefined) {
     return this.http.get<UserPage>(`${environment.apiUrl}/users?size=10&page=${page}&sort=lastName,firstName`)
   }
@@ -69,6 +77,10 @@ export class UserService {
     return this.http.get<UserPage>(`${environment.apiUrl}/users/directors?size=10&page=${page}&sort=lastName,firstName`)
   }
 
+  getActiveAdmins(page: number | undefined) {
+    return this.http.get<UserPage>(`${environment.apiUrl}/users/admins?size=10&page=${page}&sort=lastName,firstName`)
+  }
+
   getArchivedStudents(page: number | undefined) {
     return this.http.get<UserPage>(`${environment.apiUrl}/users/students/archived?size=10&page=${page}&sort=lastName,firstName`)
   }
@@ -83,6 +95,10 @@ export class UserService {
 
   getArchivedDirectors(page: number | undefined) {
     return this.http.get<UserPage>(`${environment.apiUrl}/users/directors/archived?size=10&page=${page}&sort=lastName,firstName`)
+  }
+
+  getArchivedAdmins(page: number | undefined) {
+    return this.http.get<UserPage>(`${environment.apiUrl}/users/admins/archived?size=10&page=${page}&sort=lastName,firstName`)
   }
 
   getAllNotSupervisingActiveTeachers() {
@@ -135,24 +151,32 @@ export class UserService {
   }
 
   getUnassignedStudents() {
-    return this.http.get<UserPage>(`${environment.apiUrl}/users/unassigned?sort=lastName,firstName`)
+    return this.http.get<UserPage>(`${environment.apiUrl}/users/students/unassigned?sort=lastName,firstName`)
   }
 
   archiveUser(userId: string | undefined) {
     return this.http.delete(`${environment.apiUrl}/users/${userId}`)
   }
 
-  unassignStudent(userId: string | undefined) {
-    return this.http.put(`${environment.apiUrl}/users/${userId}/unassign`, {}, {observe: "response"})
+  unassignStudent(userId: string | undefined, classId: string | undefined) {
+    return this.http.put(`${environment.apiUrl}/classes/students/unassign`, {schoolClassId: classId, studentId: userId}, {observe: "response"})
   }
 
   assignStudent(userId: string | undefined, classId: string | undefined) {
-    return this.http.put(`${environment.apiUrl}/users/${userId}/assign`, {classId: classId}, {observe: "response"})
+    return this.http.put(`${environment.apiUrl}/classes/students/assign`, {schoolClassId: classId, studentId: userId}, {observe: "response"})
   }
 
   updateProfileImage(image: any) {
     const formData = new FormData();
     formData.append("image", image)
     return this.http.put(`${environment.apiUrl}/users/me/image`, formData, {observe: "response"})
+  }
+
+  assignRole(id: string, role: string) {
+    return this.http.post(`${environment.apiUrl}/users/assign-role`, {userId: id, role: role}, {observe: "response"})
+  }
+
+  unassignRole(id: string, role: string) {
+    return this.http.post(`${environment.apiUrl}/users/unassign-role`, {userId: id, role: role}, {observe: "response"})
   }
 }

@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.entity.UserEntity;
 
 import java.sql.Timestamp;
+import java.util.Set;
 import java.util.UUID;
 
 @Data
@@ -28,6 +29,8 @@ public class UserDTO {
 
     private boolean archived = false;
 
+    private Set<String> roles;
+
     private Timestamp createdAt;
 
     private Timestamp updatedAt;
@@ -43,5 +46,6 @@ public class UserDTO {
         this.imageUrl = user.getImageUrl();
         this.createdAt = user.getCreatedAt();
         this.updatedAt = user.getUpdatedAt();
+        this.roles = user.getRoles();
     }
 }

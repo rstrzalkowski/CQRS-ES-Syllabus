@@ -6,6 +6,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.axonframework.modelling.command.TargetAggregateIdentifier;
 import org.hibernate.validator.constraints.Length;
 
 import java.util.UUID;
@@ -23,7 +25,7 @@ public class CreateGradeCommand {
     @NotNull
     private UUID studentId;
 
-    @NotNull
+    @Setter
     private UUID teacherId;
 
     @Length(max = 100)
@@ -31,4 +33,8 @@ public class CreateGradeCommand {
 
     @NotNull
     private UUID activityId;
+
+    @NotNull
+    @TargetAggregateIdentifier
+    private UUID realisationId;
 }

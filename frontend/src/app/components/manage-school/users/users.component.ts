@@ -31,7 +31,8 @@ export class UsersComponent implements OnInit {
   //Modals
   deleteModalOpen: boolean = false
   generateCodeModalOpen: boolean = false
-  editSubjectModalOpen: boolean = false
+  assignRoleModalOpen: boolean = false
+  unassignRoleModalOpen: boolean = false
   //end modals
 
 
@@ -82,6 +83,14 @@ export class UsersComponent implements OnInit {
           this.users$ = this.userService.getActiveDirectors(this.pageNumber$.value)
           break
         }
+        case "ADMIN": {
+          this.users$ = this.userService.getActiveAdmins(this.pageNumber$.value)
+          break
+        }
+        case "UNASSIGNED": {
+          this.users$ = this.userService.getActiveUnassignedUsers(this.pageNumber$.value)
+          break
+        }
         default: {
           this.users$ = this.userService.getActiveUsers(this.pageNumber$.value)
         }
@@ -105,11 +114,24 @@ export class UsersComponent implements OnInit {
           this.users$ = this.userService.getArchivedDirectors(this.pageNumber$.value)
           break
         }
+        case "ADMIN": {
+          this.users$ = this.userService.getArchivedAdmins(this.pageNumber$.value)
+          break
+        }
+        case "UNASSIGNED": {
+          this.users$ = this.userService.getArchivedUnassignedUsers(this.pageNumber$.value)
+          break
+        }
         default: {
           this.users$ = this.userService.getArchivedUsers(this.pageNumber$.value)
         }
       }
     }
+  }
+
+  showUnassignedUsers() {
+    this.userType = "UNASSIGNED"
+    this.getFilteredUsers()
   }
 
   showStudents() {
@@ -129,6 +151,11 @@ export class UsersComponent implements OnInit {
 
   showDirectors() {
     this.userType = "DIRECTOR"
+    this.getFilteredUsers()
+  }
+
+  showAdmins() {
+    this.userType = "ADMIN"
     this.getFilteredUsers()
   }
 
@@ -177,5 +204,15 @@ export class UsersComponent implements OnInit {
 
   onGeneratedTokens() {
     this.codesComponent?.getFilteredTokens()
+  }
+
+  showAssignRole(user: User) {
+    this.editedUser = user;
+    this.assignRoleModalOpen = true;
+  }
+
+  showUnassignRole(user: User) {
+    this.editedUser = user;
+    this.unassignRoleModalOpen = true;
   }
 }

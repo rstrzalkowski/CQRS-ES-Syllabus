@@ -84,7 +84,8 @@ public class RealisationQueryController {
     @Secured("STUDENT")
     public Page<GradeDTO> getOwnGradesOfRealisation(@PathVariable("id") UUID id, Pageable pageable) {
         accessGuard.checkAccessToRealisation(id);
-        return gradeQueryHandler.handle(new GetOwnGradesByRealisationQuery(id, pageable));
+        UserInfo userInfo = (UserInfo) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return gradeQueryHandler.handle(new GetOwnGradesByRealisationQuery(id, userInfo.getId(), pageable));
     }
 
     @GetMapping("/{id}/activities")

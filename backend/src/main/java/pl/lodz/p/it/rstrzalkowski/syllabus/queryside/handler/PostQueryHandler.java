@@ -24,25 +24,26 @@ public class PostQueryHandler {
     @QueryHandler
     public Page<PostDTO> handle(GetActivePostsByRealisationQuery query) {
         Page<PostEntity> posts =
-                postRepository.findByRealisationIdAndArchived(query.realisationId(), false, query.pageable());
+            postRepository.findByRealisationIdAndArchived(query.realisationId(), false, query.pageable());
         return posts.map((PostDTO::new));
     }
 
     @QueryHandler
     public Page<PostDTO> handle(GetArchivedPostsByRealisationQuery query) {
         return postRepository.findByRealisationIdAndArchived(query.realisationId(), true, query.pageable())
-                .map(PostDTO::new);
+            .map(PostDTO::new);
     }
 
     @QueryHandler
     public PostDTO handle(GetPostByIdQuery query) {
         return new PostDTO(postRepository.findById(query.id())
-                .orElseThrow(PostNotFoundException::new));
+            .orElseThrow(PostNotFoundException::new));
     }
 
     @QueryHandler
     public Page<PostDTO> handle(GetRecentActivePostsQuery query) {
-        return postRepository.findByRealisation_SchoolClass_Students_IdAndArchived(query.studentId(), false, query.pageable())
-                .map(PostDTO::new);
+        return postRepository.findByRealisation_SchoolClass_Students_IdAndArchived(query.studentId(), false,
+                query.pageable())
+            .map(PostDTO::new);
     }
 }

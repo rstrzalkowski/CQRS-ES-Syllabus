@@ -17,7 +17,7 @@ export interface User {
   child?: any;
   locked: boolean;
   archived: boolean;
-  role: string;
+  roles: string[];
   imageUrl: string;
   schoolClassName?: any;
 }

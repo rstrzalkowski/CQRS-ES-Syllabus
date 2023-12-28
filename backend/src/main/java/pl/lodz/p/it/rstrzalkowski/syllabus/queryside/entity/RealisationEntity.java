@@ -42,7 +42,8 @@ public class RealisationEntity extends AbstractEntity {
     @OneToMany(mappedBy = "realisation")
     private Set<ActivityEntity> activities = new LinkedHashSet<>();
 
-    public RealisationEntity(UUID id, SubjectEntity subject, SchoolClassEntity schoolClass, UserEntity teacher, Year year) {
+    public RealisationEntity(UUID id, SubjectEntity subject, SchoolClassEntity schoolClass, UserEntity teacher,
+                             Year year) {
         super(id);
         this.subject = subject;
         this.schoolClass = schoolClass;

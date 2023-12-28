@@ -5,5 +5,5 @@ import org.springframework.data.domain.Pageable;
 
 import java.util.UUID;
 
-public record GetOwnGradesByRealisationQuery(UUID realisationId, Pageable pageable) {
+public record GetOwnGradesByRealisationQuery(UUID realisationId, UUID userId, Pageable pageable) {
 }

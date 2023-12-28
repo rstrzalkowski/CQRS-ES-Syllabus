@@ -9,20 +9,26 @@ import org.axonframework.modelling.command.AggregateLifecycle;
 import org.axonframework.spring.stereotype.Aggregate;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.boundedcontext.AbstractAggregate;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.boundedcontext.realisations.entity.Activity;
+import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.boundedcontext.realisations.entity.Grade;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.boundedcontext.realisations.entity.Post;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.activity.CreateActivityCommand;
+import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.grade.CreateGradeCommand;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.post.CreatePostCommand;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.realisation.CreateRealisationCommand;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.ActivityCreatedEvent;
+import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.GradeCreatedEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.PostCreatedEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.RealisationCreatedEvent;
+import pl.lodz.p.it.rstrzalkowski.syllabus.shared.exception.ResponseBadRequestException;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.util.WriteApplicationBean;
 
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.Year;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @EqualsAndHashCode(callSuper = true)
@@ -37,12 +43,8 @@ public class Realisation extends AbstractAggregate {
     private UUID teacherId;
     private Year year;
 
-    private List<Post> posts = new ArrayList<>();
-    private List<Activity> activities = new ArrayList<>();
-
-    //CreatePostCommand
-    //CreateActivityCommand
-    //GradeActivityCommand
+    private List<Post> posts;
+    private List<Activity> activities;
 
 
     @CommandHandler
@@ -84,6 +86,34 @@ public class Realisation extends AbstractAggregate {
         );
     }
 
+    @CommandHandler
+    public void on(CreateGradeCommand cmd) {
+        System.out.println(activities);
+        Activity activity = activities.stream()
+            .filter(a -> Objects.equals(a.getId(), cmd.getActivityId()))
+            .findFirst()
+            .orElseThrow(ResponseBadRequestException::new);
+
+        boolean studentAlreadyGraded = activity.getGrades().stream()
+            .anyMatch(g -> Objects.equals(g.getStudentId(), cmd.getStudentId()));
+
+        if (studentAlreadyGraded) {
+            //Update grade TODO
+            throw new ResponseBadRequestException();
+        }
+
+        AggregateLifecycle.apply(new GradeCreatedEvent(
+            UUID.randomUUID(),
+            cmd.getActivityId(),
+            cmd.getStudentId(),
+            cmd.getTeacherId(),
+            LocalDateTime.now(),
+            cmd.getComment(),
+            cmd.getValue(),
+            Timestamp.from(Instant.now()))
+        );
+    }
+
     @EventSourcingHandler
     public void on(RealisationCreatedEvent event) {
         setId(event.getId());
@@ -91,6 +121,8 @@ public class Realisation extends AbstractAggregate {
         this.schoolClassId = event.getSchoolClassId();
         this.teacherId = event.getTeacherId();
         this.year = event.getYear();
+        this.activities = new ArrayList<>();
+        this.posts = new ArrayList<>();
     }
 
     @EventSourcingHandler
@@ -115,7 +147,29 @@ public class Realisation extends AbstractAggregate {
             event.getDescription(),
             false);
 
+        activity.setGrades(new ArrayList<>());
         activity.setId(event.getId());
+
         this.activities.add(activity);
+    }
+
+    @EventSourcingHandler
+    public void on(GradeCreatedEvent event) {
+        Activity activity = activities.stream()
+            .filter(a -> Objects.equals(a.getId(), event.getActivityId()))
+            .findFirst()
+            .orElseThrow(ResponseBadRequestException::new);
+
+        Grade grade = new Grade(
+            event.getTeacherId(),
+            event.getStudentId(),
+            event.getValue(),
+            event.getDate(),
+            event.getComment()
+        );
+
+        grade.setId(event.getId());
+
+        activity.getGrades().add(grade);
     }
 }

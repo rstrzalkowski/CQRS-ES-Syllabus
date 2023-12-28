@@ -101,7 +101,7 @@ export class GradeStudentsComponent implements OnInit {
   }
 
   submit() {
-    this.gradeService.updateGrade(this.activity?.activityId, this.studentId, this.currentGrade, this.currentComment).subscribe((result) => {
+    this.gradeService.updateGrade(this.activity?.activityId, this.studentId, this.currentGrade, this.currentComment, this.activity?.realisationId).subscribe((result) => {
       this.alertService.showAlert("success", "Grade has been updated!")
       this.loading = true
       this.getGrades()

@@ -13,4 +13,9 @@ import java.util.UUID;
 @ReadApplicationBean
 public interface UserRepository extends JpaRepository<UserEntity, UUID> {
     Page<UserEntity> findAllByArchived(boolean archived, Pageable pageable);
+
+    Page<UserEntity> findByArchivedAndRolesContainingAndSchoolClassIsNull(boolean archived, String role,
+                                                                          Pageable pageable);
+
+    Page<UserEntity> findAllByRolesContainingAndArchived(String role, boolean archived, Pageable pageable);
 }

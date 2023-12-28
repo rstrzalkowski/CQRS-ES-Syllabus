@@ -19,7 +19,8 @@ public class LogCommandDispatchInterceptor implements MessageDispatchInterceptor
     private static final Logger LOGGER = LoggerFactory.getLogger(LogCommandDispatchInterceptor.class);
 
     @Override
-    public BiFunction<Integer, CommandMessage<?>, CommandMessage<?>> handle(List<? extends CommandMessage<?>> messages) {
+    public BiFunction<Integer, CommandMessage<?>, CommandMessage<?>> handle(
+        List<? extends CommandMessage<?>> messages) {
         return (index, command) -> {
             LOGGER.info("Dispatching a command {}.", command);
             return command;

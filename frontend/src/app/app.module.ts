@@ -54,6 +54,8 @@ import {DashboardComponent} from './components/dashboard/dashboard.component';
 import {ImageUploadComponent} from './components/image-upload/image-upload.component';
 import { UserProfileComponent } from './components/user-profile/user-profile.component';
 import { ChooseRoleComponent } from './components/login/choose-role/choose-role.component';
+import { AssignRoleComponent } from './components/manage-school/users/assign-role/assign-role.component';
+import { UnassignRoleComponent } from './components/manage-school/users/unassign-role/unassign-role.component';
 
 
 @NgModule({
@@ -103,6 +105,8 @@ import { ChooseRoleComponent } from './components/login/choose-role/choose-role.
     ImageUploadComponent,
     UserProfileComponent,
     ChooseRoleComponent,
+    AssignRoleComponent,
+    UnassignRoleComponent,
   ],
   imports: [
     BrowserModule,
