@@ -1,0 +1,10 @@
+spring:
+  profiles:
+    default: read
+
+keycloak:
+  url: http://localhost:18080
+  master:
+    admin:
+      username: admin
+      password: admin

@@ -1,0 +1,12 @@
+<div>
+  <div class="flex items-center">
+    <div class="text-skin-base">
+      <span class="text-xl underline underline-offset-8">Your grade: </span>
+      <span *ngIf="grade !== 0" class="text-3xl">{{grade | number: "1.2-2"}}</span>
+      <span *ngIf="grade === 0" class="text-xl">No grades.
+    </span>
+    </div>
+  </div>
+  <p class="mt-5"><span routerLink="grades" class="cursor-pointer font-bold truncate text-teal-600">View grades</span>
+  </p>
+</div>
