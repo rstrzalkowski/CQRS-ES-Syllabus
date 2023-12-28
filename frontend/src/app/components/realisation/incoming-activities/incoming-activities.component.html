@@ -1,0 +1,34 @@
+<div class="w-full">
+  <div class="w-full flex items-center">
+    <div class="w-full text-xl text-skin-base">
+      <div class="flex justify-between space-x-5">
+        <span class="text-lg underline underline-offset-8">Incoming activities:</span>
+        <span *ngIf="activityPage?.totalPages !== 0">Weight</span>
+      </div>
+      <p *ngIf="activityPage?.totalPages === 0" class="text-base mt-5">There are no incoming activities. Take a
+        breath!</p>
+      <div *ngFor="let activity of activityPage?.content">
+        <div class="mt-2 md:px-6 px-0 py-4 rounded">
+          <div class="flex items-center justify-between space-x-5">
+            <div>
+              <div class="text-xl font-semibold text-skin-base">{{activity.name}}</div>
+              <span class="text-base">{{activity.date | date}}</span>
+              <div class="mt-6 text-base text-skin-base">{{activity.description}}</div>
+            </div>
+            <div class="text-3xl">{{activity.weight}}</div>
+          </div>
+        </div>
+        <hr class="bg-skin-base">
+      </div>
+    </div>
+  </div>
+  <div class="flex justify-around">
+    <span *ngIf="(activityPage!.number) > 0" (click)="previous()"
+          class="mt-5 p-3 cursor-pointer font-bold truncate text-teal-600">Previous page</span>
+    <span *ngIf="!activityPage?.last" (click)="next()"
+          class="mt-5 p-3 cursor-pointer font-bold truncate text-teal-600">Next page</span>
+  </div>
+</div>
+
+
+
