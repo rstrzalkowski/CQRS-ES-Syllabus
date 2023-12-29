@@ -13,7 +13,9 @@ import java.util.UUID;
 public class UpdatePostCommand {
 
     @TargetAggregateIdentifier
-    private UUID id;
+    private UUID realisationId;
+
+    private UUID postId;
 
     private String title;
 

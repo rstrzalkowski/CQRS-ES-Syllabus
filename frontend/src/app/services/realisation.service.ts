@@ -22,7 +22,8 @@ export class RealisationService {
   }
 
   updateRealisation(realisationId: string | undefined, teacherId: string | undefined, year: number | undefined) {
-    return this.http.put(`${environment.apiUrl}/realisations/${realisationId}`, {
+    return this.http.put(`${environment.apiUrl}/realisations`, {
+      id: realisationId,
       year: year,
       teacherId: teacherId
     }, {observe: "response"})

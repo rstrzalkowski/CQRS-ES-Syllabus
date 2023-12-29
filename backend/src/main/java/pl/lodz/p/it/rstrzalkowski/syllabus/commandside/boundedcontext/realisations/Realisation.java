@@ -12,13 +12,20 @@ import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.boundedcontext.realisatio
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.boundedcontext.realisations.entity.Grade;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.boundedcontext.realisations.entity.Post;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.activity.CreateActivityCommand;
+import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.activity.UpdateActivityCommand;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.grade.CreateGradeCommand;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.post.CreatePostCommand;
+import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.post.UpdatePostCommand;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.realisation.CreateRealisationCommand;
+import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.realisation.UpdateRealisationCommand;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.ActivityCreatedEvent;
+import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.ActivityUpdatedEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.GradeCreatedEvent;
+import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.GradeUpdatedEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.PostCreatedEvent;
+import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.PostUpdatedEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.RealisationCreatedEvent;
+import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.RealisationUpdatedEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.exception.ResponseBadRequestException;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.util.WriteApplicationBean;
 
@@ -49,7 +56,6 @@ public class Realisation extends AbstractAggregate {
 
     @CommandHandler
     public Realisation(CreateRealisationCommand cmd) {
-        //TODO check if subject, schoolclass and teacher exist
         AggregateLifecycle.apply(new RealisationCreatedEvent(
             UUID.randomUUID(),
             cmd.getSubjectId(),
@@ -62,6 +68,10 @@ public class Realisation extends AbstractAggregate {
 
     @CommandHandler
     public void on(CreatePostCommand cmd) {
+        if (isArchived()) {
+            throw new ResponseBadRequestException();
+        }
+
         AggregateLifecycle.apply(new PostCreatedEvent(
             UUID.randomUUID(),
             cmd.getRealisationId(),
@@ -74,6 +84,10 @@ public class Realisation extends AbstractAggregate {
 
     @CommandHandler
     public void on(CreateActivityCommand cmd) {
+        if (isArchived()) {
+            throw new ResponseBadRequestException();
+        }
+
         AggregateLifecycle.apply(new ActivityCreatedEvent(
             UUID.randomUUID(),
             cmd.getRealisationId(),
@@ -88,18 +102,30 @@ public class Realisation extends AbstractAggregate {
 
     @CommandHandler
     public void on(CreateGradeCommand cmd) {
-        System.out.println(activities);
+        if (isArchived()) {
+            throw new ResponseBadRequestException();
+        }
+
         Activity activity = activities.stream()
             .filter(a -> Objects.equals(a.getId(), cmd.getActivityId()))
+            .filter(a -> !a.isArchived())
             .findFirst()
             .orElseThrow(ResponseBadRequestException::new);
 
-        boolean studentAlreadyGraded = activity.getGrades().stream()
-            .anyMatch(g -> Objects.equals(g.getStudentId(), cmd.getStudentId()));
+        Grade currentGrade = activity.getGrades().stream()
+            .filter(g -> Objects.equals(g.getStudentId(), cmd.getStudentId()))
+            .filter(g -> !g.isArchived())
+            .findFirst().orElse(null);
 
-        if (studentAlreadyGraded) {
-            //Update grade TODO
-            throw new ResponseBadRequestException();
+        if (currentGrade != null) {
+            AggregateLifecycle.apply(new GradeUpdatedEvent(
+                currentGrade.getId(),
+                activity.getId(),
+                LocalDateTime.now(),
+                cmd.getComment(),
+                cmd.getValue())
+            );
+            return;
         }
 
         AggregateLifecycle.apply(new GradeCreatedEvent(
@@ -111,6 +137,60 @@ public class Realisation extends AbstractAggregate {
             cmd.getComment(),
             cmd.getValue(),
             Timestamp.from(Instant.now()))
+        );
+    }
+
+    @CommandHandler
+    public void on(UpdatePostCommand cmd) {
+        if (isArchived()) {
+            throw new ResponseBadRequestException();
+        }
+
+        Post post = posts.stream()
+            .filter(p -> Objects.equals(p.getId(), cmd.getPostId()))
+            .filter(p -> !p.isArchived())
+            .findFirst()
+            .orElseThrow(ResponseBadRequestException::new);
+
+        AggregateLifecycle.apply(new PostUpdatedEvent(
+            post.getId(),
+            cmd.getTitle(),
+            cmd.getContent(),
+            Timestamp.from(Instant.now()))
+        );
+    }
+
+    @CommandHandler
+    public void on(UpdateRealisationCommand cmd) {
+        if (isArchived()) {
+            throw new ResponseBadRequestException();
+        }
+
+        AggregateLifecycle.apply(new RealisationUpdatedEvent(
+            cmd.getId(),
+            cmd.getYear(),
+            cmd.getTeacherId())
+        );
+    }
+
+    @CommandHandler
+    public void on(UpdateActivityCommand cmd) {
+        if (isArchived()) {
+            throw new ResponseBadRequestException();
+        }
+
+        Activity activity = activities.stream()
+            .filter(a -> Objects.equals(a.getId(), cmd.getActivityId()))
+            .filter(a -> !a.isArchived())
+            .findFirst()
+            .orElseThrow(ResponseBadRequestException::new);
+
+        AggregateLifecycle.apply(new ActivityUpdatedEvent(
+            activity.getId(),
+            cmd.getWeight(),
+            cmd.getDate(),
+            cmd.getDescription(),
+            cmd.getName())
         );
     }
 
@@ -130,8 +210,8 @@ public class Realisation extends AbstractAggregate {
         Post post = new Post(
             event.getTeacherId(),
             event.getTitle(),
-            event.getContent(),
-            false);
+            event.getContent()
+        );
 
         post.setId(event.getId());
         this.posts.add(post);
@@ -144,8 +224,8 @@ public class Realisation extends AbstractAggregate {
             event.getName(),
             event.getDate(),
             event.getWeight(),
-            event.getDescription(),
-            false);
+            event.getDescription()
+        );
 
         activity.setGrades(new ArrayList<>());
         activity.setId(event.getId());
@@ -157,6 +237,7 @@ public class Realisation extends AbstractAggregate {
     public void on(GradeCreatedEvent event) {
         Activity activity = activities.stream()
             .filter(a -> Objects.equals(a.getId(), event.getActivityId()))
+            .filter(a -> !a.isArchived())
             .findFirst()
             .orElseThrow(ResponseBadRequestException::new);
 
@@ -171,5 +252,56 @@ public class Realisation extends AbstractAggregate {
         grade.setId(event.getId());
 
         activity.getGrades().add(grade);
+    }
+
+    @EventSourcingHandler
+    public void on(RealisationUpdatedEvent event) {
+        this.teacherId = event.getTeacherId();
+        this.year = event.getYear();
+    }
+
+    @EventSourcingHandler
+    public void on(GradeUpdatedEvent event) {
+        Activity activity = activities.stream()
+            .filter(a -> Objects.equals(a.getId(), event.getActivityId()))
+            .filter(a -> !a.isArchived())
+            .findFirst()
+            .orElseThrow(ResponseBadRequestException::new);
+
+        Grade grade = activity.getGrades().stream()
+            .filter(g -> Objects.equals(g.getId(), event.getId()))
+            .filter(g -> !g.isArchived())
+            .findFirst()
+            .orElseThrow(ResponseBadRequestException::new);
+
+        grade.setDate(event.getDate());
+        grade.setValue(event.getValue());
+        grade.setComment(event.getComment());
+    }
+
+    @EventSourcingHandler
+    public void on(ActivityUpdatedEvent event) {
+        Activity activity = activities.stream()
+            .filter(a -> Objects.equals(a.getId(), event.getId()))
+            .filter(a -> !a.isArchived())
+            .findFirst()
+            .orElseThrow(ResponseBadRequestException::new);
+
+        activity.setDate(event.getDate());
+        activity.setWeight(event.getWeight());
+        activity.setName(event.getName());
+        activity.setDescription(event.getDescription());
+    }
+
+    @EventSourcingHandler
+    public void on(PostUpdatedEvent event) {
+        Post post = posts.stream()
+            .filter(p -> Objects.equals(p.getId(), event.getId()))
+            .filter(p -> !p.isArchived())
+            .findFirst()
+            .orElseThrow(ResponseBadRequestException::new);
+
+        post.setContent(event.getContent());
+        post.setTitle(event.getTitle());
     }
 }

@@ -31,21 +31,25 @@ public class KeycloakService {
     private String adminPassword;
 
     public JwtResponse login(String email, String password, String realm) {
-        if (realm.equals("master")) {
-            return keycloakHttpClient.loginAsAdmin(
+        try {
+            if (realm.equals("master")) {
+                return keycloakHttpClient.loginAsAdmin(
+                    email,
+                    password,
+                    null,
+                    null,
+                    null);
+            }
+
+            return keycloakHttpClient.login(
                 email,
                 password,
                 null,
                 null,
                 null);
+        } catch (WebClientResponseException wcre) {
+            throw new SyllabusCommandExecutionException(wcre.getStatusCode());
         }
-
-        return keycloakHttpClient.login(
-            email,
-            password,
-            null,
-            null,
-            null);
     }
 
     public String createUser(CreateUserDto dto) {
@@ -113,9 +117,7 @@ public class KeycloakService {
         return "Bearer " + jwtResponse.getToken();
     }
 
+    public void changePassword(String oldPassword, String newPassword) {
 
-    public void deleteUser(String id) {
-        String authorization = getKeycloakAdminAuthorization();
-        keycloakHttpClient.deleteUser(id, authorization);
     }
 }

@@ -27,11 +27,12 @@ export class PostService {
     }, {observe: "response"})
   }
 
-  updatePost(title: string, content: string, postId: string | undefined) {
+  updatePost(title: string, content: string, postId: string | undefined, realisationId: string | undefined) {
     return this.http.put(`${environment.apiUrl}/posts`, {
-      id: postId,
+      postId: postId,
       title: title,
       content: content,
+      realisationId: realisationId
     }, {observe: "response"})
   }
 

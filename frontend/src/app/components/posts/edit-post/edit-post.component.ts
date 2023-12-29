@@ -39,7 +39,7 @@ export class EditPostComponent implements OnInit {
     }
 
     this.loading = true
-    this.postService.updatePost(this.title, this.content, this.post?.postId).subscribe((result) => {
+    this.postService.updatePost(this.title, this.content, this.post?.postId, this.post?.realisationId).subscribe((result) => {
       this.alertService.showAlert('success', 'Post has been successfully updated!')
       this.success.emit()
     }, error => {

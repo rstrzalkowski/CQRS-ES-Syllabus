@@ -49,7 +49,7 @@ export class EditActivityComponent implements OnInit {
     }
 
     this.loading = true
-    this.activityService.updateActivity(this.name, this.description, this.weight, new Date(this.date), this.activity?.activityId).subscribe((result) => {
+    this.activityService.updateActivity(this.name, this.description, this.weight, new Date(this.date), this.activity?.activityId, this.activity?.realisationId).subscribe((result) => {
       this.alertService.showAlert('success', 'Activity has been successfully updated!')
       this.success.emit()
     }, error => {

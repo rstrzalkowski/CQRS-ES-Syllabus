@@ -104,6 +104,14 @@ public class SchoolClass extends AbstractAggregate {
     }
 
     @EventSourcingHandler
+    public void on(SchoolClassUpdatedEvent event) {
+        this.level = event.getLevel();
+        this.teacherId = event.getTeacherId();
+        this.name = event.getName();
+        this.fullName = event.getFullName();
+    }
+
+    @EventSourcingHandler
     public void on(StudentAssignedToClassEvent event) {
         this.students.add(new Student(event.getStudentId()));
     }

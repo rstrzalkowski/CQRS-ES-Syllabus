@@ -12,6 +12,7 @@ import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.repository.SchoolClassRepos
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.repository.UserRepository;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.SchoolClassArchivedEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.SchoolClassCreatedEvent;
+import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.SchoolClassUpdatedEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.StudentAssignedToClassEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.StudentUnassignedFromClassEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.util.ReadApplicationBean;
@@ -38,6 +39,19 @@ public class SchoolClassProjector {
             event.getName(),
             event.getFullName());
         schoolClass.setCreatedAt(event.getCreatedAt());
+
+        schoolClassRepository.save(schoolClass);
+    }
+
+    @EventHandler
+    public void on(SchoolClassUpdatedEvent event) {
+        UserEntity teacher = userRepository.findById(event.getTeacherId()).orElseThrow();
+        SchoolClassEntity schoolClass = schoolClassRepository.findById(event.getId()).orElseThrow();
+
+        schoolClass.setName(event.getName());
+        schoolClass.setFullName(event.getFullName());
+        schoolClass.setLevel(event.getLevel());
+        schoolClass.setSupervisingTeacher(teacher);
 
         schoolClassRepository.save(schoolClass);
     }

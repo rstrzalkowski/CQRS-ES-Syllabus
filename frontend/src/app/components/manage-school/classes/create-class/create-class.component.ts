@@ -1,10 +1,8 @@
 import {Component, EventEmitter, HostListener, OnInit, Output} from '@angular/core';
 import {AlertService} from "../../../../services/alert.service";
 import {ClassService} from "../../../../services/class.service";
-import {LevelPage} from "../../../../model/level";
 import {User} from "../../../../model/user";
 import {Observable} from "rxjs";
-import {LevelService} from "../../../../services/level.service";
 import {UserService} from "../../../../services/user.service";
 
 @Component({
@@ -18,7 +16,6 @@ export class CreateClassComponent implements OnInit {
   fullName: string = ""
   level: number | undefined
   teacherId: number | undefined
-  levels$: Observable<LevelPage> = this.levelService.getAllActiveLevels()
   teachers$: Observable<User[]> = this.userService.getAllNotSupervisingActiveTeachers()
   //end data
 
@@ -33,7 +30,6 @@ export class CreateClassComponent implements OnInit {
 
   constructor(private alertService: AlertService,
               private classService: ClassService,
-              private levelService: LevelService,
               private userService: UserService) {
   }
 

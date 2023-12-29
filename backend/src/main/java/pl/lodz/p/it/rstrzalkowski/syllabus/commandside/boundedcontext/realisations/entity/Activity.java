@@ -25,15 +25,12 @@ public class Activity extends AbstractEntity {
 
     private List<Grade> grades;
 
-    private boolean edited;
 
-    public Activity(UUID teacherId, String name, LocalDateTime date, Integer weight, String description,
-                    boolean edited) {
+    public Activity(UUID teacherId, String name, LocalDateTime date, Integer weight, String description) {
         this.teacherId = teacherId;
         this.name = name;
         this.date = date;
         this.weight = weight;
         this.description = description;
-        this.edited = edited;
     }
 }

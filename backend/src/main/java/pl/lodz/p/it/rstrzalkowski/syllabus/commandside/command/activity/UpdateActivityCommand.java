@@ -16,7 +16,9 @@ import java.util.UUID;
 public class UpdateActivityCommand {
 
     @TargetAggregateIdentifier
-    private UUID id;
+    private UUID realisationId;
+    
+    private UUID activityId;
 
     @Length(max = 40)
     private String name;

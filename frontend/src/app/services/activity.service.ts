@@ -33,13 +33,14 @@ export class ActivityService {
     }, {observe: "response"})
   }
 
-  updateActivity(name: string, description: string, weight: number, date: any, activityId: string | undefined) {
+  updateActivity(name: string, description: string, weight: number, date: any, activityId: string | undefined, realisationId: string | undefined) {
     return this.http.put(`${environment.apiUrl}/activities`, {
-      id: activityId,
+      activityId: activityId,
       name: name,
       description: description,
       weight: weight,
-      date: date
+      date: date,
+      realisationId: realisationId
     }, {observe: "response"})
   }
 

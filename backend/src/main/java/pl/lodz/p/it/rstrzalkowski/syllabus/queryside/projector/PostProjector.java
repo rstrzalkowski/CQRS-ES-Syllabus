@@ -45,6 +45,7 @@ public class PostProjector {
 
         post.setTitle(event.getTitle());
         post.setContent(event.getContent());
+        post.setUpdatedAt(event.getEditDate());
         post.setEdited(true);
 
         postRepository.save(post);

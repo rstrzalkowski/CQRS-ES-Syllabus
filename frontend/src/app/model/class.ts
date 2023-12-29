@@ -1,4 +1,3 @@
-import {Level} from "./level";
 import {User} from "./user";
 
 export interface ClassPage {
@@ -12,7 +11,7 @@ export interface Class {
   id: string;
   createdAt: Date;
   updatedAt: Date;
-  level: Level;
+  level: number;
   name: string;
   fullName: string;
   supervisingTeacher: User;

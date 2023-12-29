@@ -13,4 +13,5 @@ import java.util.UUID;
 public class RealisationUpdatedEvent {
     private UUID id;
     private Year year;
+    private UUID teacherId;
 }

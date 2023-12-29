@@ -47,8 +47,10 @@ public class RealisationProjector {
     @EventHandler
     public void on(RealisationUpdatedEvent event) {
         RealisationEntity realisation = realisationRepository.findById(event.getId()).orElseThrow();
+        UserEntity teacher = userRepository.findById(event.getTeacherId()).orElseThrow();
 
         realisation.setYear(event.getYear());
+        realisation.setTeacher(teacher);
         realisation.setEdited(true);
 
         realisationRepository.save(realisation);

@@ -2,7 +2,6 @@ import {Component, EventEmitter, HostListener, Input, OnInit, Output} from '@ang
 import {AlertService} from "../../../../services/alert.service";
 import {ClassService} from "../../../../services/class.service";
 import {Observable} from "rxjs";
-import {LevelPage} from "../../../../model/level";
 import {User} from "../../../../model/user";
 import {LevelService} from "../../../../services/level.service";
 import {UserService} from "../../../../services/user.service";
@@ -17,9 +16,9 @@ export class EditClassComponent implements OnInit {
   //Data
   shortName: string = ""
   fullName: string = ""
-  levelId: string | undefined
   teacherId: string | undefined
-  levels$: Observable<LevelPage> = this.levelService.getAllActiveLevels()
+  level: number | undefined
+  levels: number[] = [1, 2, 3, 4, 5, 6, 7, 8];
   teachers$: Observable<User[]> = this.userService.getAllNotSupervisingActiveTeachers()
   //end data
 
@@ -42,7 +41,7 @@ export class EditClassComponent implements OnInit {
     this.shortName = this.class?.name || ""
     this.fullName = this.class?.fullName || ""
     this.teacherId = this.class?.supervisingTeacher.id
-    this.levelId = this.class?.level.id
+    this.level = this.class?.level
   }
 
   @HostListener('document:keydown', ['$event']) onKeydownHandler(event: KeyboardEvent) {
@@ -52,13 +51,13 @@ export class EditClassComponent implements OnInit {
   }
 
   submit() {
-    if (this.shortName === '' || this.fullName === '' || this.levelId === undefined || this.teacherId === undefined) {
+    if (this.shortName === '' || this.fullName === '' || this.level === undefined || this.teacherId === undefined) {
       this.alertService.showAlert('warning', 'Fill all the required fields.')
       return
     }
 
     this.loading = true
-    this.classService.updateClass(this.class?.id, this.shortName, this.fullName, this.levelId, this.teacherId).subscribe((result) => {
+    this.classService.updateClass(this.class?.id, this.shortName, this.fullName, this.level, this.teacherId).subscribe((result) => {
       this.alertService.showAlert('success', 'Class has been successfully updated!')
       this.success.emit()
     }, error => {

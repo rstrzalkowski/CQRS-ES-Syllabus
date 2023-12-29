@@ -31,18 +31,14 @@ import {GradeStudentsComponent} from './components/activities/grade-students/gra
 import {RealisationsComponent} from "./components/manage-school/realisations/realisations.component";
 import {ClassesComponent} from "./components/manage-school/classes/classes.component";
 import {UsersComponent} from "./components/manage-school/users/users.component";
-import {LevelsComponent} from "./components/manage-school/levels/levels.component";
 import {SubjectsComponent} from "./components/manage-school/subjects/subjects.component";
 import {
   ManageSchoolSidebarComponent
 } from "./components/manage-school/manage-school-sidebar/manage-school-sidebar.component";
 import {EditSubjectComponent} from './components/manage-school/subjects/edit-subject/edit-subject.component';
 import {CreateSubjectComponent} from './components/manage-school/subjects/create-subject/create-subject.component';
-import {CreateLevelComponent} from './components/manage-school/levels/create-level/create-level.component';
 import {CreateClassComponent} from './components/manage-school/classes/create-class/create-class.component';
 import {EditClassComponent} from './components/manage-school/classes/edit-class/edit-class.component';
-import {GenerateCodeComponent} from './components/manage-school/users/generate-code/generate-code.component';
-import {CodesComponent} from './components/manage-school/users/codes/codes.component';
 import {
   CreateRealisationComponent
 } from './components/manage-school/realisations/create-realisation/create-realisation.component';
@@ -52,10 +48,10 @@ import {
 import {EditStudentsComponent} from './components/manage-school/classes/edit-students/edit-students.component';
 import {DashboardComponent} from './components/dashboard/dashboard.component';
 import {ImageUploadComponent} from './components/image-upload/image-upload.component';
-import { UserProfileComponent } from './components/user-profile/user-profile.component';
-import { ChooseRoleComponent } from './components/login/choose-role/choose-role.component';
-import { AssignRoleComponent } from './components/manage-school/users/assign-role/assign-role.component';
-import { UnassignRoleComponent } from './components/manage-school/users/unassign-role/unassign-role.component';
+import {UserProfileComponent} from './components/user-profile/user-profile.component';
+import {ChooseRoleComponent} from './components/login/choose-role/choose-role.component';
+import {AssignRoleComponent} from './components/manage-school/users/assign-role/assign-role.component';
+import {UnassignRoleComponent} from './components/manage-school/users/unassign-role/unassign-role.component';
 
 
 @NgModule({
@@ -90,14 +86,10 @@ import { UnassignRoleComponent } from './components/manage-school/users/unassign
     RealisationsComponent,
     ClassesComponent,
     UsersComponent,
-    LevelsComponent,
     EditSubjectComponent,
     CreateSubjectComponent,
-    CreateLevelComponent,
     CreateClassComponent,
     EditClassComponent,
-    GenerateCodeComponent,
-    CodesComponent,
     CreateRealisationComponent,
     EditRealisationComponent,
     EditStudentsComponent,

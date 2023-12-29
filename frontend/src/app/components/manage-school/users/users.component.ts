@@ -1,11 +1,10 @@
-import {Component, HostListener, OnInit, ViewChild} from '@angular/core';
+import {Component, HostListener, OnInit} from '@angular/core';
 import {BehaviorSubject, Observable} from "rxjs";
 import {SubjectService} from "../../../services/subject.service";
 import {AlertService} from "../../../services/alert.service";
 import {User, UserPage} from "../../../model/user";
 import {UserService} from "../../../services/user.service";
 import {AuthService} from "../../../services/auth.service";
-import {CodesComponent} from "./codes/codes.component";
 
 @Component({
   selector: 'app-users',
@@ -41,9 +40,6 @@ export class UsersComponent implements OnInit {
   editedUser: User | undefined
 
   //end data
-
-
-  @ViewChild(CodesComponent) codesComponent: CodesComponent | undefined;
 
 
   constructor(private subjectService: SubjectService,
@@ -201,10 +197,6 @@ export class UsersComponent implements OnInit {
     this.deleteModalOpen = true
   }
 
-
-  onGeneratedTokens() {
-    this.codesComponent?.getFilteredTokens()
-  }
 
   showAssignRole(user: User) {
     this.editedUser = user;

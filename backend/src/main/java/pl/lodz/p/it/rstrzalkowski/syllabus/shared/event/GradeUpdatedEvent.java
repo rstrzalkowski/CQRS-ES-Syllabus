@@ -12,6 +12,7 @@ import java.util.UUID;
 @Data
 public class GradeUpdatedEvent {
     private UUID id;
+    private UUID activityId;
     private LocalDateTime date;
     private String comment;
     private Integer value;

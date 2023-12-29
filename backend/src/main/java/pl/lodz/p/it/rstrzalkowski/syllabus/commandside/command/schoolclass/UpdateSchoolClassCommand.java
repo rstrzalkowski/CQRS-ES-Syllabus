@@ -3,6 +3,7 @@ package pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.schoolclass;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.axonframework.modelling.command.TargetAggregateIdentifier;
 
 import java.util.UUID;
 
@@ -11,6 +12,7 @@ import java.util.UUID;
 @Data
 public class UpdateSchoolClassCommand {
 
+    @TargetAggregateIdentifier
     private UUID id;
 
     private UUID teacherId;
