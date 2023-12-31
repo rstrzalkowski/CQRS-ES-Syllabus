@@ -138,7 +138,7 @@ export class ActivitiesComponent implements OnInit {
 
   deleteActivity() {
     if (this.activityIdToBeDeleted) {
-      this.activityService.deleteActivity(this.activityIdToBeDeleted).subscribe((result) => {
+      this.activityService.deleteActivity(this.activityIdToBeDeleted, this.realisationId).subscribe((result) => {
         this.ngOnInit()
         this.alertService.showAlert('success', 'Activity has been deleted.')
         this.deleteModalOpened = false

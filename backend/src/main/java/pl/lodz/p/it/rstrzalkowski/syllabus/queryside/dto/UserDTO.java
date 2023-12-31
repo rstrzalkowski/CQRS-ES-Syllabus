@@ -35,6 +35,8 @@ public class UserDTO {
 
     private Timestamp updatedAt;
 
+    private String schoolClassName;
+
     public UserDTO(UserEntity user) {
         this.id = user.getId();
         this.email = user.getEmail();
@@ -47,5 +49,8 @@ public class UserDTO {
         this.createdAt = user.getCreatedAt();
         this.updatedAt = user.getUpdatedAt();
         this.roles = user.getRoles();
+        if (user.getSchoolClass() != null) {
+            this.schoolClassName = user.getSchoolClass().getSchoolClassName();
+        }
     }
 }

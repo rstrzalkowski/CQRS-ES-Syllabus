@@ -46,6 +46,10 @@ export class RealisationService {
   }
 
   archiveRealisation(realisationId: string) {
-    return this.http.delete(`${environment.apiUrl}/realisations/${realisationId}`)
+    return this.http.delete(`${environment.apiUrl}/realisations`, {
+      body: {
+        id: realisationId
+      }
+    })
   }
 }

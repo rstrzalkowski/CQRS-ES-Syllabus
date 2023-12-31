@@ -46,7 +46,11 @@ export class ClassService {
     }, {observe: "response"})
   }
 
-  archiveClass(levelId: string | undefined) {
-    return this.http.delete(`${environment.apiUrl}/classes/${levelId}`)
+  archiveClass(classId: string | undefined) {
+    return this.http.delete(`${environment.apiUrl}/classes`, {
+      body: {
+        id: classId
+      }
+    })
   }
 }

@@ -36,7 +36,11 @@ export class PostService {
     }, {observe: "response"})
   }
 
-  deletePost(postId: string) {
-    return this.http.delete(`${environment.apiUrl}/posts/${postId}`)
+  deletePost(postId: string, realisationId: string | undefined) {
+    return this.http.delete(`${environment.apiUrl}/posts`, {
+      body: {
+        id: postId, realisationId: realisationId
+      }
+    })
   }
 }

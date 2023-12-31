@@ -6,5 +6,5 @@ import pl.lodz.p.it.rstrzalkowski.syllabus.shared.util.WriteApplicationBean;
 
 @Repository
 @WriteApplicationBean
-public interface RealisedSubjectRepository extends JpaRepository<RealisedSubjectEntity, String> {
+public interface RealisedSubjectRepository extends JpaRepository<RealisedSubjectEntity, RealisedSubjectId> {
 }

@@ -26,21 +26,6 @@ export class UserService {
     }
   }
 
-  generateCodes(amount: number, role: string, schoolClassId: string | undefined) {
-    if (schoolClassId) {
-      return this.http.post(`${environment.apiUrl}/users/tokens`, {
-        amount: amount,
-        role: role,
-        schoolClassId: schoolClassId
-      })
-    } else {
-      return this.http.post(`${environment.apiUrl}/users/tokens`, {
-        amount: amount,
-        role: role,
-      })
-    }
-  }
-
   getAllActiveTeachers() {
     return this.http.get<UserPage>(`${environment.apiUrl}/users/teachers?sort=lastName,firstName`)
   }
@@ -159,11 +144,17 @@ export class UserService {
   }
 
   unassignStudent(userId: string | undefined, classId: string | undefined) {
-    return this.http.put(`${environment.apiUrl}/classes/students/unassign`, {schoolClassId: classId, studentId: userId}, {observe: "response"})
+    return this.http.put(`${environment.apiUrl}/classes/students/unassign`, {
+      schoolClassId: classId,
+      studentId: userId
+    }, {observe: "response"})
   }
 
   assignStudent(userId: string | undefined, classId: string | undefined) {
-    return this.http.put(`${environment.apiUrl}/classes/students/assign`, {schoolClassId: classId, studentId: userId}, {observe: "response"})
+    return this.http.put(`${environment.apiUrl}/classes/students/assign`, {
+      schoolClassId: classId,
+      studentId: userId
+    }, {observe: "response"})
   }
 
   updateProfileImage(image: any) {

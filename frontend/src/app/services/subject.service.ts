@@ -25,7 +25,11 @@ export class SubjectService {
   }
 
   archiveSubject(subjectId: string | undefined) {
-    return this.http.delete(`${environment.apiUrl}/subjects/${subjectId}`)
+    return this.http.delete(`${environment.apiUrl}/subjects`, {
+      body: {
+        id: subjectId
+      }
+    })
   }
 
   createSubject(name: string | undefined, abbreviation: string | undefined) {

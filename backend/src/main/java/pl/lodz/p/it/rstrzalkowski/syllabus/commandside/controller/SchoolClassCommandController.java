@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,8 +17,6 @@ import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.schoolclass.Updat
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.user.AssignStudentCommand;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.user.UnassignStudentCommand;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.util.WriteApplicationBean;
-
-import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -54,8 +51,8 @@ public class SchoolClassCommandController {
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @DeleteMapping("/{id}")
-    public void archiveById(@PathVariable("id") UUID id) {
-        commandGateway.sendAndWait(new ArchiveSchoolClassCommand(id));
+    @DeleteMapping
+    public void archiveById(@Valid @RequestBody ArchiveSchoolClassCommand command) {
+        commandGateway.sendAndWait(command);
     }
 }

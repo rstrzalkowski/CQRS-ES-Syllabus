@@ -3,7 +3,6 @@ import {AlertService} from "../../../../services/alert.service";
 import {ClassService} from "../../../../services/class.service";
 import {Observable} from "rxjs";
 import {User} from "../../../../model/user";
-import {LevelService} from "../../../../services/level.service";
 import {UserService} from "../../../../services/user.service";
 import {Class} from "../../../../model/class";
 
@@ -33,7 +32,6 @@ export class EditClassComponent implements OnInit {
 
   constructor(private alertService: AlertService,
               private classService: ClassService,
-              private levelService: LevelService,
               private userService: UserService) {
   }
 

@@ -44,7 +44,11 @@ export class ActivityService {
     }, {observe: "response"})
   }
 
-  deleteActivity(activityId: string) {
-    return this.http.delete(`${environment.apiUrl}/activities/${activityId}`)
+  deleteActivity(activityId: string, realisationId: string | undefined) {
+    return this.http.delete(`${environment.apiUrl}/activities`, {
+      body: {
+        id: activityId, realisationId: realisationId
+      }
+    })
   }
 }

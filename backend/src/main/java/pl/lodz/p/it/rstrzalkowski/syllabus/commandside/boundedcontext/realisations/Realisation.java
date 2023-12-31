@@ -11,19 +11,25 @@ import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.boundedcontext.AbstractAg
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.boundedcontext.realisations.entity.Activity;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.boundedcontext.realisations.entity.Grade;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.boundedcontext.realisations.entity.Post;
+import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.activity.ArchiveActivityCommand;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.activity.CreateActivityCommand;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.activity.UpdateActivityCommand;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.grade.CreateGradeCommand;
+import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.post.ArchivePostCommand;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.post.CreatePostCommand;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.post.UpdatePostCommand;
+import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.realisation.ArchiveRealisationCommand;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.realisation.CreateRealisationCommand;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.realisation.UpdateRealisationCommand;
+import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.ActivityArchivedEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.ActivityCreatedEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.ActivityUpdatedEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.GradeCreatedEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.GradeUpdatedEvent;
+import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.PostArchivedEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.PostCreatedEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.PostUpdatedEvent;
+import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.RealisationArchivedEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.RealisationCreatedEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.RealisationUpdatedEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.exception.ResponseBadRequestException;
@@ -67,7 +73,7 @@ public class Realisation extends AbstractAggregate {
     }
 
     @CommandHandler
-    public void on(CreatePostCommand cmd) {
+    public void handle(CreatePostCommand cmd) {
         if (isArchived()) {
             throw new ResponseBadRequestException();
         }
@@ -83,7 +89,7 @@ public class Realisation extends AbstractAggregate {
     }
 
     @CommandHandler
-    public void on(CreateActivityCommand cmd) {
+    public void handle(CreateActivityCommand cmd) {
         if (isArchived()) {
             throw new ResponseBadRequestException();
         }
@@ -101,7 +107,7 @@ public class Realisation extends AbstractAggregate {
     }
 
     @CommandHandler
-    public void on(CreateGradeCommand cmd) {
+    public void handle(CreateGradeCommand cmd) {
         if (isArchived()) {
             throw new ResponseBadRequestException();
         }
@@ -141,7 +147,7 @@ public class Realisation extends AbstractAggregate {
     }
 
     @CommandHandler
-    public void on(UpdatePostCommand cmd) {
+    public void handle(UpdatePostCommand cmd) {
         if (isArchived()) {
             throw new ResponseBadRequestException();
         }
@@ -154,27 +160,27 @@ public class Realisation extends AbstractAggregate {
 
         AggregateLifecycle.apply(new PostUpdatedEvent(
             post.getId(),
-            cmd.getTitle(),
-            cmd.getContent(),
+            cmd.getTitle() != null ? cmd.getTitle() : post.getTitle(),
+            cmd.getContent() != null ? cmd.getContent() : post.getContent(),
             Timestamp.from(Instant.now()))
         );
     }
 
     @CommandHandler
-    public void on(UpdateRealisationCommand cmd) {
+    public void handle(UpdateRealisationCommand cmd) {
         if (isArchived()) {
             throw new ResponseBadRequestException();
         }
 
         AggregateLifecycle.apply(new RealisationUpdatedEvent(
             cmd.getId(),
-            cmd.getYear(),
-            cmd.getTeacherId())
+            cmd.getYear() != null ? cmd.getYear() : this.year,
+            cmd.getTeacherId() != null ? cmd.getTeacherId() : this.teacherId)
         );
     }
 
     @CommandHandler
-    public void on(UpdateActivityCommand cmd) {
+    public void handle(UpdateActivityCommand cmd) {
         if (isArchived()) {
             throw new ResponseBadRequestException();
         }
@@ -187,10 +193,51 @@ public class Realisation extends AbstractAggregate {
 
         AggregateLifecycle.apply(new ActivityUpdatedEvent(
             activity.getId(),
-            cmd.getWeight(),
-            cmd.getDate(),
-            cmd.getDescription(),
-            cmd.getName())
+            cmd.getWeight() != null ? cmd.getWeight() : activity.getWeight(),
+            cmd.getDate() != null ? cmd.getDate() : activity.getDate(),
+            cmd.getDescription() != null ? cmd.getDescription() : activity.getDescription(),
+            cmd.getName() != null ? cmd.getName() : activity.getName())
+        );
+    }
+
+    @CommandHandler
+    public void handle(ArchiveRealisationCommand cmd) {
+        if (isArchived()) {
+            throw new ResponseBadRequestException();
+        }
+
+        AggregateLifecycle.apply(new RealisationArchivedEvent(
+            cmd.getId())
+        );
+    }
+
+    @CommandHandler
+    public void handle(ArchivePostCommand cmd) {
+        boolean postExists = posts.stream()
+            .anyMatch(p -> Objects.equals(p.getId(), cmd.getId()) && !p.isArchived());
+
+        if (isArchived() || !postExists) {
+            System.out.println(isArchived());
+            System.out.println(postExists);
+            throw new ResponseBadRequestException();
+        }
+
+        AggregateLifecycle.apply(new PostArchivedEvent(
+            cmd.getId())
+        );
+    }
+
+    @CommandHandler
+    public void handle(ArchiveActivityCommand cmd) {
+        boolean activityExists = activities.stream()
+            .anyMatch(a -> Objects.equals(a.getId(), cmd.getId()) && !a.isArchived());
+
+        if (isArchived() || !activityExists) {
+            throw new ResponseBadRequestException();
+        }
+
+        AggregateLifecycle.apply(new ActivityArchivedEvent(
+            cmd.getId())
         );
     }
 
@@ -303,5 +350,26 @@ public class Realisation extends AbstractAggregate {
 
         post.setContent(event.getContent());
         post.setTitle(event.getTitle());
+    }
+
+    @EventSourcingHandler
+    public void on(RealisationArchivedEvent event) {
+        setArchived(true);
+    }
+
+    @EventSourcingHandler
+    public void on(ActivityArchivedEvent event) {
+        activities.stream()
+            .filter(a -> a.getId() == event.getId() && !a.isArchived())
+            .findFirst()
+            .ifPresent(activity -> activity.setArchived(true));
+    }
+
+    @EventSourcingHandler
+    public void on(PostArchivedEvent event) {
+        posts.stream()
+            .filter(p -> p.getId() == event.getId() && !p.isArchived())
+            .findFirst()
+            .ifPresent(post -> post.setArchived(true));
     }
 }

@@ -6,7 +6,6 @@ import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,8 +17,6 @@ import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.post.CreatePostCo
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.post.UpdatePostCommand;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.keycloak.dto.UserInfo;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.util.WriteApplicationBean;
-
-import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -44,8 +41,8 @@ public class PostCommandController {
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @DeleteMapping("/{id}")
-    public void archiveById(@PathVariable("id") UUID id) {
-        commandGateway.sendAndWait(new ArchivePostCommand(id));
+    @DeleteMapping
+    public void archiveById(@Valid @RequestBody ArchivePostCommand command) {
+        commandGateway.sendAndWait(command);
     }
 }

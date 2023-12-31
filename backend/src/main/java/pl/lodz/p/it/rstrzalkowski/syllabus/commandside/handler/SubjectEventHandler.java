@@ -6,6 +6,7 @@ import org.axonframework.eventhandling.EventHandler;
 import org.springframework.stereotype.Component;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.persistence.subject.SubjectNameEntity;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.persistence.subject.SubjectNameRepository;
+import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.SubjectArchivedEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.SubjectCreatedEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.SubjectUpdatedEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.exception.subject.SubjectNotFoundCommandExecutionException;
@@ -35,5 +36,13 @@ public class SubjectEventHandler {
             subjectNameEntity.setSubjectName(event.getName());
             subjectNameRepository.save(subjectNameEntity);
         }
+    }
+
+    @EventHandler
+    public void on(SubjectArchivedEvent event) {
+        SubjectNameEntity subjectNameEntity = subjectNameRepository.findById(event.getId())
+            .orElseThrow(SubjectNotFoundCommandExecutionException::new);
+
+        subjectNameRepository.delete(subjectNameEntity);
     }
 }

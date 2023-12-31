@@ -60,7 +60,7 @@ export class PostsComponent implements OnInit {
 
   deletePost() {
     if (this.postIdToBeDeleted) {
-      this.postService.deletePost(this.postIdToBeDeleted).subscribe((result) => {
+      this.postService.deletePost(this.postIdToBeDeleted, this.realisationId).subscribe((result) => {
         this.alertService.showAlert('success', 'Post has been deleted.')
         this.deleteSuccess.emit()
         this.deleteModalOpened = false

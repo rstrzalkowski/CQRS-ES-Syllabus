@@ -2,7 +2,6 @@ import {Component, EventEmitter, HostListener, Input, OnInit, Output} from '@ang
 import {Observable} from "rxjs";
 import {UserPage} from "../../../../model/user";
 import {AlertService} from "../../../../services/alert.service";
-import {LevelService} from "../../../../services/level.service";
 import {UserService} from "../../../../services/user.service";
 import {RealisationInfo} from "../../../../model/realisation.info";
 import {RealisationService} from "../../../../services/realisation.service";
@@ -31,7 +30,6 @@ export class EditRealisationComponent implements OnInit {
 
   constructor(private alertService: AlertService,
               private realisationService: RealisationService,
-              private levelService: LevelService,
               private userService: UserService) {
   }
 

@@ -9,6 +9,7 @@ import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.entity.UserEntity;
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.repository.ActivityRepository;
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.repository.RealisationRepository;
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.repository.UserRepository;
+import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.ActivityArchivedEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.ActivityCreatedEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.ActivityUpdatedEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.util.ReadApplicationBean;
@@ -50,6 +51,15 @@ public class ActivityProjector {
         activity.setDate(event.getDate());
 
         activity.setEdited(true);
+
+        activityRepository.save(activity);
+    }
+
+    @EventHandler
+    public void on(ActivityArchivedEvent event) {
+        ActivityEntity activity = activityRepository.findById(event.getId()).orElseThrow();
+
+        activity.setArchived(true);
 
         activityRepository.save(activity);
     }
