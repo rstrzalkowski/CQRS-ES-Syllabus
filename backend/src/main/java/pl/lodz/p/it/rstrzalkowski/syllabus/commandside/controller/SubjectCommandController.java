@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.subject.ArchiveSubjectCommand;
-import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.subject.CreateSubjectCommand;
-import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.subject.UpdateSubjectCommand;
+import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.subject.RequestCreateSubjectCommand;
+import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.subject.RequestUpdateSubjectCommand;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.util.WriteApplicationBean;
 
 @RestController
@@ -26,13 +26,13 @@ public class SubjectCommandController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public void createSubject(@Valid @RequestBody CreateSubjectCommand command) {
+    public void createSubject(@Valid @RequestBody RequestCreateSubjectCommand command) {
         commandGateway.sendAndWait(command);
     }
 
     @ResponseStatus(HttpStatus.OK)
     @PutMapping
-    public void updateSubject(@Valid @RequestBody UpdateSubjectCommand command) {
+    public void updateSubject(@Valid @RequestBody RequestUpdateSubjectCommand command) {
         commandGateway.sendAndWait(command);
     }
 

@@ -1,6 +1,7 @@
 package pl.lodz.p.it.rstrzalkowski.syllabus.commandside.handler;
 
 import lombok.RequiredArgsConstructor;
+import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.axonframework.config.ProcessingGroup;
 import org.axonframework.eventhandling.EventHandler;
 import org.springframework.stereotype.Component;
@@ -21,6 +22,7 @@ import java.util.Objects;
 public class SubjectEventHandler {
 
     private final SubjectNameRepository subjectNameRepository;
+    private final CommandGateway commandGateway;
 
     @EventHandler
     public void on(SubjectCreatedEvent event) {

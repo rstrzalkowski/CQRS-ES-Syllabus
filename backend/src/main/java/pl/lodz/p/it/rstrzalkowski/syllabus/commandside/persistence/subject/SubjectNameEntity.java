@@ -1,5 +1,6 @@
 package pl.lodz.p.it.rstrzalkowski.syllabus.commandside.persistence.subject;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
@@ -17,5 +18,6 @@ public class SubjectNameEntity {
     @Id
     private UUID id;
 
+    @Column(unique = true)
     private String subjectName;
 }

@@ -10,6 +10,8 @@ import org.axonframework.spring.stereotype.Aggregate;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.boundedcontext.AbstractAggregate;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.subject.ArchiveSubjectCommand;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.subject.CreateSubjectCommand;
+import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.subject.RequestCreateSubjectCommand;
+import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.subject.RequestUpdateSubjectCommand;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.subject.UpdateSubjectCommand;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.SubjectArchivedEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.SubjectCreatedEvent;
@@ -34,6 +36,29 @@ public class Subject extends AbstractAggregate {
 
 
     @CommandHandler
+    public void handle(RequestCreateSubjectCommand cmd) {
+        AggregateLifecycle.apply(new SubjectCreatedEvent(
+            UUID.randomUUID(),
+            cmd.getName(),
+            cmd.getAbbreviation(),
+            Timestamp.from(Instant.now()))
+        );
+    }
+
+    @CommandHandler
+    public void handle(RequestUpdateSubjectCommand cmd) {
+        if (isArchived()) {
+            throw new ResponseBadRequestException();
+        }
+
+        AggregateLifecycle.apply(new SubjectUpdatedEvent(
+            getId(),
+            cmd.getName() != null ? cmd.getName() : this.name,
+            cmd.getAbbreviation() != null ? cmd.getAbbreviation() : this.abbreviation,
+            cmd.getImageUrl() != null ? cmd.getImageUrl() : this.imageUrl));
+    }
+
+    @CommandHandler
     public Subject(CreateSubjectCommand cmd) {
         AggregateLifecycle.apply(new SubjectCreatedEvent(
             UUID.randomUUID(),
@@ -45,6 +70,10 @@ public class Subject extends AbstractAggregate {
 
     @CommandHandler
     public void handle(UpdateSubjectCommand cmd) {
+        if (isArchived()) {
+            throw new ResponseBadRequestException();
+        }
+
         AggregateLifecycle.apply(new SubjectUpdatedEvent(
             getId(),
             cmd.getName() != null ? cmd.getName() : this.name,
