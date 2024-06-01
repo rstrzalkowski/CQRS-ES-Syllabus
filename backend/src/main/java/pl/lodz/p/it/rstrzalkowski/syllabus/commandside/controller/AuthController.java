@@ -1,4 +1,4 @@
-package pl.lodz.p.it.rstrzalkowski.syllabus.commandside.controller.auth;
+package pl.lodz.p.it.rstrzalkowski.syllabus.commandside.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -23,9 +23,9 @@ public class AuthController {
     @PostMapping("/authorize")
     public JwtResponse login(@Valid @RequestBody LoginCommand command) {
         return keycloakService.login(
-            command.getUsername(),
-            command.getPassword(),
-            "external");
+                command.getUsername(),
+                command.getPassword()
+        );
     }
 
     @PutMapping("/me/password")

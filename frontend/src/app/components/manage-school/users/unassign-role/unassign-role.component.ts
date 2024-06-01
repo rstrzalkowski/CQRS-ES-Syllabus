@@ -25,7 +25,10 @@ export class UnassignRoleComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.user) {
-      this.roles = this.user.roles;
+      this.user.roles.forEach(role => {
+        role = role.replace("SYLLABUS_", "");
+        this.roles.push(role)
+      });
     }
   }
 

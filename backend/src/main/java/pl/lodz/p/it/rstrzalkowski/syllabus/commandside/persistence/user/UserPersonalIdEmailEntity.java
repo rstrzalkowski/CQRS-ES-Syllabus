@@ -1,11 +1,10 @@
-package pl.lodz.p.it.rstrzalkowski.syllabus.commandside.persistence.subject;
+package pl.lodz.p.it.rstrzalkowski.syllabus.commandside.persistence.user;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,19 +15,22 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class SubjectNameEntity {
+public class UserPersonalIdEmailEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(unique = true, nullable = false)
-    @NotNull
-    private String subjectName;
+    @Column(unique = true)
+    private String email;
+
+    @Column(unique = true)
+    private String personalId;
 
     private UUID aggregateId;
 
-    public SubjectNameEntity(String name) {
-        this.subjectName = name;
+    public UserPersonalIdEmailEntity(String email, String personalId) {
+        this.email = email;
+        this.personalId = personalId;
     }
 }

@@ -48,6 +48,7 @@ export class LoginComponent implements OnInit {
     const decodedJWT = this.authService.decodeJWT(this.authService.getJwtFromStorage()!)
     let roles: string[] = []
     decodedJWT.realm_access.roles.forEach((role: string) => {
+      role = role.replace("SYLLABUS_", "");
       if (["STUDENT", "TEACHER", "OFFICE", "DIRECTOR", "ADMIN"].includes(role)) {
         roles.push(role)
       }

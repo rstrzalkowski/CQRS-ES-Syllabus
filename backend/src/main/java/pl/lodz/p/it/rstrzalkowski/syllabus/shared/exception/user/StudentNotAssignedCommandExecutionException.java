@@ -6,4 +6,7 @@ import pl.lodz.p.it.rstrzalkowski.syllabus.shared.exception.SyllabusCommandExecu
 
 @ResponseStatus(HttpStatus.BAD_REQUEST)
 public class StudentNotAssignedCommandExecutionException extends SyllabusCommandExecutionException {
+    public StudentNotAssignedCommandExecutionException() {
+        super(HttpStatus.BAD_REQUEST);
+    }
 }

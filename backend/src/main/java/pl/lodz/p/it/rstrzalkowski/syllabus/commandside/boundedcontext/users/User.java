@@ -14,6 +14,8 @@ import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.user.UnassignRole
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.RoleAssignedToUserEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.RoleUnassignedFromUserEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.UserCreatedEvent;
+import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.UserCreationFailedEvent;
+import pl.lodz.p.it.rstrzalkowski.syllabus.shared.exception.SyllabusCommandExecutionException;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.exception.user.RoleAlreadyAssignedCommandExecutionException;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.exception.user.RoleNotCurrentlyAssignedCommandExecutionException;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.keycloak.KeycloakService;
@@ -27,7 +29,7 @@ import java.util.List;
 import java.util.UUID;
 
 @EqualsAndHashCode(callSuper = true)
-@Aggregate
+@Aggregate(snapshotTriggerDefinition = "syllabusSnapshotTriggerDefinition")
 @NoArgsConstructor
 @AllArgsConstructor
 @WriteApplicationBean
@@ -46,23 +48,28 @@ public class User extends AbstractAggregate {
 
     @CommandHandler
     public User(RegisterCommand cmd, KeycloakService keycloakService) {
-        String uuid =
-            keycloakService.createUser(new CreateUserDto(
-                cmd.getEmail(),
-                cmd.getFirstName(),
-                cmd.getLastName(),
-                cmd.getPassword()));
+        try {
+            String uuid =
+                    keycloakService.createUser(new CreateUserDto(
+                            cmd.getEmail(),
+                            cmd.getFirstName(),
+                            cmd.getLastName(),
+                            cmd.getPassword()));
 
-        AggregateLifecycle.apply(new UserCreatedEvent(
-            UUID.fromString(uuid),
-            cmd.getEmail(),
-            cmd.getFirstName(),
-            cmd.getLastName(),
-            cmd.getPersonalId(),
-            "https://cdn-icons-png.flaticon.com/512/149/149071.png",
-            "",
-            Timestamp.from(Instant.now()))
-        );
+            AggregateLifecycle.apply(new UserCreatedEvent(
+                    UUID.fromString(uuid),
+                    cmd.getEmail(),
+                    cmd.getFirstName(),
+                    cmd.getLastName(),
+                    cmd.getPersonalId(),
+                    "https://cdn-icons-png.flaticon.com/512/149/149071.png",
+                    "",
+                    Timestamp.from(Instant.now()))
+            );
+        } catch (SyllabusCommandExecutionException scee) {
+            AggregateLifecycle.apply(new UserCreationFailedEvent(cmd.getPersonalId(), cmd.getEmail()));
+            throw scee;
+        }
     }
 
     @CommandHandler
@@ -74,8 +81,8 @@ public class User extends AbstractAggregate {
         keycloakService.assignRole(getId(), cmd.getRole());
 
         AggregateLifecycle.apply(new RoleAssignedToUserEvent(
-            getId(),
-            cmd.getRole())
+                getId(),
+                cmd.getRole())
         );
     }
 
@@ -88,8 +95,8 @@ public class User extends AbstractAggregate {
         keycloakService.unassignRole(getId(), cmd.getRole());
 
         AggregateLifecycle.apply(new RoleUnassignedFromUserEvent(
-            getId(),
-            cmd.getRole())
+                getId(),
+                cmd.getRole())
         );
     }
 

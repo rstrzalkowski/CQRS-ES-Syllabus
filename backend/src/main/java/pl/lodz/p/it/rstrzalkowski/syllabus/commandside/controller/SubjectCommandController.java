@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -25,18 +26,21 @@ public class SubjectCommandController {
     private final CommandGateway commandGateway;
 
     @ResponseStatus(HttpStatus.CREATED)
+    @Secured({"TEACHER", "OFFICE", "DIRECTOR", "ADMIN"})
     @PostMapping
     public void createSubject(@Valid @RequestBody CreateSubjectCommand command) {
         commandGateway.sendAndWait(command);
     }
 
     @ResponseStatus(HttpStatus.OK)
+    @Secured({"TEACHER", "OFFICE", "DIRECTOR", "ADMIN"})
     @PutMapping
     public void updateSubject(@Valid @RequestBody UpdateSubjectCommand command) {
         commandGateway.sendAndWait(command);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Secured({"TEACHER", "OFFICE", "DIRECTOR", "ADMIN"})
     @DeleteMapping
     public void archiveById(@Valid @RequestBody ArchiveSubjectCommand command) {
         commandGateway.sendAndWait(command);

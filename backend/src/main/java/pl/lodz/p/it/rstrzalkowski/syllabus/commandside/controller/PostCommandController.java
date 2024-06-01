@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,6 +28,7 @@ public class PostCommandController {
     private final CommandGateway commandGateway;
 
     @ResponseStatus(HttpStatus.CREATED)
+    @Secured({"TEACHER", "OFFICE", "DIRECTOR", "ADMIN"})
     @PostMapping
     public void createPost(@Valid @RequestBody CreatePostCommand command) {
         UserInfo userInfo = (UserInfo) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -35,12 +37,14 @@ public class PostCommandController {
     }
 
     @ResponseStatus(HttpStatus.OK)
+    @Secured({"TEACHER", "OFFICE", "DIRECTOR", "ADMIN"})
     @PutMapping
     public void updatePost(@Valid @RequestBody UpdatePostCommand command) {
         commandGateway.sendAndWait(command);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Secured({"TEACHER", "OFFICE", "DIRECTOR", "ADMIN"})
     @DeleteMapping
     public void archiveById(@Valid @RequestBody ArchivePostCommand command) {
         commandGateway.sendAndWait(command);

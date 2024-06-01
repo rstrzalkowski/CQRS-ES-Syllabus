@@ -164,10 +164,10 @@ export class UserService {
   }
 
   assignRole(id: string, role: string) {
-    return this.http.post(`${environment.apiUrl}/users/assign-role`, {userId: id, role: role}, {observe: "response"})
+    return this.http.post(`${environment.apiUrl}/users/assign-role`, {userId: id, role: `SYLLABUS_${role}`}, {observe: "response"})
   }
 
   unassignRole(id: string, role: string) {
-    return this.http.post(`${environment.apiUrl}/users/unassign-role`, {userId: id, role: role}, {observe: "response"})
+    return this.http.post(`${environment.apiUrl}/users/unassign-role`, {userId: id, role: `SYLLABUS_${role}`}, {observe: "response"})
   }
 }

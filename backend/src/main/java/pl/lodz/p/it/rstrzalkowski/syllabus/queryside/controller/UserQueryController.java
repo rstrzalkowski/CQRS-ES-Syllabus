@@ -44,7 +44,7 @@ public class UserQueryController {
     private final UserQueryHandler userQueryHandler;
 
     @GetMapping("/me")
-    @Secured({"STUDENT", "TEACHER", "PARENT", "OFFICE", "DIRECTOR", "ADMIN"})
+    @Secured({"STUDENT", "TEACHER", "OFFICE", "DIRECTOR", "ADMIN"})
     public UserDTO getLoggedInUser() {
         UserInfo userInfo = (UserInfo) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return userQueryHandler.handle(new GetLoggedInUserQuery(userInfo.getId()));

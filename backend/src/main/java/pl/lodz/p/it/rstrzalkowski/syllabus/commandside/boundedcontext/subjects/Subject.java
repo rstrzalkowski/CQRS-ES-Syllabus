@@ -13,16 +13,18 @@ import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.subject.CreateSub
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.subject.UpdateSubjectCommand;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.SubjectArchivedEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.SubjectCreatedEvent;
+import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.SubjectNameUpdateFailedEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.SubjectUpdatedEvent;
-import pl.lodz.p.it.rstrzalkowski.syllabus.shared.exception.ResponseBadRequestException;
+import pl.lodz.p.it.rstrzalkowski.syllabus.shared.exception.ArchivedObjectException;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.util.WriteApplicationBean;
 
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.util.Objects;
 import java.util.UUID;
 
 @EqualsAndHashCode(callSuper = true)
-@Aggregate
+@Aggregate(snapshotTriggerDefinition = "syllabusSnapshotTriggerDefinition")
 @NoArgsConstructor
 @AllArgsConstructor
 @WriteApplicationBean
@@ -36,30 +38,37 @@ public class Subject extends AbstractAggregate {
     @CommandHandler
     public Subject(CreateSubjectCommand cmd) {
         AggregateLifecycle.apply(new SubjectCreatedEvent(
-            UUID.randomUUID(),
-            cmd.getName(),
-            cmd.getAbbreviation(),
-            Timestamp.from(Instant.now()))
+                UUID.randomUUID(),
+                cmd.getName(),
+                cmd.getAbbreviation(),
+                Timestamp.from(Instant.now()))
         );
     }
 
     @CommandHandler
     public void handle(UpdateSubjectCommand cmd) {
+        if (isArchived()) {
+            if (!Objects.equals(cmd.getName(), name)) {
+                AggregateLifecycle.apply(new SubjectNameUpdateFailedEvent(cmd.getName()));
+            }
+            throw new ArchivedObjectException();
+        }
+
         AggregateLifecycle.apply(new SubjectUpdatedEvent(
-            getId(),
-            cmd.getName() != null ? cmd.getName() : this.name,
-            cmd.getAbbreviation() != null ? cmd.getAbbreviation() : this.abbreviation,
-            cmd.getImageUrl() != null ? cmd.getImageUrl() : this.imageUrl));
+                getId(),
+                cmd.getName() != null ? cmd.getName() : this.name,
+                cmd.getAbbreviation() != null ? cmd.getAbbreviation() : this.abbreviation,
+                cmd.getImageUrl() != null ? cmd.getImageUrl() : this.imageUrl));
     }
 
     @CommandHandler
     public void handle(ArchiveSubjectCommand cmd) {
         if (isArchived()) {
-            throw new ResponseBadRequestException();
+            throw new ArchivedObjectException();
         }
 
         AggregateLifecycle.apply(new SubjectArchivedEvent(
-            getId())
+                getId())
         );
     }
 

@@ -22,7 +22,7 @@ export class ChooseRoleComponent implements OnInit {
     const jwt = this.authService.getJwtFromStorage();
     let decodedJWT = this.authService.decodeJWT(jwt!);
 
-    this.roles = decodedJWT.realm_access.roles;
+    this.roles = decodedJWT.realm_access.roles.map((role: string) => role.replace("SYLLABUS_",""));
   }
 
   @HostListener('document:keydown', ['$event']) onKeydownHandler(event: KeyboardEvent) {

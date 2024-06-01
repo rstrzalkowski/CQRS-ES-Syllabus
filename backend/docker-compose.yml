@@ -1,12 +1,8 @@
 version: '3.8'
 services:
   axonserver:
-    image: axoniq/axonserver:latest
+    image: axoniq/axonserver:2024.0.2
     hostname: axonserver
-    volumes:
-      - axonserver-data:/data
-      - axonserver-events:/eventdata
-      - axonserver-config:/config:ro
     environment:
       - AXONIQ_AXONSERVER_DEVMODE_ENABLED=true
     ports:
@@ -58,11 +54,12 @@ services:
       DB_PASSWORD: keycloak_password
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
-    image: keycloak/keycloak:latest
+    image: keycloak/keycloak:23.0.1
     ports:
       - "18080:8080"
-    command:
-      - "start-dev"
+    volumes:
+      - ./external-realm.json:/opt/keycloak/data/import/external-realm.json
+    command: start-dev --import-realm
     networks:
       - keycloak
 
@@ -78,13 +75,22 @@ services:
 volumes:
   axonserver-data:
     driver: local
-
+    driver_opts:
+      type: none
+      device: ${PWD}/data
+      o: bind
   axonserver-events:
     driver: local
-
+    driver_opts:
+      type: none
+      device: ${PWD}/events
+      o: bind
   axonserver-config:
     driver: local
-
+    driver_opts:
+      type: none
+      device: ${PWD}/config
+      o: bind
   postgres:
 
 networks:

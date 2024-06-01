@@ -40,8 +40,14 @@ public class KeycloakTokenFilter extends OncePerRequestFilter {
         }
 
         List<SimpleGrantedAuthority> authorities = userInfo.getRoles().stream()
-            .map(SimpleGrantedAuthority::new)
-            .toList();
+                .filter(role -> role.contains("SYLLABUS_"))
+                .map(role -> role.replaceAll("SYLLABUS_", ""))
+                .map(SimpleGrantedAuthority::new)
+                .toList();
+
+        if (authorities.isEmpty()) {
+            response.sendError(401);
+        }
 
         Authentication authentication = new UsernamePasswordAuthenticationToken(
             userInfo,
