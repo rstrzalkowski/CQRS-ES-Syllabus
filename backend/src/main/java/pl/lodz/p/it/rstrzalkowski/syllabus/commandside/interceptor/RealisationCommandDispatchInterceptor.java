@@ -1,9 +1,12 @@
 package pl.lodz.p.it.rstrzalkowski.syllabus.commandside.interceptor;
 
+import jakarta.transaction.Transactional;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.axonframework.commandhandling.CommandMessage;
 import org.axonframework.messaging.MessageDispatchInterceptor;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.realisation.CreateRealisationCommand;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.persistence.realisation.RealisedSubjectEntity;
@@ -24,7 +27,9 @@ public class RealisationCommandDispatchInterceptor implements MessageDispatchInt
     private final RealisedSubjectRepository realisedSubjectRepository;
 
     @Override
-    public BiFunction<Integer, CommandMessage<?>, CommandMessage<?>> handle(List<? extends CommandMessage<?>> list) {
+    @Transactional
+    @Retryable(retryFor = RealisationAlreadyExistsCommandExecutionException.class)
+    public @NotNull BiFunction<Integer, CommandMessage<?>, CommandMessage<?>> handle(@NotNull List<? extends CommandMessage<?>> list) {
         return (i, m) -> {
             if (CreateRealisationCommand.class.equals(m.getPayloadType())) {
                 final CreateRealisationCommand createRealisationCommand = (CreateRealisationCommand) m.getPayload();

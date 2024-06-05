@@ -77,10 +77,4 @@ public interface KeycloakHttpClient {
             @PathVariable UUID userId,
             @RequestHeader(value = "Authorization", defaultValue = "") String authorization
     );
-
-    @DeleteExchange("/admin/realms/external/users/{userId}")
-    void deleteUser(
-            @PathVariable String userId,
-            @RequestHeader(value = "Authorization", defaultValue = "") String authorization
-    );
 }

@@ -2,12 +2,9 @@ package pl.lodz.p.it.rstrzalkowski.syllabus.commandside.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.user.ChangePasswordCommand;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.user.LoginCommand;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.keycloak.KeycloakService;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.keycloak.dto.JwtResponse;
@@ -26,11 +23,5 @@ public class AuthController {
                 command.getUsername(),
                 command.getPassword()
         );
-    }
-
-    @PutMapping("/me/password")
-    @Secured({"STUDENT", "TEACHER", "OFFICE", "DIRECTOR", "ADMIN"})
-    public void changePassword(@Valid @RequestBody ChangePasswordCommand command) {
-        keycloakService.changePassword(command.getOldPassword(), command.getNewPassword());
     }
 }

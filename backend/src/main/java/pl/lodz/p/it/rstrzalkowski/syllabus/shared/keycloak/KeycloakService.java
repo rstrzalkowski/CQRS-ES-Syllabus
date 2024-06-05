@@ -109,8 +109,4 @@ public class KeycloakService {
         JwtResponse jwtResponse = loginAsServiceClient();
         return "Bearer " + jwtResponse.getToken();
     }
-
-    public void changePassword(String oldPassword, String newPassword) {
-        //TODO
-    }
 }
