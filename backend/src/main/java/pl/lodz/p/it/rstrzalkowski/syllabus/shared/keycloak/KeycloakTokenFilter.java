@@ -57,6 +57,7 @@ public class KeycloakTokenFilter extends OncePerRequestFilter {
 
         if (authorities.isEmpty()) {
             response.sendError(401);
+            return;
         }
 
         Authentication authentication = new UsernamePasswordAuthenticationToken(

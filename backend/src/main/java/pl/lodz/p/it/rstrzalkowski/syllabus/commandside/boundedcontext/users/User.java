@@ -11,11 +11,12 @@ import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.boundedcontext.AbstractAg
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.user.AssignRoleCommand;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.user.RegisterCommand;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.user.UnassignRoleCommand;
+import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.user.UpdateDescriptionCommand;
+import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.persistence.user.UserPersonalIdEmailService;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.RoleAssignedToUserEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.RoleUnassignedFromUserEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.UserCreatedEvent;
-import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.UserCreationFailedEvent;
-import pl.lodz.p.it.rstrzalkowski.syllabus.shared.exception.SyllabusCommandExecutionException;
+import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.UserDescriptionUpdatedEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.exception.user.RoleAlreadyAssignedCommandExecutionException;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.exception.user.RoleNotCurrentlyAssignedCommandExecutionException;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.keycloak.KeycloakService;
@@ -43,33 +44,34 @@ public class User extends AbstractAggregate {
 
     private String personalId;
 
+    private String description;
+
     private List<String> roles = new ArrayList<>();
 
 
     @CommandHandler
-    public User(RegisterCommand cmd, KeycloakService keycloakService) {
-        try {
-            String uuid =
-                    keycloakService.createUser(new CreateUserDto(
-                            cmd.getEmail(),
-                            cmd.getFirstName(),
-                            cmd.getLastName(),
-                            cmd.getPassword()));
+    public User(RegisterCommand cmd, KeycloakService keycloakService, UserPersonalIdEmailService userPersonalIdEmailService) {
+        userPersonalIdEmailService.lockPersonalIdAndEmail(cmd.getPersonalId(), cmd.getEmail());
 
-            AggregateLifecycle.apply(new UserCreatedEvent(
-                    UUID.fromString(uuid),
-                    cmd.getEmail(),
-                    cmd.getFirstName(),
-                    cmd.getLastName(),
-                    cmd.getPersonalId(),
-                    "https://cdn-icons-png.flaticon.com/512/149/149071.png",
-                    "",
-                    Timestamp.from(Instant.now()))
-            );
-        } catch (SyllabusCommandExecutionException scee) {
-            AggregateLifecycle.apply(new UserCreationFailedEvent(cmd.getPersonalId(), cmd.getEmail()));
-            throw scee;
-        }
+        String userId = keycloakService.createUser(new CreateUserDto(
+                cmd.getEmail(),
+                cmd.getFirstName(),
+                cmd.getLastName(),
+                cmd.getPassword())
+        );
+
+        userPersonalIdEmailService.updateAggregateId(cmd.getEmail(), UUID.fromString(userId));
+
+        AggregateLifecycle.apply(new UserCreatedEvent(
+                UUID.fromString(userId),
+                cmd.getEmail(),
+                cmd.getFirstName(),
+                cmd.getLastName(),
+                cmd.getPersonalId(),
+                "https://cdn-icons-png.flaticon.com/512/149/149071.png",
+                "",
+                Timestamp.from(Instant.now()))
+        );
     }
 
     @CommandHandler
@@ -100,6 +102,14 @@ public class User extends AbstractAggregate {
         );
     }
 
+    @CommandHandler
+    public void on(UpdateDescriptionCommand cmd) {
+        AggregateLifecycle.apply(new UserDescriptionUpdatedEvent(
+                getId(),
+                cmd.getDescription())
+        );
+    }
+
     @EventSourcingHandler
     public void on(UserCreatedEvent event) {
         setId(event.getId());
@@ -117,5 +127,10 @@ public class User extends AbstractAggregate {
     @EventSourcingHandler
     public void on(RoleUnassignedFromUserEvent event) {
         this.roles.remove(event.getRole());
+    }
+
+    @EventSourcingHandler
+    public void on(UserDescriptionUpdatedEvent event) {
+        this.description = event.getDescription();
     }
 }

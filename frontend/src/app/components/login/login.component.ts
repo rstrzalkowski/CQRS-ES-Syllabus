@@ -59,8 +59,10 @@ export class LoginComponent implements OnInit {
   roleHasBeenChosen(role: string) {
     localStorage.setItem("role", role)
     this.chooseRoleModalOpened = false;
-    this.userService.getLoggedInUserObservable().subscribe((result) => {
-      this.userService.user = result
+    this.userService.getLoggedInUserObservable()?.subscribe((result) => {
+      if (result) {
+        this.userService.user = result
+      }
       this.router.navigate(['/dashboard'])
     })
   }
@@ -68,11 +70,5 @@ export class LoginComponent implements OnInit {
   closeRoleModal() {
     this.loading = false
     this.chooseRoleModalOpened = false;
-  }
-
-  loginAs(email: string) {
-    this.email = email
-    this.password = "P@ssw0rd"
-    this.login()
   }
 }

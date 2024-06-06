@@ -1,5 +1,6 @@
 package pl.lodz.p.it.rstrzalkowski.syllabus.queryside.controller;
 
+import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -29,6 +30,7 @@ import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.query.user.GetLoggedInUserQ
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.query.user.GetNotSupervisingActiveTeachersQuery;
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.query.user.GetUnassignedStudentsQuery;
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.query.user.GetUserByIdQuery;
+import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.query.user.GetUserByKeywordQuery;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.keycloak.dto.UserInfo;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.util.ReadApplicationBean;
 
@@ -150,5 +152,11 @@ public class UserQueryController {
     @Secured({"OFFICE", "DIRECTOR", "ADMIN"})
     public Page<UserDTO> getUnassignedStudents(Pageable pageable) {
         return userQueryHandler.handle(new GetUnassignedStudentsQuery(pageable));
+    }
+
+    @GetMapping("/search")
+    @Secured({"STUDENT", "TEACHER", "PARENT", "OFFICE", "DIRECTOR", "ADMIN"})
+    public Page<UserDTO> searchForUser(@PathParam("keyword") String keyword, Pageable pageable) {
+        return userQueryHandler.handle(new GetUserByKeywordQuery(keyword, pageable));
     }
 }

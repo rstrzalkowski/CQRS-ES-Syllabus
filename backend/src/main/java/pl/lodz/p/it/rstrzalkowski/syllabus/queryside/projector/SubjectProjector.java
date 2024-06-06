@@ -11,6 +11,7 @@ import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.repository.RealisationRepos
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.repository.SubjectRepository;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.SubjectArchivedEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.SubjectCreatedEvent;
+import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.SubjectImageUpdatedEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.SubjectUpdatedEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.util.ReadApplicationBean;
 
@@ -27,9 +28,9 @@ public class SubjectProjector {
     @EventHandler
     public void on(SubjectCreatedEvent event) {
         SubjectEntity subject = new SubjectEntity(
-            event.getId(),
-            event.getName(),
-            event.getAbbreviation());
+                event.getId(),
+                event.getName(),
+                event.getAbbreviation());
         subject.setCreatedAt(event.getCreatedAt());
 
         subjectRepository.save(subject);
@@ -41,7 +42,15 @@ public class SubjectProjector {
 
         subjectEntity.setName(event.getName());
         subjectEntity.setAbbreviation(event.getAbbreviation());
-        subjectEntity.setImageUrl(event.getAbbreviation());
+
+        subjectRepository.save(subjectEntity);
+    }
+
+    @EventHandler
+    public void on(SubjectImageUpdatedEvent event) {
+        SubjectEntity subjectEntity = subjectRepository.findById(event.getId()).orElseThrow();
+
+        subjectEntity.setImageUrl(event.getImageUrl());
 
         subjectRepository.save(subjectEntity);
     }
@@ -51,7 +60,7 @@ public class SubjectProjector {
         SubjectEntity subject = subjectRepository.findById(event.getId()).orElseThrow();
 
         List<RealisationEntity> realisations = realisationRepository
-            .findByArchivedAndSubjectId(false, subject.getId());
+                .findByArchivedAndSubjectId(false, subject.getId());
 
         realisations.forEach(realisation -> {
             realisation.getPosts().forEach(post -> post.setArchived(true));

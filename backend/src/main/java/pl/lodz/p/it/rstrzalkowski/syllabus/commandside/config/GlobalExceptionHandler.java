@@ -1,4 +1,4 @@
-package pl.lodz.p.it.rstrzalkowski.syllabus.commandside.interceptor;
+package pl.lodz.p.it.rstrzalkowski.syllabus.commandside.config;
 
 import lombok.extern.java.Log;
 import org.axonframework.commandhandling.CommandExecutionException;
@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+import pl.lodz.p.it.rstrzalkowski.syllabus.shared.exception.ErrorObject;
 
 @ControllerAdvice
 @Log
@@ -27,11 +28,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         }
 
         return handleExceptionInternal(
-            cex,
-            errorObject,
-            new HttpHeaders(),
-            HttpStatus.valueOf(errorObject.getStatusCode()),
-            request
+                cex,
+                errorObject,
+                new HttpHeaders(),
+                HttpStatus.valueOf(errorObject.getStatusCode()),
+                request
         );
     }
 }

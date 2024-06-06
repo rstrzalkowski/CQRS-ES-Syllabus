@@ -28,7 +28,7 @@ export class AuthService {
   }
 
   login(username: string, password: string) {
-    return this.http.post(`${environment.apiUrl}/authorize`, {username, password}, {observe: "response"})
+    return this.http.post(`${environment.apiUrl}/auth`, {username, password}, {observe: "response"})
   }
 
   register(email: string, password: string, firstName: string, lastName: string, personalId: string) {

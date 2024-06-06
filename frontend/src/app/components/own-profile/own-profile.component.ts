@@ -18,7 +18,7 @@ export class OwnProfileComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.userService.user == undefined) {
-      this.userService.getLoggedInUserObservable().subscribe((result) => {
+      this.userService.getLoggedInUserObservable()?.subscribe((result) => {
         this.userService.user = result
         this.newAbout = this.userService.user.description
       })
@@ -28,7 +28,7 @@ export class OwnProfileComponent implements OnInit {
   }
 
   refreshUserData() {
-    this.userService.getLoggedInUserObservable().subscribe((result) => {
+    this.userService.getLoggedInUserObservable()?.subscribe((result) => {
       this.userService.user = result
       this.newAbout = this.userService.user.description
     })

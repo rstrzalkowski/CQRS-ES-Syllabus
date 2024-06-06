@@ -12,4 +12,6 @@ import java.util.UUID;
 @WriteApplicationBean
 public interface RealisedSubjectRepository extends JpaRepository<RealisedSubjectEntity, UUID> {
     Optional<RealisedSubjectEntity> findBySubjectIdAndSchoolClassIdAndYear(UUID subjectId, UUID schoolClassId, Year year);
+
+    Optional<RealisedSubjectEntity> findByAggregateId(UUID realisationId);
 }

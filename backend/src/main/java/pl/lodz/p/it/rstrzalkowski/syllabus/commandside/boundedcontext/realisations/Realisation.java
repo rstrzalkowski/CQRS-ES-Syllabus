@@ -21,6 +21,7 @@ import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.post.UpdatePostCo
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.realisation.ArchiveRealisationCommand;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.realisation.CreateRealisationCommand;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.realisation.UpdateRealisationCommand;
+import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.persistence.realisation.RealisedSubjectService;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.ActivityArchivedEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.ActivityCreatedEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.ActivityUpdatedEvent;
@@ -64,9 +65,13 @@ public class Realisation extends AbstractAggregate {
 
 
     @CommandHandler
-    public Realisation(CreateRealisationCommand cmd) {
+    public Realisation(CreateRealisationCommand cmd, RealisedSubjectService realisedSubjectService) {
+        UUID realisationId = UUID.randomUUID();
+
+        realisedSubjectService.lockSubjectIdAndClassIdAndYear(cmd.getSubjectId(), cmd.getClassId(), cmd.getYear(), realisationId);
+
         AggregateLifecycle.apply(new RealisationCreatedEvent(
-                UUID.randomUUID(),
+                realisationId,
                 cmd.getSubjectId(),
                 cmd.getClassId(),
                 cmd.getTeacherId(),
@@ -204,10 +209,12 @@ public class Realisation extends AbstractAggregate {
     }
 
     @CommandHandler
-    public void handle(ArchiveRealisationCommand cmd) {
+    public void handle(ArchiveRealisationCommand cmd, RealisedSubjectService realisedSubjectService) {
         if (isArchived()) {
             throw new ArchivedObjectException();
         }
+
+        realisedSubjectService.releaseSubjectIdAndClassIdAndYear(getId());
 
         AggregateLifecycle.apply(new RealisationArchivedEvent(
                 cmd.getId())

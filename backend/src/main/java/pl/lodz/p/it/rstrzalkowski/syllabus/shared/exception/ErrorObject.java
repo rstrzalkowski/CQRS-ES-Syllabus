@@ -1,4 +1,4 @@
-package pl.lodz.p.it.rstrzalkowski.syllabus.commandside.interceptor;
+package pl.lodz.p.it.rstrzalkowski.syllabus.shared.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

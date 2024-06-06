@@ -5,7 +5,6 @@ import {RegisterComponent} from "./components/register/register.component";
 import {AuthenticationGuard} from "./guards/authentication.guard";
 import {OwnProfileComponent} from "./components/own-profile/own-profile.component";
 import {HomeComponent} from "./components/home/home.component";
-import {SettingsComponent} from "./components/settings/settings.component";
 import {RealisationComponent} from "./components/realisation/realisation.component";
 import {ForbiddenPageComponent} from "./components/utilities/forbidden-page/forbidden-page.component";
 import {NotFoundPageComponent} from "./components/utilities/not-found-page/not-found-page.component";
@@ -49,14 +48,6 @@ const routes: Routes = [
         canActivate: [AuthenticationGuard],
         data: {
           title: "Dashboard"
-        },
-      },
-      {
-        path: "settings",
-        component: SettingsComponent,
-        canActivate: [AuthenticationGuard],
-        data: {
-          title: "Settings"
         },
       },
       {

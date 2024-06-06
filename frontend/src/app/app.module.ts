@@ -11,7 +11,6 @@ import {FormsModule} from "@angular/forms";
 import {HomeComponent} from './components/home/home.component';
 import {OwnProfileComponent} from './components/own-profile/own-profile.component';
 import {JwtInterceptor} from "./interceptors/jwt.interceptor";
-import {SettingsComponent} from './components/settings/settings.component';
 import {AlertComponent} from './components/utilities/alert/alert.component';
 import {RealisationComponent} from './components/realisation/realisation.component';
 import {ForbiddenPageComponent} from './components/utilities/forbidden-page/forbidden-page.component';
@@ -64,7 +63,6 @@ import {UnassignRoleComponent} from './components/manage-school/users/unassign-r
     HomeComponent,
     HomeComponent,
     OwnProfileComponent,
-    SettingsComponent,
     AlertComponent,
     RealisationComponent,
     ForbiddenPageComponent,

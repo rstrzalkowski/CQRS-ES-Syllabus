@@ -10,4 +10,6 @@ import java.util.Optional;
 @WriteApplicationBean
 public interface UserPersonalIdEmailRepository extends JpaRepository<UserPersonalIdEmailEntity, String> {
     Optional<UserPersonalIdEmailEntity> findByPersonalId(String personalId);
+
+    Optional<UserPersonalIdEmailEntity> findByEmail(String email);
 }

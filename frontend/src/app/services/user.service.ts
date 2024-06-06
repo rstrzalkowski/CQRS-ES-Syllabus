@@ -4,6 +4,7 @@ import {environment} from "../../environments/environment";
 import {User, UserPage} from "../model/user";
 import {AuthService} from "./auth.service";
 import {TokenPage} from "../model/token";
+import {Router} from "@angular/router";
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +13,7 @@ export class UserService {
 
   public user: User | undefined
 
-  constructor(private http: HttpClient, private authService: AuthService) {
+  constructor(private http: HttpClient, private authService: AuthService, private router: Router) {
     if (this.authService.authenticated.value) {
       this.getLoggedInUser()
     } else {
@@ -107,13 +108,19 @@ export class UserService {
   }
 
   getLoggedInUserObservable() {
+    if (localStorage.getItem('role') === "ADMIN") {
+      this.router.navigate(['/dashboard'])
+      return;
+    }
     return this.http.get<User>(`${environment.apiUrl}/users/me`)
   }
 
   getLoggedInUser() {
-    this.http.get<User>(`${environment.apiUrl}/users/me`).subscribe((result) => {
-      this.user = result;
-    })
+    if (localStorage.getItem('role') !== "ADMIN") {
+      this.http.get<User>(`${environment.apiUrl}/users/me`).subscribe((result) => {
+        this.user = result;
+      })
+    }
   }
 
   getUser(userId: string | undefined) {
@@ -126,13 +133,6 @@ export class UserService {
 
   updateAbout(newAbout: string) {
     return this.http.put(`${environment.apiUrl}/users/me/description`, {description: newAbout}, {observe: "response"})
-  }
-
-  changePassword(oldPassword: string, newPassword: string) {
-    return this.http.put(`${environment.apiUrl}/users/me/password`, {
-      oldPassword: oldPassword,
-      newPassword: newPassword
-    }, {observe: "response"})
   }
 
   getUnassignedStudents() {
@@ -164,10 +164,16 @@ export class UserService {
   }
 
   assignRole(id: string, role: string) {
-    return this.http.post(`${environment.apiUrl}/users/assign-role`, {userId: id, role: `SYLLABUS_${role}`}, {observe: "response"})
+    return this.http.post(`${environment.apiUrl}/users/assign-role`, {
+      userId: id,
+      role: `SYLLABUS_${role}`
+    }, {observe: "response"})
   }
 
   unassignRole(id: string, role: string) {
-    return this.http.post(`${environment.apiUrl}/users/unassign-role`, {userId: id, role: `SYLLABUS_${role}`}, {observe: "response"})
+    return this.http.post(`${environment.apiUrl}/users/unassign-role`, {
+      userId: id,
+      role: `SYLLABUS_${role}`
+    }, {observe: "response"})
   }
 }

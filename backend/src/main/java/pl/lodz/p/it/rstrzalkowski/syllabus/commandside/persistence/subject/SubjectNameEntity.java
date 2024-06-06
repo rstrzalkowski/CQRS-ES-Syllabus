@@ -31,4 +31,9 @@ public class SubjectNameEntity {
     public SubjectNameEntity(String name) {
         this.subjectName = name;
     }
+
+    public SubjectNameEntity(String name, UUID subjectId) {
+        this.subjectName = name;
+        this.aggregateId = subjectId;
+    }
 }

@@ -37,4 +37,11 @@ public class RealisedSubjectEntity {
         this.schoolClassId = schoolClassId;
         this.year = year;
     }
+
+    public RealisedSubjectEntity(UUID subjectId, UUID schoolClassId, Year year, UUID realisationId) {
+        this.subjectId = subjectId;
+        this.schoolClassId = schoolClassId;
+        this.year = year;
+        this.aggregateId = realisationId;
+    }
 }

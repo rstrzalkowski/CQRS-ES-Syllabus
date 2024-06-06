@@ -11,8 +11,11 @@ import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.boundedcontext.AbstractAg
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.subject.ArchiveSubjectCommand;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.subject.CreateSubjectCommand;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.subject.UpdateSubjectCommand;
+import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.subject.UpdateSubjectImageCommand;
+import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.persistence.subject.SubjectNameService;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.SubjectArchivedEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.SubjectCreatedEvent;
+import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.SubjectImageUpdatedEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.SubjectNameUpdateFailedEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.SubjectUpdatedEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.exception.ArchivedObjectException;
@@ -36,9 +39,13 @@ public class Subject extends AbstractAggregate {
 
 
     @CommandHandler
-    public Subject(CreateSubjectCommand cmd) {
+    public Subject(CreateSubjectCommand cmd, SubjectNameService subjectNameService) {
+        UUID subjectId = UUID.randomUUID();
+
+        subjectNameService.lockSubjectName(cmd.getName(), subjectId);
+
         AggregateLifecycle.apply(new SubjectCreatedEvent(
-                UUID.randomUUID(),
+                subjectId,
                 cmd.getName(),
                 cmd.getAbbreviation(),
                 Timestamp.from(Instant.now()))
@@ -46,12 +53,16 @@ public class Subject extends AbstractAggregate {
     }
 
     @CommandHandler
-    public void handle(UpdateSubjectCommand cmd) {
+    public void handle(UpdateSubjectCommand cmd, SubjectNameService subjectNameService) {
         if (isArchived()) {
             if (!Objects.equals(cmd.getName(), name)) {
                 AggregateLifecycle.apply(new SubjectNameUpdateFailedEvent(cmd.getName()));
             }
             throw new ArchivedObjectException();
+        }
+
+        if (!Objects.equals(cmd.getName(), name)) {
+            subjectNameService.updateSubjectName(cmd.getName(), getId());
         }
 
         AggregateLifecycle.apply(new SubjectUpdatedEvent(
@@ -62,13 +73,27 @@ public class Subject extends AbstractAggregate {
     }
 
     @CommandHandler
-    public void handle(ArchiveSubjectCommand cmd) {
+    public void handle(ArchiveSubjectCommand cmd, SubjectNameService subjectNameService) {
         if (isArchived()) {
             throw new ArchivedObjectException();
         }
 
+        subjectNameService.releaseSubjectName(getId());
+
         AggregateLifecycle.apply(new SubjectArchivedEvent(
                 getId())
+        );
+    }
+
+    @CommandHandler
+    public void handle(UpdateSubjectImageCommand cmd) {
+        if (isArchived()) {
+            throw new ArchivedObjectException();
+        }
+
+        AggregateLifecycle.apply(new SubjectImageUpdatedEvent(
+                getId(),
+                cmd.getImageUrl())
         );
     }
 
@@ -83,6 +108,11 @@ public class Subject extends AbstractAggregate {
     public void on(SubjectUpdatedEvent event) {
         this.name = event.getName();
         this.abbreviation = event.getAbbreviation();
+    }
+
+    @EventSourcingHandler
+    public void on(SubjectImageUpdatedEvent event) {
+        this.imageUrl = event.getImageUrl();
     }
 
     @EventSourcingHandler
