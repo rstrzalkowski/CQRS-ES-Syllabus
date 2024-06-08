@@ -36,14 +36,16 @@ public class SubjectCommandController {
     private final ImageService imageService;
 
     @ResponseStatus(HttpStatus.CREATED)
-    @Secured({"TEACHER", "OFFICE", "DIRECTOR", "ADMIN"})
+    @Secured({"TEACHER", "DIRECTOR", "ADMIN"})
+
     @PostMapping
     public void createSubject(@Valid @RequestBody CreateSubjectCommand command) {
         commandGateway.sendAndWait(command);
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @Secured({"TEACHER", "OFFICE", "DIRECTOR", "ADMIN"})
+    @Secured({"TEACHER", "DIRECTOR", "ADMIN"})
+
     @PutMapping
     public void updateSubject(@Valid @RequestBody UpdateSubjectCommand command) {
         commandGateway.sendAndWait(command);
@@ -51,7 +53,7 @@ public class SubjectCommandController {
 
     @ResponseStatus(HttpStatus.OK)
     @PutMapping("/{id}/image")
-    @Secured({"OFFICE", "DIRECTOR", "ADMIN"})
+    @Secured({"DIRECTOR", "ADMIN"})
     public void updateSubjectImage(@PathVariable("id") UUID id, @Valid @RequestParam("image") MultipartFile image) {
         try {
             String imageUrl = imageService.saveImage(image);
@@ -62,7 +64,8 @@ public class SubjectCommandController {
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Secured({"TEACHER", "OFFICE", "DIRECTOR", "ADMIN"})
+    @Secured({"TEACHER", "DIRECTOR", "ADMIN"})
+
     @DeleteMapping
     public void archiveById(@Valid @RequestBody ArchiveSubjectCommand command) {
         commandGateway.sendAndWait(command);

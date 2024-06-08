@@ -26,21 +26,24 @@ public class RealisationCommandController {
     private final CommandGateway commandGateway;
 
     @ResponseStatus(HttpStatus.CREATED)
-    @Secured({"TEACHER", "OFFICE", "DIRECTOR", "ADMIN"})
+    @Secured({"TEACHER", "DIRECTOR", "ADMIN"})
+
     @PostMapping
     public void createRealisation(@Valid @RequestBody CreateRealisationCommand command) {
         commandGateway.sendAndWait(command);
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @Secured({"TEACHER", "OFFICE", "DIRECTOR", "ADMIN"})
+    @Secured({"TEACHER", "DIRECTOR", "ADMIN"})
+
     @PutMapping
     public void updateRealisation(@Valid @RequestBody UpdateRealisationCommand command) {
         commandGateway.sendAndWait(command);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Secured({"TEACHER", "OFFICE", "DIRECTOR", "ADMIN"})
+    @Secured({"TEACHER", "DIRECTOR", "ADMIN"})
+
     @DeleteMapping
     public void archiveById(@Valid @RequestBody ArchiveRealisationCommand command) {
         commandGateway.sendAndWait(command);

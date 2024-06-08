@@ -94,15 +94,6 @@
         "attributes": {}
       },
       {
-        "id": "a11504cc-4294-4516-80c5-edb7c99ac287",
-        "name": "SYLLABUS_OFFICE",
-        "description": "",
-        "composite": false,
-        "clientRole": false,
-        "containerId": "43ca4990-7cfe-449c-98ae-71ac22cb96ce",
-        "attributes": {}
-      },
-      {
         "id": "7362972e-9513-4ff6-9cca-2b4935164e79",
         "name": "SYLLABUS_DIRECTOR",
         "description": "",

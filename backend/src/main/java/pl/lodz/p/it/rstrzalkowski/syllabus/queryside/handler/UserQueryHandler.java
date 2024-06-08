@@ -11,14 +11,12 @@ import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.entity.UserEntity;
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.exception.user.UserNotFoundException;
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.query.user.GetActiveAdminsQuery;
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.query.user.GetActiveDirectorsQuery;
-import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.query.user.GetActiveOfficesQuery;
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.query.user.GetActiveStudentsQuery;
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.query.user.GetActiveTeachersQuery;
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.query.user.GetActiveUnassignedUsersQuery;
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.query.user.GetActiveUsersQuery;
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.query.user.GetArchivedAdminsQuery;
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.query.user.GetArchivedDirectorsQuery;
-import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.query.user.GetArchivedOfficesQuery;
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.query.user.GetArchivedStudentsQuery;
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.query.user.GetArchivedTeachersQuery;
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.query.user.GetArchivedUnassignedUsersQuery;
@@ -69,12 +67,6 @@ public class UserQueryHandler {
     }
 
     @QueryHandler
-    public Page<UserDTO> handle(GetActiveOfficesQuery query) {
-        return userRepository.findAllByRolesContainingAndArchived("SYLLABUS_OFFICE", false, query.pageable())
-                .map(UserDTO::new);
-    }
-
-    @QueryHandler
     public Page<UserDTO> handle(GetActiveDirectorsQuery query) {
         return userRepository.findAllByRolesContainingAndArchived("SYLLABUS_DIRECTOR", false, query.pageable())
                 .map(UserDTO::new);
@@ -95,12 +87,6 @@ public class UserQueryHandler {
     @QueryHandler
     public Page<UserDTO> handle(GetArchivedTeachersQuery query) {
         return userRepository.findAllByRolesContainingAndArchived("SYLLABUS_TEACHER", true, query.pageable())
-                .map(UserDTO::new);
-    }
-
-    @QueryHandler
-    public Page<UserDTO> handle(GetArchivedOfficesQuery query) {
-        return userRepository.findAllByRolesContainingAndArchived("SYLLABUS_OFFICE", true, query.pageable())
                 .map(UserDTO::new);
     }
 

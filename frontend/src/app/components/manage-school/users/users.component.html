@@ -43,13 +43,11 @@
       <div (click)="showTeachers()" class="hover:bg-skin-muted p-3 rounded-lg cursor-pointer"
            [ngClass]="userType === 'TEACHER'? 'bg-skin-muted': ''">Teachers
       </div>
-      <div (click)="showOffices()" class="hover:bg-skin-muted p-3 rounded-lg cursor-pointer"
-           [ngClass]="userType === 'OFFICE'? 'bg-skin-muted': ''">Offices
-      </div>
       <div (click)="showDirectors()" class="hover:bg-skin-muted p-3 rounded-lg cursor-pointer"
            [ngClass]="userType === 'DIRECTOR'? 'bg-skin-muted': ''">Directors
       </div>
-      <div *ngIf="authService.getRole() === 'ADMIN'" (click)="showAdmins()" class="hover:bg-skin-muted p-3 rounded-lg cursor-pointer"
+      <div *ngIf="authService.getRole() === 'ADMIN'" (click)="showAdmins()"
+           class="hover:bg-skin-muted p-3 rounded-lg cursor-pointer"
            [ngClass]="userType === 'ADMIN'? 'bg-skin-muted': ''">Admins
       </div>
     </div>

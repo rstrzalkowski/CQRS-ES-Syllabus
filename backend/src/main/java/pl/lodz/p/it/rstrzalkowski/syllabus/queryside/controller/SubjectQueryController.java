@@ -28,25 +28,25 @@ public class SubjectQueryController {
     private final SubjectQueryHandler subjectQueryHandler;
 
     @GetMapping("/{id}")
-    @Secured({"DIRECTOR", "OFFICE", "ADMIN"})
+    @Secured({"DIRECTOR", "ADMIN"})
     public SubjectDTO getSubjectById(@PathVariable("id") UUID id) {
         return subjectQueryHandler.handle(new GetSubjectByIdQuery(id));
     }
 
     @GetMapping("/search")
-    @Secured({"DIRECTOR", "OFFICE", "ADMIN"})
+    @Secured({"DIRECTOR", "ADMIN"})
     public Page<SubjectDTO> getSubjectByName(@Param("name") String name, Pageable pageable) {
         return subjectQueryHandler.handle(new GetSubjectsByNameContainingQuery(name, pageable));
     }
 
     @GetMapping
-    @Secured({"DIRECTOR", "OFFICE", "ADMIN"})
+    @Secured({"DIRECTOR", "ADMIN"})
     public Page<SubjectDTO> getActiveSubjects(Pageable pageable) {
         return subjectQueryHandler.handle(new GetActiveSubjectsQuery(pageable));
     }
 
     @GetMapping("/archived")
-    @Secured({"DIRECTOR", "OFFICE", "ADMIN"})
+    @Secured({"DIRECTOR", "ADMIN"})
     public Page<SubjectDTO> getArchivedSubjects(Pageable pageable) {
         return subjectQueryHandler.handle(new GetArchivedSubjectsQuery(pageable));
     }

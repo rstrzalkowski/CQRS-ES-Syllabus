@@ -3,7 +3,6 @@ import {HttpClient} from "@angular/common/http";
 import {environment} from "../../environments/environment";
 import {User, UserPage} from "../model/user";
 import {AuthService} from "./auth.service";
-import {TokenPage} from "../model/token";
 import {Router} from "@angular/router";
 
 @Injectable({
@@ -55,10 +54,6 @@ export class UserService {
     return this.http.get<UserPage>(`${environment.apiUrl}/users/teachers?size=10&page=${page}&sort=lastName,firstName`)
   }
 
-  getActiveOffices(page: number | undefined) {
-    return this.http.get<UserPage>(`${environment.apiUrl}/users/offices?size=10&page=${page}&sort=lastName,firstName`)
-  }
-
   getActiveDirectors(page: number | undefined) {
     return this.http.get<UserPage>(`${environment.apiUrl}/users/directors?size=10&page=${page}&sort=lastName,firstName`)
   }
@@ -75,10 +70,6 @@ export class UserService {
     return this.http.get<UserPage>(`${environment.apiUrl}/users/teachers/archived?size=10&page=${page}&sort=lastName,firstName`)
   }
 
-  getArchivedOffices(page: number | undefined) {
-    return this.http.get<UserPage>(`${environment.apiUrl}/users/offices/archived?size=10&page=${page}&sort=lastName,firstName`)
-  }
-
   getArchivedDirectors(page: number | undefined) {
     return this.http.get<UserPage>(`${environment.apiUrl}/users/directors/archived?size=10&page=${page}&sort=lastName,firstName`)
   }
@@ -89,22 +80,6 @@ export class UserService {
 
   getAllNotSupervisingActiveTeachers() {
     return this.http.get<User[]>(`${environment.apiUrl}/users/teachers/free?sort=lastName,firstName`)
-  }
-
-  getStudentTokens(page: number | undefined) {
-    return this.http.get<TokenPage>(`${environment.apiUrl}/users/tokens/students?size=10&page=${page}&sort=createdAt,desc`)
-  }
-
-  getTeacherTokens(page: number | undefined) {
-    return this.http.get<TokenPage>(`${environment.apiUrl}/users/tokens/teachers?size=10&page=${page}&sort=createdAt,desc`)
-  }
-
-  getOfficeTokens(page: number | undefined) {
-    return this.http.get<TokenPage>(`${environment.apiUrl}/users/tokens/offices?size=10&page=${page}&sort=createdAt,desc`)
-  }
-
-  getDirectorTokens(page: number | undefined) {
-    return this.http.get<TokenPage>(`${environment.apiUrl}/users/tokens/directors?size=10&page=${page}&sort=createdAt,desc`)
   }
 
   getLoggedInUserObservable() {

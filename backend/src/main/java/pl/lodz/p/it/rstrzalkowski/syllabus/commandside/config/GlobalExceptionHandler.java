@@ -10,14 +10,16 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.exception.ErrorObject;
+import pl.lodz.p.it.rstrzalkowski.syllabus.shared.util.WriteApplicationBean;
 
 @ControllerAdvice
 @Log
+@WriteApplicationBean
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler({CommandExecutionException.class})
-    protected ResponseEntity<Object> handleCommandExecution(final CommandExecutionException cex,
-                                                            final WebRequest request) {
+    protected ResponseEntity<Object> handleCommandExecutionException(final CommandExecutionException cex,
+                                                                     final WebRequest request) {
         logger.error("Exception occurred: " + cex);
         ErrorObject errorObject = null;
         try {

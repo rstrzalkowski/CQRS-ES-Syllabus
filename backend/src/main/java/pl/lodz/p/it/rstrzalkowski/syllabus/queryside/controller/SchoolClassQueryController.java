@@ -26,19 +26,19 @@ public class SchoolClassQueryController {
     private final SchoolClassQueryHandler schoolClassQueryHandler;
 
     @GetMapping("/{id}")
-    @Secured({"OFFICE", "DIRECTOR", "ADMIN"})
+    @Secured({"DIRECTOR", "ADMIN"})
     public SchoolClassDTO getSchoolClassById(@PathVariable("id") UUID id) {
         return schoolClassQueryHandler.handle(new GetSchoolClassByIdQuery(id));
     }
 
     @GetMapping
-    @Secured({"OFFICE", "DIRECTOR", "ADMIN"})
+    @Secured({"DIRECTOR", "ADMIN"})
     public Page<SchoolClassDTO> getActiveSchoolClasses(Pageable pageable) {
         return schoolClassQueryHandler.handle(new GetActiveSchoolClassesQuery(pageable));
     }
 
     @GetMapping("/archived")
-    @Secured({"OFFICE", "DIRECTOR", "ADMIN"})
+    @Secured({"DIRECTOR", "ADMIN"})
     public Page<SchoolClassDTO> getArchivedSchoolClasses(Pageable pageable) {
         return schoolClassQueryHandler.handle(new GetArchivedSchoolClassesQuery(pageable));
     }

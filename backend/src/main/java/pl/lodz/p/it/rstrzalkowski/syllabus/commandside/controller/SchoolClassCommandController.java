@@ -28,35 +28,40 @@ public class SchoolClassCommandController {
     private final CommandGateway commandGateway;
 
     @ResponseStatus(HttpStatus.CREATED)
-    @Secured({"TEACHER", "OFFICE", "DIRECTOR", "ADMIN"})
+    @Secured({"TEACHER", "DIRECTOR", "ADMIN"})
+
     @PostMapping
     public void createSchoolClass(@Valid @RequestBody CreateSchoolClassCommand command) {
         commandGateway.sendAndWait(command);
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @Secured({"TEACHER", "OFFICE", "DIRECTOR", "ADMIN"})
+    @Secured({"TEACHER", "DIRECTOR", "ADMIN"})
+
     @PutMapping("/students/assign")
     public void assignStudent(@Valid @RequestBody AssignStudentCommand command) {
         commandGateway.sendAndWait(command);
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @Secured({"TEACHER", "OFFICE", "DIRECTOR", "ADMIN"})
+    @Secured({"TEACHER", "DIRECTOR", "ADMIN"})
+
     @PutMapping("/students/unassign")
     public void unassignStudent(@Valid @RequestBody UnassignStudentCommand command) {
         commandGateway.sendAndWait(command);
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @Secured({"TEACHER", "OFFICE", "DIRECTOR", "ADMIN"})
+    @Secured({"TEACHER", "DIRECTOR", "ADMIN"})
+
     @PutMapping
     public void updateSchoolClass(@Valid @RequestBody UpdateSchoolClassCommand command) {
         commandGateway.sendAndWait(command);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Secured({"TEACHER", "OFFICE", "DIRECTOR", "ADMIN"})
+    @Secured({"TEACHER", "DIRECTOR", "ADMIN"})
+
     @DeleteMapping
     public void archiveById(@Valid @RequestBody ArchiveSchoolClassCommand command) {
         commandGateway.sendAndWait(command);

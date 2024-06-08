@@ -1,10 +1,9 @@
 package pl.lodz.p.it.rstrzalkowski.syllabus.shared.exception;
 
-import org.axonframework.commandhandling.CommandExecutionException;
 import org.springframework.http.HttpStatus;
 
-public class ResponseNotFoundException extends CommandExecutionException {
+public class ResponseNotFoundException extends SyllabusCommandExecutionException {
     public ResponseNotFoundException() {
-        super(null, null, new ErrorObject(HttpStatus.NOT_FOUND.value()));
+        super(HttpStatus.NOT_FOUND);
     }
 }

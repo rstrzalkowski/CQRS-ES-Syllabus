@@ -51,7 +51,7 @@
           [grade]="grade">
         </app-grade>
         <ng-container
-          *ngIf="authService.getRole() === 'TEACHER' || authService.getRole() === 'OFFICE' || authService.getRole() === 'DIRECTOR' || authService.getRole() === 'ADMIN'">
+          *ngIf="authService.getRole() === 'TEACHER' || authService.getRole() === 'DIRECTOR' || authService.getRole() === 'ADMIN'">
           <div class="w-full">
 
             <span class="text-lg underline underline-offset-4">Manage realisation:</span>
@@ -115,7 +115,7 @@
     </div>
   </div>
   <ng-container
-    *ngIf="authService.getRole() === 'TEACHER' || authService.getRole() === 'OFFICE' || authService.getRole() === 'DIRECTOR' || authService.getRole() === 'ADMIN'">
+    *ngIf="authService.getRole() === 'TEACHER' || authService.getRole() === 'DIRECTOR' || authService.getRole() === 'ADMIN'">
     <app-create-post (success)="refreshPosts()" *ngIf="createPostOpened"
                      (close)="createPostOpened = false"
                      [realisationId]="realisationId">

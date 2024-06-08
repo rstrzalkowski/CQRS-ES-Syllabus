@@ -87,7 +87,7 @@
             </li>
           </section>
           <app-manage-school-sidebar
-            *ngIf="authService.getRole() == 'OFFICE' || authService.getRole() == 'DIRECTOR' || authService.getRole() == 'ADMIN'"
+            *ngIf="authService.getRole() == 'DIRECTOR' || authService.getRole() == 'ADMIN'"
             (hideSidebar)="hideSidebarIfOverlapping()">
 
           </app-manage-school-sidebar>

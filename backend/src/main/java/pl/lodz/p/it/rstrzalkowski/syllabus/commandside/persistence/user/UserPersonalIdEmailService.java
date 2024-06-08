@@ -32,4 +32,9 @@ public class UserPersonalIdEmailService {
             userPersonalIdEmailRepository.flush();
         });
     }
+
+    public void releasePersonalIdAndEmail(String personalId) {
+        userPersonalIdEmailRepository.findByPersonalId(personalId).ifPresent(userPersonalIdEmailRepository::delete);
+        userPersonalIdEmailRepository.flush();
+    }
 }

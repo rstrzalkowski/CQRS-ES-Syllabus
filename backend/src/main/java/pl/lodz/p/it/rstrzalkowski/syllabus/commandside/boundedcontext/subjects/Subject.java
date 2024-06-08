@@ -16,7 +16,6 @@ import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.persistence.subject.Subje
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.SubjectArchivedEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.SubjectCreatedEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.SubjectImageUpdatedEvent;
-import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.SubjectNameUpdateFailedEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.SubjectUpdatedEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.exception.ArchivedObjectException;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.util.WriteApplicationBean;
@@ -55,9 +54,6 @@ public class Subject extends AbstractAggregate {
     @CommandHandler
     public void handle(UpdateSubjectCommand cmd, SubjectNameService subjectNameService) {
         if (isArchived()) {
-            if (!Objects.equals(cmd.getName(), name)) {
-                AggregateLifecycle.apply(new SubjectNameUpdateFailedEvent(cmd.getName()));
-            }
             throw new ArchivedObjectException();
         }
 

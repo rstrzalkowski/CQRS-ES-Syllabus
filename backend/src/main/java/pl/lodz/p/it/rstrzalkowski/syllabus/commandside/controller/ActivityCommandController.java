@@ -28,7 +28,7 @@ public class ActivityCommandController {
     private final CommandGateway commandGateway;
 
     @ResponseStatus(HttpStatus.CREATED)
-    @Secured({"TEACHER", "OFFICE", "DIRECTOR", "ADMIN"})
+    @Secured({"TEACHER", "DIRECTOR", "ADMIN"})
     @PostMapping
     public void createActivity(@Valid @RequestBody CreateActivityCommand command) {
         UserInfo userInfo = (UserInfo) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -37,14 +37,14 @@ public class ActivityCommandController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @Secured({"TEACHER", "OFFICE", "DIRECTOR", "ADMIN"})
+    @Secured({"TEACHER", "DIRECTOR", "ADMIN"})
     @PutMapping
     public void updateActivity(@Valid @RequestBody UpdateActivityCommand command) {
         commandGateway.sendAndWait(command);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Secured({"TEACHER", "OFFICE", "DIRECTOR", "ADMIN"})
+    @Secured({"TEACHER", "DIRECTOR", "ADMIN"})
     @DeleteMapping
     public void archiveById(@Valid @RequestBody ArchiveActivityCommand command) {
         commandGateway.sendAndWait(command);

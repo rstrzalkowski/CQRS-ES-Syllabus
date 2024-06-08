@@ -1,5 +1,4 @@
 import {Component, EventEmitter, HostListener, Input, OnInit, Output} from '@angular/core';
-import {AuthService} from "../../../../services/auth.service";
 import {User} from "../../../../model/user";
 import {UserService} from "../../../../services/user.service";
 import {AlertService} from "../../../../services/alert.service";
@@ -26,9 +25,12 @@ export class AssignRoleComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.user) {
-      this.roles = ["STUDENT", "TEACHER", "OFFICE", "DIRECTOR", "ADMIN"]
+      this.roles = ["STUDENT", "TEACHER", "DIRECTOR", "ADMIN"]
       this.user.roles.forEach((userRole => {
-        this.roles = this.roles.filter(role => role != userRole)
+        this.roles = this.roles.filter(role => {
+          userRole = userRole.replace("SYLLABUS_", "")
+          return role != userRole
+        })
       }))
     }
   }

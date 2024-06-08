@@ -47,26 +47,26 @@ public class RealisationQueryController {
     private final AccessGuard accessGuard;
 
     @GetMapping("/{id}")
-    @Secured({"STUDENT", "TEACHER", "OFFICE", "DIRECTOR", "ADMIN"})
+    @Secured({"STUDENT", "TEACHER", "DIRECTOR", "ADMIN"})
     public RealisationDTO getRealisationInfoById(@PathVariable("id") UUID id) {
         accessGuard.checkAccessToRealisation(id);
         return realisationQueryHandler.handle(new GetRealisationInfoByIdQuery(id));
     }
 
     @GetMapping
-    @Secured({"OFFICE", "DIRECTOR", "ADMIN"})
+    @Secured({"DIRECTOR", "ADMIN"})
     public Page<RealisationDTO> getActiveRealisations(Pageable pageable) {
         return realisationQueryHandler.handle(new GetActiveRealisationsQuery(pageable));
     }
 
     @GetMapping("/archived")
-    @Secured({"OFFICE", "DIRECTOR", "ADMIN"})
+    @Secured({"DIRECTOR", "ADMIN"})
     public Page<RealisationDTO> getArchivedRealisations(Pageable pageable) {
         return realisationQueryHandler.handle(new GetArchivedRealisationsQuery(pageable));
     }
 
     @GetMapping("/{id}/posts")
-    @Secured({"STUDENT", "TEACHER", "OFFICE", "DIRECTOR", "ADMIN"})
+    @Secured({"STUDENT", "TEACHER", "DIRECTOR", "ADMIN"})
     public Page<PostDTO> getActivePostsOfRealisation(@PathVariable("id") UUID id, Pageable pageable) {
         accessGuard.checkAccessToRealisation(id);
         return postQueryHandler.handle(new GetActivePostsByRealisationQuery(id, pageable));
@@ -81,14 +81,14 @@ public class RealisationQueryController {
     }
 
     @GetMapping("/{id}/activities")
-    @Secured({"STUDENT", "TEACHER", "OFFICE", "DIRECTOR", "ADMIN"})
+    @Secured({"STUDENT", "TEACHER", "DIRECTOR", "ADMIN"})
     public Page<ActivityDTO> getActiveActivitiesOfRealisation(@PathVariable("id") UUID id, Pageable pageable) {
         accessGuard.checkAccessToRealisation(id);
         return activityQueryHandler.handle(new GetActiveActivitiesByRealisationQuery(id, pageable));
     }
 
     @GetMapping("/{id}/activities/incoming")
-    @Secured({"STUDENT", "TEACHER", "OFFICE", "DIRECTOR", "ADMIN"})
+    @Secured({"STUDENT", "TEACHER", "DIRECTOR", "ADMIN"})
     public Page<ActivityDTO> getIncomingActivitiesOfRealisation(@PathVariable("id") UUID id, Pageable pageable) {
         accessGuard.checkAccessToRealisation(id);
         return activityQueryHandler.handle(new GetIncomingActivitiesByRealisationQuery(id, pageable));

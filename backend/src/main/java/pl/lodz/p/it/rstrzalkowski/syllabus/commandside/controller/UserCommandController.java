@@ -46,7 +46,7 @@ public class UserCommandController {
     }
 
     @PutMapping("/me/description")
-    @Secured({"STUDENT", "TEACHER", "OFFICE", "DIRECTOR", "ADMIN"})
+    @Secured({"STUDENT", "TEACHER", "DIRECTOR", "ADMIN"})
     public void updateOwnDescription(@Valid @RequestBody UpdateDescriptionCommand command) {
         UserInfo userInfo = (UserInfo) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         command.setUserId(userInfo.getId());

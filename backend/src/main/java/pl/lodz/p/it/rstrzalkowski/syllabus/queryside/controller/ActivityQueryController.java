@@ -30,16 +30,19 @@ import java.util.UUID;
 public class ActivityQueryController {
 
     private final ActivityQueryHandler activityQueryHandler;
+    private final AccessGuard accessGuard;
 
     @GetMapping("/{id}")
-    @Secured({"TEACHER", "OFFICE", "DIRECTOR", "ADMIN"})
+    @Secured({"TEACHER", "DIRECTOR", "ADMIN"})
     public ActivityEntity getActivityById(@PathVariable("id") UUID id) {
+        accessGuard.checkAccessToActivity(id);
         return activityQueryHandler.handle(new GetActivityByIdQuery(id));
     }
 
     @GetMapping("/{id}/grades")
-    @Secured({"TEACHER", "OFFICE", "DIRECTOR", "ADMIN"})
+    @Secured({"TEACHER", "DIRECTOR", "ADMIN"})
     public List<GradeOfActivityDTO> getGradesOfActivity(@PathVariable("id") UUID id, Pageable pageable) {
+        accessGuard.checkAccessToActivity(id);
         return activityQueryHandler.handle(new GetGradesOfActivityQuery(id, pageable));
     }
 

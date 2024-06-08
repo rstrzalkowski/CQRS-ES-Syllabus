@@ -26,7 +26,8 @@ public class GradeCommandController {
     private final CommandGateway commandGateway;
 
     @ResponseStatus(HttpStatus.CREATED)
-    @Secured({"TEACHER", "OFFICE", "DIRECTOR", "ADMIN"})
+    @Secured({"TEACHER", "DIRECTOR", "ADMIN"})
+
     @PostMapping
     public void createGrade(@Valid @RequestBody CreateGradeCommand command) {
         UserInfo userInfo = (UserInfo) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -35,7 +36,8 @@ public class GradeCommandController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @Secured({"TEACHER", "OFFICE", "DIRECTOR", "ADMIN"})
+    @Secured({"TEACHER", "DIRECTOR", "ADMIN"})
+
     @PutMapping
     public void updateGrade(@Valid @RequestBody UpdateGradeCommand command) {
         commandGateway.sendAndWait(command);

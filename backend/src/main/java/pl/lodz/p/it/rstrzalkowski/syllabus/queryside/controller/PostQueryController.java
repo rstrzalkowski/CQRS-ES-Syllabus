@@ -28,7 +28,7 @@ public class PostQueryController {
     private final AccessGuard accessGuard;
 
     @GetMapping("/{id}")
-    @Secured({"TEACHER", "OFFICE", "DIRECTOR", "ADMIN"})
+    @Secured({"TEACHER", "DIRECTOR", "ADMIN"})
     public PostDTO getPostById(@PathVariable("id") UUID id) {
         accessGuard.checkAccessToPost(id);
         return postQueryHandler.handle(new GetPostByIdQuery(id));

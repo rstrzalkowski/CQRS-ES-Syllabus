@@ -17,6 +17,7 @@ import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.RoleAssignedToUserEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.RoleUnassignedFromUserEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.UserCreatedEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.UserDescriptionUpdatedEvent;
+import pl.lodz.p.it.rstrzalkowski.syllabus.shared.exception.SyllabusCommandExecutionException;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.exception.user.RoleAlreadyAssignedCommandExecutionException;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.exception.user.RoleNotCurrentlyAssignedCommandExecutionException;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.keycloak.KeycloakService;
@@ -53,12 +54,18 @@ public class User extends AbstractAggregate {
     public User(RegisterCommand cmd, KeycloakService keycloakService, UserPersonalIdEmailService userPersonalIdEmailService) {
         userPersonalIdEmailService.lockPersonalIdAndEmail(cmd.getPersonalId(), cmd.getEmail());
 
-        String userId = keycloakService.createUser(new CreateUserDto(
-                cmd.getEmail(),
-                cmd.getFirstName(),
-                cmd.getLastName(),
-                cmd.getPassword())
-        );
+        String userId;
+        try {
+            userId = keycloakService.createUser(new CreateUserDto(
+                    cmd.getEmail(),
+                    cmd.getFirstName(),
+                    cmd.getLastName(),
+                    cmd.getPassword())
+            );
+        } catch (SyllabusCommandExecutionException scee) {
+            userPersonalIdEmailService.releasePersonalIdAndEmail(cmd.getPersonalId());
+            throw scee;
+        }
 
         userPersonalIdEmailService.updateAggregateId(cmd.getEmail(), UUID.fromString(userId));
 

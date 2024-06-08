@@ -49,7 +49,7 @@ export class LoginComponent implements OnInit {
     let roles: string[] = []
     decodedJWT.realm_access.roles.forEach((role: string) => {
       role = role.replace("SYLLABUS_", "");
-      if (["STUDENT", "TEACHER", "OFFICE", "DIRECTOR", "ADMIN"].includes(role)) {
+      if (["STUDENT", "TEACHER", "DIRECTOR", "ADMIN"].includes(role)) {
         roles.push(role)
       }
     })
