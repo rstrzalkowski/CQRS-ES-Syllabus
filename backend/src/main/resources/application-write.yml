@@ -11,8 +11,13 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: update
     defer-datasource-initialization: true
+
+  servlet:
+    multipart:
+      max-file-size: 48MB
+      max-request-size: 48MB
 
 server:
   servlet:

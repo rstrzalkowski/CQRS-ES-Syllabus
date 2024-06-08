@@ -71,10 +71,6 @@ export class UsersComponent implements OnInit {
           this.users$ = this.userService.getActiveTeachers(this.pageNumber$.value)
           break
         }
-        case "OFFICE": {
-          this.users$ = this.userService.getActiveOffices(this.pageNumber$.value)
-          break
-        }
         case "DIRECTOR": {
           this.users$ = this.userService.getActiveDirectors(this.pageNumber$.value)
           break
@@ -100,10 +96,6 @@ export class UsersComponent implements OnInit {
         }
         case "TEACHER": {
           this.users$ = this.userService.getArchivedTeachers(this.pageNumber$.value)
-          break
-        }
-        case "OFFICE": {
-          this.users$ = this.userService.getArchivedOffices(this.pageNumber$.value)
           break
         }
         case "DIRECTOR": {
@@ -137,11 +129,6 @@ export class UsersComponent implements OnInit {
 
   showTeachers() {
     this.userType = "TEACHER"
-    this.getFilteredUsers()
-  }
-
-  showOffices() {
-    this.userType = "OFFICE"
     this.getFilteredUsers()
   }
 

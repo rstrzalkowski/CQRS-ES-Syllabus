@@ -9,6 +9,7 @@ import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.repository.UserRepository;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.RoleAssignedToUserEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.RoleUnassignedFromUserEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.UserCreatedEvent;
+import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.UserDescriptionUpdatedEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.util.ReadApplicationBean;
 
 @Service
@@ -20,13 +21,13 @@ public class UserProjector {
     @EventHandler
     public void on(UserCreatedEvent event) {
         UserEntity user = new UserEntity(
-            event.getId(),
-            event.getEmail(),
-            event.getFirstName(),
-            event.getLastName(),
-            event.getPersonalId(),
-            event.getDescription(),
-            event.getImageUrl());
+                event.getId(),
+                event.getEmail(),
+                event.getFirstName(),
+                event.getLastName(),
+                event.getPersonalId(),
+                event.getDescription(),
+                event.getImageUrl());
         user.setCreatedAt(event.getCreatedAt());
 
         userRepository.save(user);
@@ -46,6 +47,15 @@ public class UserProjector {
         UserEntity user = userRepository.findById(event.getUserId()).orElseThrow(UserNotFoundException::new);
 
         user.getRoles().remove(event.getRole());
+
+        userRepository.save(user);
+    }
+
+    @EventHandler
+    public void on(UserDescriptionUpdatedEvent event) {
+        UserEntity user = userRepository.findById(event.getUserId()).orElseThrow(UserNotFoundException::new);
+
+        user.setDescription(event.getDescription());
 
         userRepository.save(user);
     }

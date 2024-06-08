@@ -3,14 +3,17 @@ package pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.subject;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.web.multipart.MultipartFile;
+import org.axonframework.modelling.command.TargetAggregateIdentifier;
+
+import java.util.UUID;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 public class UpdateSubjectImageCommand {
 
-    private Long id;
+    @TargetAggregateIdentifier
+    private UUID id;
 
-    private MultipartFile image;
+    private String imageUrl;
 }

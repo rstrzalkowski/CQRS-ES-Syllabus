@@ -4,7 +4,8 @@ spring:
 
 keycloak:
   url: http://localhost:18080
-  master:
-    admin:
-      username: admin
-      password: admin
+  external:
+    service-client:
+      secret: svsrMqyCCb0TZT9ccQS8q8w0ne2YfoJA
+    jwks:
+      uri: http://localhost:18080/realms/external/protocol/openid-connect/certs

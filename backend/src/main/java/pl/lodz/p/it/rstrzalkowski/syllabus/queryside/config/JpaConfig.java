@@ -7,10 +7,9 @@ import pl.lodz.p.it.rstrzalkowski.syllabus.shared.util.ReadApplicationBean;
 @Configuration
 @ReadApplicationBean
 @EntityScan(basePackages = {
-    "pl.lodz.p.it.rstrzalkowski.syllabus.queryside",
-    "org.axonframework.eventhandling.tokenstore",
-    "org.axonframework.modelling.saga.repository.jpa",
-    "org.axonframework.eventsourcing.eventstore.jpa"
+        "pl.lodz.p.it.rstrzalkowski.syllabus.queryside",
+        "org.axonframework.eventhandling.tokenstore",
+        "org.axonframework.modelling.saga.repository.jpa"
 })
 public class JpaConfig {
 }

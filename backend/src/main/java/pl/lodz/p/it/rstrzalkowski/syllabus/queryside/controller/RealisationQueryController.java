@@ -15,7 +15,6 @@ import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.dto.GradeDTO;
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.dto.PostDTO;
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.dto.RealisationDTO;
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.dto.SubjectDTO;
-import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.entity.RealisationEntity;
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.handler.ActivityQueryHandler;
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.handler.GradeQueryHandler;
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.handler.PostQueryHandler;
@@ -28,7 +27,6 @@ import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.query.realisation.GetActive
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.query.realisation.GetArchivedRealisationsQuery;
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.query.realisation.GetOwnRealisationsQuery;
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.query.realisation.GetRealisationAverageGradeQuery;
-import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.query.realisation.GetRealisationByIdQuery;
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.query.realisation.GetRealisationInfoByIdQuery;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.keycloak.dto.UserInfo;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.util.ReadApplicationBean;
@@ -48,33 +46,27 @@ public class RealisationQueryController {
     private final GradeQueryHandler gradeQueryHandler;
     private final AccessGuard accessGuard;
 
-    @GetMapping("/{id}/secured")
-    @Secured({"OFFICE", "DIRECTOR", "ADMIN"})
-    public RealisationEntity getRealisationById(@PathVariable("id") UUID id) {
-        return realisationQueryHandler.handle(new GetRealisationByIdQuery(id));
-    }
-
     @GetMapping("/{id}")
-    @Secured({"STUDENT", "TEACHER", "OFFICE", "DIRECTOR", "ADMIN"})
+    @Secured({"STUDENT", "TEACHER", "DIRECTOR", "ADMIN"})
     public RealisationDTO getRealisationInfoById(@PathVariable("id") UUID id) {
         accessGuard.checkAccessToRealisation(id);
         return realisationQueryHandler.handle(new GetRealisationInfoByIdQuery(id));
     }
 
     @GetMapping
-    @Secured({"OFFICE", "DIRECTOR", "ADMIN"})
+    @Secured({"DIRECTOR", "ADMIN"})
     public Page<RealisationDTO> getActiveRealisations(Pageable pageable) {
         return realisationQueryHandler.handle(new GetActiveRealisationsQuery(pageable));
     }
 
     @GetMapping("/archived")
-    @Secured({"OFFICE", "DIRECTOR", "ADMIN"})
+    @Secured({"DIRECTOR", "ADMIN"})
     public Page<RealisationDTO> getArchivedRealisations(Pageable pageable) {
         return realisationQueryHandler.handle(new GetArchivedRealisationsQuery(pageable));
     }
 
     @GetMapping("/{id}/posts")
-    @Secured({"STUDENT", "TEACHER", "OFFICE", "DIRECTOR", "ADMIN"})
+    @Secured({"STUDENT", "TEACHER", "DIRECTOR", "ADMIN"})
     public Page<PostDTO> getActivePostsOfRealisation(@PathVariable("id") UUID id, Pageable pageable) {
         accessGuard.checkAccessToRealisation(id);
         return postQueryHandler.handle(new GetActivePostsByRealisationQuery(id, pageable));
@@ -89,14 +81,14 @@ public class RealisationQueryController {
     }
 
     @GetMapping("/{id}/activities")
-    @Secured({"STUDENT", "TEACHER", "OFFICE", "DIRECTOR", "ADMIN"})
+    @Secured({"STUDENT", "TEACHER", "DIRECTOR", "ADMIN"})
     public Page<ActivityDTO> getActiveActivitiesOfRealisation(@PathVariable("id") UUID id, Pageable pageable) {
         accessGuard.checkAccessToRealisation(id);
         return activityQueryHandler.handle(new GetActiveActivitiesByRealisationQuery(id, pageable));
     }
 
     @GetMapping("/{id}/activities/incoming")
-    @Secured({"STUDENT", "TEACHER", "OFFICE", "DIRECTOR", "ADMIN"})
+    @Secured({"STUDENT", "TEACHER", "DIRECTOR", "ADMIN"})
     public Page<ActivityDTO> getIncomingActivitiesOfRealisation(@PathVariable("id") UUID id, Pageable pageable) {
         accessGuard.checkAccessToRealisation(id);
         return activityQueryHandler.handle(new GetIncomingActivitiesByRealisationQuery(id, pageable));

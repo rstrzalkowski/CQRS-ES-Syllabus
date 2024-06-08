@@ -17,8 +17,6 @@
               <div class="flex justify-around font-bold">
                 <span *ngIf="roles.includes('STUDENT')" (click)="loginAs('STUDENT')" class="p-1 m-1 cursor-pointer">STUDENT</span>
                 <span *ngIf="roles.includes('TEACHER')" (click)="loginAs('TEACHER')" class="p-1 m-1 cursor-pointer">TEACHER</span>
-                <span *ngIf="roles.includes('OFFICE')" (click)="loginAs('OFFICE')"
-                      class="p-1 m-1 cursor-pointer">OFFICE</span>
                 <span *ngIf="roles.includes('DIRECTOR')" (click)="loginAs('DIRECTOR')" class="p-1 m-1 cursor-pointer">DIRECTOR</span>
                 <span *ngIf="roles.includes('ADMIN')" (click)="loginAs('ADMIN')"
                       class="p-1 m-1 cursor-pointer">ADMIN</span>

@@ -16,7 +16,7 @@ export class ManagementGuard implements CanActivate {
   canActivate(
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-    return this.authService.getRole() === 'OFFICE' || this.authService.getRole() === 'DIRECTOR' || this.authService.getRole() === 'ADMIN';
+    return this.authService.getRole() === 'DIRECTOR' || this.authService.getRole() === 'ADMIN';
   }
 
 }

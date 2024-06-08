@@ -23,20 +23,18 @@ public interface KeycloakHttpClient {
 
     @PostExchange(value = "/realms/external/protocol/openid-connect/token", contentType = "application/x-www-form-urlencoded")
     JwtResponse login(
-        @RequestParam("username") String username,
-        @RequestParam("password") String password,
-        @RequestParam(value = "grant_type", defaultValue = "password") String grantType,
-        @RequestParam(value = "client_id", defaultValue = "external-client") String clientId,
-        @RequestParam(value = "scope", defaultValue = "openid") String scope
+            @RequestParam("username") String username,
+            @RequestParam("password") String password,
+            @RequestParam(value = "grant_type", defaultValue = "password") String grantType,
+            @RequestParam(value = "client_id", defaultValue = "external-client") String clientId,
+            @RequestParam(value = "scope", defaultValue = "openid") String scope
     );
 
-    @PostExchange(value = "/realms/master/protocol/openid-connect/token", contentType = "application/x-www-form-urlencoded")
-    JwtResponse loginAsAdmin(
-        @RequestParam("username") String username,
-        @RequestParam("password") String password,
-        @RequestParam(value = "grant_type", defaultValue = "password") String grantType,
-        @RequestParam(value = "client_id", defaultValue = "master-client") String clientId,
-        @RequestParam(value = "scope", defaultValue = "openid") String scope
+    @PostExchange(value = "/realms/external/protocol/openid-connect/token", contentType = "application/x-www-form-urlencoded")
+    JwtResponse loginAsServiceClient(
+            @RequestParam(value = "grant_type", defaultValue = "client_credentials") String grantType,
+            @RequestParam(value = "client_id", defaultValue = "service-client") String clientId,
+            @RequestParam(value = "client_secret") String secret
     );
 
     @GetExchange("/realms/external/protocol/openid-connect/userinfo")
@@ -44,45 +42,39 @@ public interface KeycloakHttpClient {
 
     @PostExchange("/admin/realms/external/users")
     ResponseEntity<Void> createUser(
-        @RequestBody CreateUserDto dto,
-        @RequestHeader(value = "Authorization", defaultValue = "") String authorization
+            @RequestBody CreateUserDto dto,
+            @RequestHeader(value = "Authorization", defaultValue = "") String authorization
     );
 
     @PutExchange("/admin/realms/external/users/{userId}/reset-password")
     void setPassword(
-        @RequestBody SetPasswordDto dto,
-        @PathVariable String userId,
-        @RequestHeader(value = "Authorization", defaultValue = "") String authorization
+            @RequestBody SetPasswordDto dto,
+            @PathVariable String userId,
+            @RequestHeader(value = "Authorization", defaultValue = "") String authorization
     );
 
     @PostExchange("/admin/realms/external/users/{userId}/role-mappings/realm")
     void assignRole(
-        @RequestBody List<KeycloakRoleDto> dto,
-        @PathVariable UUID userId,
-        @RequestHeader(value = "Authorization", defaultValue = "") String authorization
+            @RequestBody List<KeycloakRoleDto> dto,
+            @PathVariable UUID userId,
+            @RequestHeader(value = "Authorization", defaultValue = "") String authorization
     );
 
     @DeleteExchange("/admin/realms/external/users/{userId}/role-mappings/realm")
     void unassignRole(
-        @RequestBody List<KeycloakRoleDto> dto,
-        @PathVariable UUID userId,
-        @RequestHeader(value = "Authorization", defaultValue = "") String authorization
+            @RequestBody List<KeycloakRoleDto> dto,
+            @PathVariable UUID userId,
+            @RequestHeader(value = "Authorization", defaultValue = "") String authorization
     );
 
     @GetExchange("/admin/realms/external/roles")
     List<KeycloakRoleDto> getAllRoles(
-        @RequestHeader(value = "Authorization", defaultValue = "") String authorization
+            @RequestHeader(value = "Authorization", defaultValue = "") String authorization
     );
 
     @GetExchange("/admin/realms/external/users/{userId}/role-mappings")
     UserRolesDto getUserRoles(
-        @PathVariable UUID userId,
-        @RequestHeader(value = "Authorization", defaultValue = "") String authorization
-    );
-
-    @DeleteExchange("/admin/realms/external/users/{userId}")
-    void deleteUser(
-        @PathVariable String userId,
-        @RequestHeader(value = "Authorization", defaultValue = "") String authorization
+            @PathVariable UUID userId,
+            @RequestHeader(value = "Authorization", defaultValue = "") String authorization
     );
 }

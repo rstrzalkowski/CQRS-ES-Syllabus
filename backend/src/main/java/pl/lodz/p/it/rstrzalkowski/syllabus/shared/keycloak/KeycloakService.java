@@ -24,36 +24,33 @@ public class KeycloakService {
 
     private final KeycloakHttpClient keycloakHttpClient;
 
-    @Value("${keycloak.master.admin.username}")
-    private String adminUsername;
+    @Value("${keycloak.external.service-client.secret}")
+    private String secret;
 
-    @Value("${keycloak.master.admin.password}")
-    private String adminPassword;
 
-    public JwtResponse login(String email, String password, String realm) {
+    public JwtResponse login(String email, String password) {
         try {
-            if (realm.equals("master")) {
-                return keycloakHttpClient.loginAsAdmin(
+            return keycloakHttpClient.login(
                     email,
                     password,
                     null,
                     null,
                     null);
-            }
+        } catch (WebClientResponseException wcre) {
+            throw new SyllabusCommandExecutionException(wcre.getStatusCode());
+        }
+    }
 
-            return keycloakHttpClient.login(
-                email,
-                password,
-                null,
-                null,
-                null);
+    public JwtResponse loginAsServiceClient() {
+        try {
+            return keycloakHttpClient.loginAsServiceClient(null, null, secret);
         } catch (WebClientResponseException wcre) {
             throw new SyllabusCommandExecutionException(wcre.getStatusCode());
         }
     }
 
     public String createUser(CreateUserDto dto) {
-        String authorization = getKeycloakAdminAuthorization();
+        String authorization = getKeycloakServiceClientAuthorization();
 
         try {
             HttpEntity<Void> response = keycloakHttpClient.createUser(dto, authorization);
@@ -75,15 +72,15 @@ public class KeycloakService {
     }
 
     public void assignRole(UUID userId, String role) {
-        String authorization = getKeycloakAdminAuthorization();
+        String authorization = getKeycloakServiceClientAuthorization();
 
         try {
             List<KeycloakRoleDto> availableRoles = keycloakHttpClient.getAllRoles(authorization);
 
             KeycloakRoleDto roleToBeAssigned = availableRoles.stream()
-                .filter(keycloakRole -> Objects.equals(keycloakRole.getName().toUpperCase(), role.toUpperCase()))
-                .findFirst()
-                .orElseThrow(ResponseBadRequestException::new);
+                    .filter(keycloakRole -> Objects.equals(keycloakRole.getName().toUpperCase(), role.toUpperCase()))
+                    .findFirst()
+                    .orElseThrow(ResponseBadRequestException::new);
 
             keycloakHttpClient.assignRole(List.of(roleToBeAssigned), userId, authorization);
         } catch (WebClientResponseException wcre) {
@@ -92,15 +89,15 @@ public class KeycloakService {
     }
 
     public void unassignRole(UUID userId, String role) {
-        String authorization = getKeycloakAdminAuthorization();
+        String authorization = getKeycloakServiceClientAuthorization();
 
         try {
             List<KeycloakRoleDto> userRoles = keycloakHttpClient.getUserRoles(userId, authorization).getRoles();
 
             KeycloakRoleDto roleToBeUnassigned = userRoles.stream()
-                .filter(keycloakRole -> Objects.equals(keycloakRole.getName().toUpperCase(), role.toUpperCase()))
-                .findFirst()
-                .orElseThrow(ResponseBadRequestException::new);
+                    .filter(keycloakRole -> Objects.equals(keycloakRole.getName().toUpperCase(), role.toUpperCase()))
+                    .findFirst()
+                    .orElseThrow(ResponseBadRequestException::new);
 
             keycloakHttpClient.unassignRole(List.of(roleToBeUnassigned), userId, authorization);
         } catch (WebClientResponseException wcre) {
@@ -108,16 +105,8 @@ public class KeycloakService {
         }
     }
 
-    public String getKeycloakAdminAuthorization() {
-        JwtResponse jwtResponse = login(
-            adminUsername,
-            adminPassword,
-            "master"
-        );
+    public String getKeycloakServiceClientAuthorization() {
+        JwtResponse jwtResponse = loginAsServiceClient();
         return "Bearer " + jwtResponse.getToken();
-    }
-
-    public void changePassword(String oldPassword, String newPassword) {
-
     }
 }

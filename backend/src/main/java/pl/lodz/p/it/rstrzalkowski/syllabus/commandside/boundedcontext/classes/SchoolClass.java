@@ -19,7 +19,7 @@ import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.SchoolClassCreatedEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.SchoolClassUpdatedEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.StudentAssignedToClassEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.StudentUnassignedFromClassEvent;
-import pl.lodz.p.it.rstrzalkowski.syllabus.shared.exception.ResponseBadRequestException;
+import pl.lodz.p.it.rstrzalkowski.syllabus.shared.exception.ArchivedObjectException;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.exception.user.StudentAlreadyAssignedException;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.exception.user.StudentNotAssignedCommandExecutionException;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.util.WriteApplicationBean;
@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.UUID;
 
 @EqualsAndHashCode(callSuper = true)
-@Aggregate
+@Aggregate(snapshotTriggerDefinition = "syllabusSnapshotTriggerDefinition")
 @NoArgsConstructor
 @AllArgsConstructor
 @WriteApplicationBean
@@ -46,18 +46,18 @@ public class SchoolClass extends AbstractAggregate {
     @CommandHandler
     public SchoolClass(CreateSchoolClassCommand cmd) {
         AggregateLifecycle.apply(new SchoolClassCreatedEvent(
-            UUID.randomUUID(),
-            cmd.getLevel(),
-            cmd.getTeacherId(),
-            cmd.getShortName(),
-            cmd.getFullName(),
-            Timestamp.from(Instant.now())));
+                UUID.randomUUID(),
+                cmd.getLevel(),
+                cmd.getTeacherId(),
+                cmd.getShortName(),
+                cmd.getFullName(),
+                Timestamp.from(Instant.now())));
     }
 
     @CommandHandler
     public void handle(AssignStudentCommand cmd) {
         if (isArchived()) {
-            throw new ResponseBadRequestException();
+            throw new ArchivedObjectException();
         }
 
         Student student = new Student(cmd.getStudentId());
@@ -67,15 +67,15 @@ public class SchoolClass extends AbstractAggregate {
         }
 
         AggregateLifecycle.apply(new StudentAssignedToClassEvent(
-            cmd.getStudentId(),
-            cmd.getSchoolClassId()
+                cmd.getStudentId(),
+                cmd.getSchoolClassId()
         ));
     }
 
     @CommandHandler
     public void handle(UnassignStudentCommand cmd) {
         if (isArchived()) {
-            throw new ResponseBadRequestException();
+            throw new ArchivedObjectException();
         }
 
         Student student = new Student(cmd.getStudentId());
@@ -85,33 +85,33 @@ public class SchoolClass extends AbstractAggregate {
         }
 
         AggregateLifecycle.apply(new StudentUnassignedFromClassEvent(
-            cmd.getStudentId(),
-            cmd.getSchoolClassId()
+                cmd.getStudentId(),
+                cmd.getSchoolClassId()
         ));
     }
 
     @CommandHandler
     public void handle(UpdateSchoolClassCommand cmd) {
         if (isArchived()) {
-            throw new ResponseBadRequestException();
+            throw new ArchivedObjectException();
         }
 
         AggregateLifecycle.apply(new SchoolClassUpdatedEvent(
-            getId(),
-            cmd.getTeacherId() != null ? cmd.getTeacherId() : this.teacherId,
-            cmd.getLevel() != null ? cmd.getLevel() : this.level,
-            cmd.getName() != null ? cmd.getName() : this.name,
-            cmd.getFullName() != null ? cmd.getFullName() : this.fullName));
+                getId(),
+                cmd.getTeacherId() != null ? cmd.getTeacherId() : this.teacherId,
+                cmd.getLevel() != null ? cmd.getLevel() : this.level,
+                cmd.getName() != null ? cmd.getName() : this.name,
+                cmd.getFullName() != null ? cmd.getFullName() : this.fullName));
     }
 
     @CommandHandler
     public void handle(ArchiveSchoolClassCommand cmd) {
         if (isArchived()) {
-            throw new ResponseBadRequestException();
+            throw new ArchivedObjectException();
         }
 
         AggregateLifecycle.apply(new SchoolClassArchivedEvent(
-            cmd.getId())
+                cmd.getId())
         );
     }
 

@@ -3,7 +3,7 @@ import {HttpClient} from "@angular/common/http";
 import {environment} from "../../environments/environment";
 import {User, UserPage} from "../model/user";
 import {AuthService} from "./auth.service";
-import {TokenPage} from "../model/token";
+import {Router} from "@angular/router";
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +12,7 @@ export class UserService {
 
   public user: User | undefined
 
-  constructor(private http: HttpClient, private authService: AuthService) {
+  constructor(private http: HttpClient, private authService: AuthService, private router: Router) {
     if (this.authService.authenticated.value) {
       this.getLoggedInUser()
     } else {
@@ -54,10 +54,6 @@ export class UserService {
     return this.http.get<UserPage>(`${environment.apiUrl}/users/teachers?size=10&page=${page}&sort=lastName,firstName`)
   }
 
-  getActiveOffices(page: number | undefined) {
-    return this.http.get<UserPage>(`${environment.apiUrl}/users/offices?size=10&page=${page}&sort=lastName,firstName`)
-  }
-
   getActiveDirectors(page: number | undefined) {
     return this.http.get<UserPage>(`${environment.apiUrl}/users/directors?size=10&page=${page}&sort=lastName,firstName`)
   }
@@ -74,10 +70,6 @@ export class UserService {
     return this.http.get<UserPage>(`${environment.apiUrl}/users/teachers/archived?size=10&page=${page}&sort=lastName,firstName`)
   }
 
-  getArchivedOffices(page: number | undefined) {
-    return this.http.get<UserPage>(`${environment.apiUrl}/users/offices/archived?size=10&page=${page}&sort=lastName,firstName`)
-  }
-
   getArchivedDirectors(page: number | undefined) {
     return this.http.get<UserPage>(`${environment.apiUrl}/users/directors/archived?size=10&page=${page}&sort=lastName,firstName`)
   }
@@ -90,30 +82,20 @@ export class UserService {
     return this.http.get<User[]>(`${environment.apiUrl}/users/teachers/free?sort=lastName,firstName`)
   }
 
-  getStudentTokens(page: number | undefined) {
-    return this.http.get<TokenPage>(`${environment.apiUrl}/users/tokens/students?size=10&page=${page}&sort=createdAt,desc`)
-  }
-
-  getTeacherTokens(page: number | undefined) {
-    return this.http.get<TokenPage>(`${environment.apiUrl}/users/tokens/teachers?size=10&page=${page}&sort=createdAt,desc`)
-  }
-
-  getOfficeTokens(page: number | undefined) {
-    return this.http.get<TokenPage>(`${environment.apiUrl}/users/tokens/offices?size=10&page=${page}&sort=createdAt,desc`)
-  }
-
-  getDirectorTokens(page: number | undefined) {
-    return this.http.get<TokenPage>(`${environment.apiUrl}/users/tokens/directors?size=10&page=${page}&sort=createdAt,desc`)
-  }
-
   getLoggedInUserObservable() {
+    if (localStorage.getItem('role') === "ADMIN") {
+      this.router.navigate(['/dashboard'])
+      return;
+    }
     return this.http.get<User>(`${environment.apiUrl}/users/me`)
   }
 
   getLoggedInUser() {
-    this.http.get<User>(`${environment.apiUrl}/users/me`).subscribe((result) => {
-      this.user = result;
-    })
+    if (localStorage.getItem('role') !== "ADMIN") {
+      this.http.get<User>(`${environment.apiUrl}/users/me`).subscribe((result) => {
+        this.user = result;
+      })
+    }
   }
 
   getUser(userId: string | undefined) {
@@ -126,13 +108,6 @@ export class UserService {
 
   updateAbout(newAbout: string) {
     return this.http.put(`${environment.apiUrl}/users/me/description`, {description: newAbout}, {observe: "response"})
-  }
-
-  changePassword(oldPassword: string, newPassword: string) {
-    return this.http.put(`${environment.apiUrl}/users/me/password`, {
-      oldPassword: oldPassword,
-      newPassword: newPassword
-    }, {observe: "response"})
   }
 
   getUnassignedStudents() {
@@ -164,10 +139,16 @@ export class UserService {
   }
 
   assignRole(id: string, role: string) {
-    return this.http.post(`${environment.apiUrl}/users/assign-role`, {userId: id, role: role}, {observe: "response"})
+    return this.http.post(`${environment.apiUrl}/users/assign-role`, {
+      userId: id,
+      role: `SYLLABUS_${role}`
+    }, {observe: "response"})
   }
 
   unassignRole(id: string, role: string) {
-    return this.http.post(`${environment.apiUrl}/users/unassign-role`, {userId: id, role: role}, {observe: "response"})
+    return this.http.post(`${environment.apiUrl}/users/unassign-role`, {
+      userId: id,
+      role: `SYLLABUS_${role}`
+    }, {observe: "response"})
   }
 }

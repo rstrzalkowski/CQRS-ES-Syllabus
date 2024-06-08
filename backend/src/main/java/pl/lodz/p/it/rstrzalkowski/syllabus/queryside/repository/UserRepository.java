@@ -18,4 +18,6 @@ public interface UserRepository extends JpaRepository<UserEntity, UUID> {
                                                                           Pageable pageable);
 
     Page<UserEntity> findAllByRolesContainingAndArchived(String role, boolean archived, Pageable pageable);
+
+    Page<UserEntity> findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCase(String firstNamePart, String lastNamePart, Pageable pageable);
 }

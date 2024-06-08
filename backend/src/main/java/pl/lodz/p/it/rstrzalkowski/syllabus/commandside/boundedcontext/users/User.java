@@ -11,9 +11,13 @@ import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.boundedcontext.AbstractAg
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.user.AssignRoleCommand;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.user.RegisterCommand;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.user.UnassignRoleCommand;
+import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.user.UpdateDescriptionCommand;
+import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.persistence.user.UserPersonalIdEmailService;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.RoleAssignedToUserEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.RoleUnassignedFromUserEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.UserCreatedEvent;
+import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.UserDescriptionUpdatedEvent;
+import pl.lodz.p.it.rstrzalkowski.syllabus.shared.exception.SyllabusCommandExecutionException;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.exception.user.RoleAlreadyAssignedCommandExecutionException;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.exception.user.RoleNotCurrentlyAssignedCommandExecutionException;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.keycloak.KeycloakService;
@@ -27,7 +31,7 @@ import java.util.List;
 import java.util.UUID;
 
 @EqualsAndHashCode(callSuper = true)
-@Aggregate
+@Aggregate(snapshotTriggerDefinition = "syllabusSnapshotTriggerDefinition")
 @NoArgsConstructor
 @AllArgsConstructor
 @WriteApplicationBean
@@ -41,27 +45,39 @@ public class User extends AbstractAggregate {
 
     private String personalId;
 
+    private String description;
+
     private List<String> roles = new ArrayList<>();
 
 
     @CommandHandler
-    public User(RegisterCommand cmd, KeycloakService keycloakService) {
-        String uuid =
-            keycloakService.createUser(new CreateUserDto(
+    public User(RegisterCommand cmd, KeycloakService keycloakService, UserPersonalIdEmailService userPersonalIdEmailService) {
+        userPersonalIdEmailService.lockPersonalIdAndEmail(cmd.getPersonalId(), cmd.getEmail());
+
+        String userId;
+        try {
+            userId = keycloakService.createUser(new CreateUserDto(
+                    cmd.getEmail(),
+                    cmd.getFirstName(),
+                    cmd.getLastName(),
+                    cmd.getPassword())
+            );
+        } catch (SyllabusCommandExecutionException scee) {
+            userPersonalIdEmailService.releasePersonalIdAndEmail(cmd.getPersonalId());
+            throw scee;
+        }
+
+        userPersonalIdEmailService.updateAggregateId(cmd.getEmail(), UUID.fromString(userId));
+
+        AggregateLifecycle.apply(new UserCreatedEvent(
+                UUID.fromString(userId),
                 cmd.getEmail(),
                 cmd.getFirstName(),
                 cmd.getLastName(),
-                cmd.getPassword()));
-
-        AggregateLifecycle.apply(new UserCreatedEvent(
-            UUID.fromString(uuid),
-            cmd.getEmail(),
-            cmd.getFirstName(),
-            cmd.getLastName(),
-            cmd.getPersonalId(),
-            "https://cdn-icons-png.flaticon.com/512/149/149071.png",
-            "",
-            Timestamp.from(Instant.now()))
+                cmd.getPersonalId(),
+                "https://cdn-icons-png.flaticon.com/512/149/149071.png",
+                "",
+                Timestamp.from(Instant.now()))
         );
     }
 
@@ -74,8 +90,8 @@ public class User extends AbstractAggregate {
         keycloakService.assignRole(getId(), cmd.getRole());
 
         AggregateLifecycle.apply(new RoleAssignedToUserEvent(
-            getId(),
-            cmd.getRole())
+                getId(),
+                cmd.getRole())
         );
     }
 
@@ -88,8 +104,16 @@ public class User extends AbstractAggregate {
         keycloakService.unassignRole(getId(), cmd.getRole());
 
         AggregateLifecycle.apply(new RoleUnassignedFromUserEvent(
-            getId(),
-            cmd.getRole())
+                getId(),
+                cmd.getRole())
+        );
+    }
+
+    @CommandHandler
+    public void on(UpdateDescriptionCommand cmd) {
+        AggregateLifecycle.apply(new UserDescriptionUpdatedEvent(
+                getId(),
+                cmd.getDescription())
         );
     }
 
@@ -110,5 +134,10 @@ public class User extends AbstractAggregate {
     @EventSourcingHandler
     public void on(RoleUnassignedFromUserEvent event) {
         this.roles.remove(event.getRole());
+    }
+
+    @EventSourcingHandler
+    public void on(UserDescriptionUpdatedEvent event) {
+        this.description = event.getDescription();
     }
 }

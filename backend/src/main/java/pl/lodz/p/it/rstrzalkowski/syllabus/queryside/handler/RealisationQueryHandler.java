@@ -16,12 +16,10 @@ import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.query.realisation.GetActive
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.query.realisation.GetArchivedRealisationsQuery;
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.query.realisation.GetOwnRealisationsQuery;
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.query.realisation.GetRealisationAverageGradeQuery;
-import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.query.realisation.GetRealisationByIdQuery;
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.query.realisation.GetRealisationInfoByIdQuery;
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.repository.GradeRepository;
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.repository.RealisationRepository;
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.repository.UserRepository;
-import pl.lodz.p.it.rstrzalkowski.syllabus.shared.NotImplementedException;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.util.ReadApplicationBean;
 
 import java.util.ArrayList;
@@ -48,23 +46,11 @@ public class RealisationQueryHandler {
     }
 
     @QueryHandler
-    public RealisationEntity handle(GetRealisationByIdQuery id) {
-        throw new NotImplementedException();
-//        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-//        Realisation realisation = realisationRepository.findById(id)
-//            .orElseThrow(RealisationNotFoundException::new);
-//        if (!Objects.equals(user.getSchoolClass().getId(), realisation.getSchoolClass().getId())) {
-//            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
-//        }
-//        return realisation;
-    }
-
-    @QueryHandler
     public AverageGradeDTO handle(GetRealisationAverageGradeQuery query) {
         List<GradeEntity> grades =
-            gradeRepository.findAllByArchivedAndActivityArchivedAndActivityRealisationIdAndStudentId(false, false,
-                query.id(),
-                query.studentId());
+                gradeRepository.findAllByArchivedAndActivityArchivedAndActivityRealisationIdAndStudentId(false, false,
+                        query.id(),
+                        query.studentId());
 
         double sum = 0;
         double weights = 0;
@@ -88,14 +74,14 @@ public class RealisationQueryHandler {
         }
         realisations = realisationRepository.findAllByArchivedAndSchoolClassId(false, schoolClassEntity.getId());
         return realisations.stream()
-            .map(SubjectDTO::new)
-            .collect(Collectors.toList());
+                .map(SubjectDTO::new)
+                .collect(Collectors.toList());
     }
 
     @QueryHandler
     public RealisationDTO handle(GetRealisationInfoByIdQuery query) {
         RealisationEntity realisation = realisationRepository.findById(query.id())
-            .orElseThrow(RealisationNotFoundException::new);
+                .orElseThrow(RealisationNotFoundException::new);
 
         return new RealisationDTO(realisation);
     }

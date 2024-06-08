@@ -48,7 +48,8 @@ export class LoginComponent implements OnInit {
     const decodedJWT = this.authService.decodeJWT(this.authService.getJwtFromStorage()!)
     let roles: string[] = []
     decodedJWT.realm_access.roles.forEach((role: string) => {
-      if (["STUDENT", "TEACHER", "OFFICE", "DIRECTOR", "ADMIN"].includes(role)) {
+      role = role.replace("SYLLABUS_", "");
+      if (["STUDENT", "TEACHER", "DIRECTOR", "ADMIN"].includes(role)) {
         roles.push(role)
       }
     })
@@ -58,8 +59,10 @@ export class LoginComponent implements OnInit {
   roleHasBeenChosen(role: string) {
     localStorage.setItem("role", role)
     this.chooseRoleModalOpened = false;
-    this.userService.getLoggedInUserObservable().subscribe((result) => {
-      this.userService.user = result
+    this.userService.getLoggedInUserObservable()?.subscribe((result) => {
+      if (result) {
+        this.userService.user = result
+      }
       this.router.navigate(['/dashboard'])
     })
   }
@@ -67,11 +70,5 @@ export class LoginComponent implements OnInit {
   closeRoleModal() {
     this.loading = false
     this.chooseRoleModalOpened = false;
-  }
-
-  loginAs(email: string) {
-    this.email = email
-    this.password = "P@ssw0rd"
-    this.login()
   }
 }

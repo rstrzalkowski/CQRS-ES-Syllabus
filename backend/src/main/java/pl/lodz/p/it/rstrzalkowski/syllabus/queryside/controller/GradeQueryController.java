@@ -28,7 +28,7 @@ public class GradeQueryController {
     private final AccessGuard accessGuard;
 
     @GetMapping("/{id}")
-    @Secured({"TEACHER", "OFFICE", "DIRECTOR", "ADMIN"})
+    @Secured({"TEACHER", "DIRECTOR", "ADMIN"})
     public GradeDTO getGradeById(@PathVariable("id") UUID id) {
         accessGuard.checkAccessToGrade(id);
         return gradeQueryHandler.handle(new GetGradeByIdQuery(id));

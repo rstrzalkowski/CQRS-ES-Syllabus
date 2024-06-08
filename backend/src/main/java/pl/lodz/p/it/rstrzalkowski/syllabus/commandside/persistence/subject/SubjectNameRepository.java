@@ -11,4 +11,6 @@ import java.util.UUID;
 @WriteApplicationBean
 public interface SubjectNameRepository extends JpaRepository<SubjectNameEntity, UUID> {
     Optional<SubjectNameEntity> findBySubjectName(String name);
+
+    Optional<SubjectNameEntity> findByAggregateId(UUID aggregateId);
 }
