@@ -19,6 +19,8 @@ import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.post.UpdatePostCo
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.keycloak.dto.UserInfo;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.util.WriteApplicationBean;
 
+import java.util.UUID;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/posts")
@@ -31,10 +33,12 @@ public class PostCommandController {
     @Secured({"TEACHER", "DIRECTOR", "ADMIN"})
 
     @PostMapping
-    public void createPost(@Valid @RequestBody CreatePostCommand command) {
+    public UUID createPost(@Valid @RequestBody CreatePostCommand command) {
         UserInfo userInfo = (UserInfo) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         command.setTeacherId(userInfo.getId());
+        command.setPostId(UUID.randomUUID());
         commandGateway.sendAndWait(command);
+        return command.getPostId();
     }
 
     @ResponseStatus(HttpStatus.OK)

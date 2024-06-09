@@ -17,6 +17,8 @@ import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.grade.UpdateGrade
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.keycloak.dto.UserInfo;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.util.WriteApplicationBean;
 
+import java.util.UUID;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/grades")
@@ -27,12 +29,13 @@ public class GradeCommandController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @Secured({"TEACHER", "DIRECTOR", "ADMIN"})
-
     @PostMapping
-    public void createGrade(@Valid @RequestBody CreateGradeCommand command) {
+    public UUID createGrade(@Valid @RequestBody CreateGradeCommand command) {
         UserInfo userInfo = (UserInfo) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         command.setTeacherId(userInfo.getId());
+        command.setGradeId(UUID.randomUUID());
         commandGateway.sendAndWait(command);
+        return command.getGradeId();
     }
 
     @ResponseStatus(HttpStatus.OK)

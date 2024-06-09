@@ -9,10 +9,12 @@ import org.axonframework.modelling.command.AggregateLifecycle;
 import org.axonframework.spring.stereotype.Aggregate;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.boundedcontext.AbstractAggregate;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.user.AssignRoleCommand;
+import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.user.CheckStudentExistenceCommand;
+import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.user.CheckTeacherExistenceCommand;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.user.RegisterCommand;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.user.UnassignRoleCommand;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.user.UpdateDescriptionCommand;
-import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.persistence.user.UserPersonalIdEmailService;
+import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.persistence.user.UserUniqueValuesService;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.RoleAssignedToUserEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.RoleUnassignedFromUserEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.UserCreatedEvent;
@@ -20,6 +22,8 @@ import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.UserDescriptionUpdatedEv
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.exception.SyllabusCommandExecutionException;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.exception.user.RoleAlreadyAssignedCommandExecutionException;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.exception.user.RoleNotCurrentlyAssignedCommandExecutionException;
+import pl.lodz.p.it.rstrzalkowski.syllabus.shared.exception.user.UserIsNotStudentCommandExecutionException;
+import pl.lodz.p.it.rstrzalkowski.syllabus.shared.exception.user.UserIsNotTeacherCommandExecutionException;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.keycloak.KeycloakService;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.keycloak.dto.CreateUserDto;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.util.WriteApplicationBean;
@@ -51,8 +55,8 @@ public class User extends AbstractAggregate {
 
 
     @CommandHandler
-    public User(RegisterCommand cmd, KeycloakService keycloakService, UserPersonalIdEmailService userPersonalIdEmailService) {
-        userPersonalIdEmailService.lockPersonalIdAndEmail(cmd.getPersonalId(), cmd.getEmail());
+    public User(RegisterCommand cmd, KeycloakService keycloakService, UserUniqueValuesService userUniqueValuesService) {
+        userUniqueValuesService.lockPersonalIdAndEmail(cmd.getPersonalId(), cmd.getEmail());
 
         String userId;
         try {
@@ -63,11 +67,11 @@ public class User extends AbstractAggregate {
                     cmd.getPassword())
             );
         } catch (SyllabusCommandExecutionException scee) {
-            userPersonalIdEmailService.releasePersonalIdAndEmail(cmd.getPersonalId());
+            userUniqueValuesService.releaseValues(cmd.getPersonalId());
             throw scee;
         }
 
-        userPersonalIdEmailService.updateAggregateId(cmd.getEmail(), UUID.fromString(userId));
+        userUniqueValuesService.updateAggregateId(cmd.getEmail(), UUID.fromString(userId));
 
         AggregateLifecycle.apply(new UserCreatedEvent(
                 UUID.fromString(userId),
@@ -115,6 +119,20 @@ public class User extends AbstractAggregate {
                 getId(),
                 cmd.getDescription())
         );
+    }
+
+    @CommandHandler
+    public void on(CheckStudentExistenceCommand cmd) {
+        if (!roles.contains("SYLLABUS_STUDENT")) {
+            throw new UserIsNotStudentCommandExecutionException();
+        }
+    }
+
+    @CommandHandler
+    public void on(CheckTeacherExistenceCommand cmd) {
+        if (!roles.contains("SYLLABUS_TEACHER")) {
+            throw new UserIsNotTeacherCommandExecutionException();
+        }
     }
 
     @EventSourcingHandler

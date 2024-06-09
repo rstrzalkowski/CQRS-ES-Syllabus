@@ -37,4 +37,7 @@ public class CreateGradeCommand {
     @NotNull
     @TargetAggregateIdentifier
     private UUID realisationId;
+
+    @Setter
+    private UUID gradeId;
 }

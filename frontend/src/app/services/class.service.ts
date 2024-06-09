@@ -39,7 +39,7 @@ export class ClassService {
   updateClass(classId: string | undefined, shortName: string | undefined, fullName: string | undefined, level: number | undefined, teacherId: string | undefined) {
     return this.http.put(`${environment.apiUrl}/classes`, {
       id: classId,
-      ame: shortName,
+      name: shortName,
       fullName: fullName,
       level: level,
       teacherId: teacherId,

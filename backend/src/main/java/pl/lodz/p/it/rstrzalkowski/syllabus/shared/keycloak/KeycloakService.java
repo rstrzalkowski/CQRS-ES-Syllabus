@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.exception.ResponseBadRequestException;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.exception.SyllabusCommandExecutionException;
-import pl.lodz.p.it.rstrzalkowski.syllabus.shared.exception.user.UserAlreadyRegisteredCommandExecutionException;
+import pl.lodz.p.it.rstrzalkowski.syllabus.shared.exception.user.UserUniqueValuesExistCommandExecutionException;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.keycloak.dto.CreateUserDto;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.keycloak.dto.JwtResponse;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.keycloak.dto.KeycloakRoleDto;
@@ -57,7 +57,7 @@ public class KeycloakService {
             URI location = response.getHeaders().getLocation();
 
             if (location == null) {
-                throw new UserAlreadyRegisteredCommandExecutionException();
+                throw new UserUniqueValuesExistCommandExecutionException();
             }
 
             List<String> parts = List.of(location.getPath().split("/"));

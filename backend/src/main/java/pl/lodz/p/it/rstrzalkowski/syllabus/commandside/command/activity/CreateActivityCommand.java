@@ -38,4 +38,7 @@ public class CreateActivityCommand {
 
     @Setter
     private UUID teacherId;
+
+    @Setter
+    private UUID activityId;
 }

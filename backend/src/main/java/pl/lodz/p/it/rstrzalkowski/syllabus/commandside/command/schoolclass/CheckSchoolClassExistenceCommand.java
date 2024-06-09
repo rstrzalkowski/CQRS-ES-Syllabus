@@ -5,29 +5,17 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.validator.constraints.Length;
+import org.axonframework.modelling.command.TargetAggregateIdentifier;
 
 import java.util.UUID;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-public class CreateSchoolClassCommand {
+@Setter
+public class CheckSchoolClassExistenceCommand {
 
+    @TargetAggregateIdentifier
     @NotNull
-    private Integer level;
-
-    @NotNull
-    private UUID teacherId;
-
-    @NotNull
-    @Length(max = 5)
-    private String shortName;
-
-    @NotNull
-    @Length(max = 40)
-    private String fullName;
-
-    @Setter
     private UUID schoolClassId;
 }

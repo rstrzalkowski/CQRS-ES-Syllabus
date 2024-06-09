@@ -3,7 +3,9 @@ package pl.lodz.p.it.rstrzalkowski.syllabus.commandside.boundedcontext.realisati
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.axonframework.commandhandling.CommandExecutionException;
 import org.axonframework.commandhandling.CommandHandler;
+import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.axonframework.eventsourcing.EventSourcingHandler;
 import org.axonframework.modelling.command.AggregateLifecycle;
 import org.axonframework.spring.stereotype.Aggregate;
@@ -21,7 +23,10 @@ import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.post.UpdatePostCo
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.realisation.ArchiveRealisationCommand;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.realisation.CreateRealisationCommand;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.realisation.UpdateRealisationCommand;
-import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.persistence.realisation.RealisedSubjectService;
+import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.schoolclass.CheckSchoolClassExistenceCommand;
+import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.subject.CheckSubjectExistenceCommand;
+import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.user.CheckTeacherExistenceCommand;
+import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.persistence.realisation.RealisationUniqueValuesService;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.ActivityArchivedEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.ActivityCreatedEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.ActivityUpdatedEvent;
@@ -65,13 +70,20 @@ public class Realisation extends AbstractAggregate {
 
 
     @CommandHandler
-    public Realisation(CreateRealisationCommand cmd, RealisedSubjectService realisedSubjectService) {
-        UUID realisationId = UUID.randomUUID();
+    public Realisation(CreateRealisationCommand cmd, RealisationUniqueValuesService realisationUniqueValuesService, CommandGateway commandGateway) {
+        realisationUniqueValuesService.lockSubjectIdAndClassIdAndYear(cmd.getSubjectId(), cmd.getClassId(), cmd.getYear(), cmd.getRealisationId());
 
-        realisedSubjectService.lockSubjectIdAndClassIdAndYear(cmd.getSubjectId(), cmd.getClassId(), cmd.getYear(), realisationId);
+        try {
+            commandGateway.sendAndWait(new CheckSubjectExistenceCommand(cmd.getSubjectId()));
+            commandGateway.sendAndWait(new CheckTeacherExistenceCommand(cmd.getTeacherId()));
+            commandGateway.sendAndWait(new CheckSchoolClassExistenceCommand(cmd.getClassId()));
+        } catch (CommandExecutionException cee) {
+            realisationUniqueValuesService.releaseValues(cmd.getRealisationId());
+            throw cee;
+        }
 
         AggregateLifecycle.apply(new RealisationCreatedEvent(
-                realisationId,
+                cmd.getRealisationId(),
                 cmd.getSubjectId(),
                 cmd.getClassId(),
                 cmd.getTeacherId(),
@@ -80,6 +92,7 @@ public class Realisation extends AbstractAggregate {
         );
     }
 
+
     @CommandHandler
     public void handle(CreatePostCommand cmd) {
         if (isArchived()) {
@@ -87,7 +100,7 @@ public class Realisation extends AbstractAggregate {
         }
 
         AggregateLifecycle.apply(new PostCreatedEvent(
-                UUID.randomUUID(),
+                cmd.getPostId(),
                 cmd.getRealisationId(),
                 cmd.getTeacherId(),
                 cmd.getTitle(),
@@ -103,7 +116,7 @@ public class Realisation extends AbstractAggregate {
         }
 
         AggregateLifecycle.apply(new ActivityCreatedEvent(
-                UUID.randomUUID(),
+                cmd.getActivityId(),
                 cmd.getRealisationId(),
                 cmd.getTeacherId(),
                 cmd.getWeight(),
@@ -143,7 +156,7 @@ public class Realisation extends AbstractAggregate {
         }
 
         AggregateLifecycle.apply(new GradeCreatedEvent(
-                UUID.randomUUID(),
+                cmd.getGradeId(),
                 cmd.getActivityId(),
                 cmd.getStudentId(),
                 cmd.getTeacherId(),
@@ -209,12 +222,12 @@ public class Realisation extends AbstractAggregate {
     }
 
     @CommandHandler
-    public void handle(ArchiveRealisationCommand cmd, RealisedSubjectService realisedSubjectService) {
+    public void handle(ArchiveRealisationCommand cmd, RealisationUniqueValuesService realisationUniqueValuesService) {
         if (isArchived()) {
             throw new ArchivedObjectException();
         }
 
-        realisedSubjectService.releaseSubjectIdAndClassIdAndYear(getId());
+        realisationUniqueValuesService.releaseValues(getId());
 
         AggregateLifecycle.apply(new RealisationArchivedEvent(
                 cmd.getId())

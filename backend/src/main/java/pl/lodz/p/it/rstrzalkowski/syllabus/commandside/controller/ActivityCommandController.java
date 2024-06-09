@@ -19,6 +19,8 @@ import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.activity.UpdateAc
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.keycloak.dto.UserInfo;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.util.WriteApplicationBean;
 
+import java.util.UUID;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/activities")
@@ -30,10 +32,12 @@ public class ActivityCommandController {
     @ResponseStatus(HttpStatus.CREATED)
     @Secured({"TEACHER", "DIRECTOR", "ADMIN"})
     @PostMapping
-    public void createActivity(@Valid @RequestBody CreateActivityCommand command) {
+    public UUID createActivity(@Valid @RequestBody CreateActivityCommand command) {
         UserInfo userInfo = (UserInfo) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         command.setTeacherId(userInfo.getId());
+        command.setActivityId(UUID.randomUUID());
         commandGateway.sendAndWait(command);
+        return command.getActivityId();
     }
 
     @ResponseStatus(HttpStatus.OK)

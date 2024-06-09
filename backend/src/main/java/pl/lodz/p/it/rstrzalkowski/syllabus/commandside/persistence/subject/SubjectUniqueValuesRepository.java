@@ -9,8 +9,6 @@ import java.util.UUID;
 
 @Repository
 @WriteApplicationBean
-public interface SubjectNameRepository extends JpaRepository<SubjectNameEntity, UUID> {
-    Optional<SubjectNameEntity> findBySubjectName(String name);
-
-    Optional<SubjectNameEntity> findByAggregateId(UUID aggregateId);
+public interface SubjectUniqueValuesRepository extends JpaRepository<SubjectUniqueValuesJpaEntity, UUID> {
+    Optional<SubjectUniqueValuesJpaEntity> findByAggregateId(UUID aggregateId);
 }

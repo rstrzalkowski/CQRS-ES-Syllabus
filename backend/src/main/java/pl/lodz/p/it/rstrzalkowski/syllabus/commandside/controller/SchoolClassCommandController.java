@@ -19,6 +19,8 @@ import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.user.AssignStuden
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.user.UnassignStudentCommand;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.util.WriteApplicationBean;
 
+import java.util.UUID;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/classes")
@@ -31,8 +33,10 @@ public class SchoolClassCommandController {
     @Secured({"TEACHER", "DIRECTOR", "ADMIN"})
 
     @PostMapping
-    public void createSchoolClass(@Valid @RequestBody CreateSchoolClassCommand command) {
+    public UUID createSchoolClass(@Valid @RequestBody CreateSchoolClassCommand command) {
+        command.setSchoolClassId(UUID.randomUUID());
         commandGateway.sendAndWait(command);
+        return command.getSchoolClassId();
     }
 
     @ResponseStatus(HttpStatus.OK)

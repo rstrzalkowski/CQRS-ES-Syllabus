@@ -17,6 +17,8 @@ import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.realisation.Creat
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.realisation.UpdateRealisationCommand;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.util.WriteApplicationBean;
 
+import java.util.UUID;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/realisations")
@@ -27,10 +29,11 @@ public class RealisationCommandController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @Secured({"TEACHER", "DIRECTOR", "ADMIN"})
-
     @PostMapping
-    public void createRealisation(@Valid @RequestBody CreateRealisationCommand command) {
+    public UUID createRealisation(@Valid @RequestBody CreateRealisationCommand command) {
+        command.setRealisationId(UUID.randomUUID());
         commandGateway.sendAndWait(command);
+        return command.getRealisationId();
     }
 
     @ResponseStatus(HttpStatus.OK)

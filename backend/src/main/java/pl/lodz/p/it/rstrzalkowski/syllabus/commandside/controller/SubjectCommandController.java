@@ -39,8 +39,10 @@ public class SubjectCommandController {
     @Secured({"TEACHER", "DIRECTOR", "ADMIN"})
 
     @PostMapping
-    public void createSubject(@Valid @RequestBody CreateSubjectCommand command) {
+    public UUID createSubject(@Valid @RequestBody CreateSubjectCommand command) {
+        command.setSubjectId(UUID.randomUUID());
         commandGateway.sendAndWait(command);
+        return command.getSubjectId();
     }
 
     @ResponseStatus(HttpStatus.OK)

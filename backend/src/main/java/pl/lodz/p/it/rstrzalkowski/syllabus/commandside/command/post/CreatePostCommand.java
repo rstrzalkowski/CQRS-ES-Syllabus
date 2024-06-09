@@ -29,4 +29,7 @@ public class CreatePostCommand {
 
     @Setter
     private UUID teacherId;
+
+    @Setter
+    private UUID postId;
 }
