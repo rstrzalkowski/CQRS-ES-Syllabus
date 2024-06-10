@@ -13,6 +13,9 @@ import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.boundedcontext.AbstractAg
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.boundedcontext.realisations.entity.Activity;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.boundedcontext.realisations.entity.Grade;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.boundedcontext.realisations.entity.Post;
+import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.boundedcontext.realisations.entity.SchoolClass;
+import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.boundedcontext.realisations.entity.Subject;
+import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.boundedcontext.realisations.entity.Teacher;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.activity.ArchiveActivityCommand;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.activity.CreateActivityCommand;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.activity.UpdateActivityCommand;
@@ -51,7 +54,6 @@ import java.time.Year;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.UUID;
 
 @EqualsAndHashCode(callSuper = true)
 @Aggregate(snapshotTriggerDefinition = "syllabusSnapshotTriggerDefinition")
@@ -60,11 +62,10 @@ import java.util.UUID;
 @WriteApplicationBean
 public class Realisation extends AbstractAggregate {
 
-    private UUID subjectId;
-    private UUID schoolClassId;
-    private UUID teacherId;
+    private Teacher teacher;
+    private Subject subject;
+    private SchoolClass schoolClass;
     private Year year;
-
     private List<Post> posts;
     private List<Activity> activities;
 
@@ -188,15 +189,19 @@ public class Realisation extends AbstractAggregate {
     }
 
     @CommandHandler
-    public void handle(UpdateRealisationCommand cmd) {
+    public void handle(UpdateRealisationCommand cmd, CommandGateway commandGateway) {
         if (isArchived()) {
             throw new ArchivedObjectException();
+        }
+
+        if (!Objects.equals(cmd.getTeacherId(), teacher.getId())) {
+            commandGateway.sendAndWait(new CheckTeacherExistenceCommand(cmd.getTeacherId()));
         }
 
         AggregateLifecycle.apply(new RealisationUpdatedEvent(
                 cmd.getId(),
                 cmd.getYear() != null ? cmd.getYear() : this.year,
-                cmd.getTeacherId() != null ? cmd.getTeacherId() : this.teacherId)
+                cmd.getTeacherId() != null ? cmd.getTeacherId() : teacher.getId())
         );
     }
 
@@ -265,9 +270,9 @@ public class Realisation extends AbstractAggregate {
     @EventSourcingHandler
     public void on(RealisationCreatedEvent event) {
         setId(event.getId());
-        this.subjectId = event.getSubjectId();
-        this.schoolClassId = event.getSchoolClassId();
-        this.teacherId = event.getTeacherId();
+        this.subject = new Subject(event.getSubjectId());
+        this.schoolClass = new SchoolClass(event.getSchoolClassId());
+        this.teacher = new Teacher(event.getTeacherId());
         this.year = event.getYear();
         this.activities = new ArrayList<>();
         this.posts = new ArrayList<>();
@@ -324,7 +329,7 @@ public class Realisation extends AbstractAggregate {
 
     @EventSourcingHandler
     public void on(RealisationUpdatedEvent event) {
-        this.teacherId = event.getTeacherId();
+        this.teacher = new Teacher(event.getTeacherId());
         this.year = event.getYear();
     }
 

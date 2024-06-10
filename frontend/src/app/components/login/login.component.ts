@@ -29,25 +29,29 @@ export class LoginComponent implements OnInit {
   login() {
     this.authService.login(this.email, this.password).subscribe((result) => {
       this.loading = true
-      this.authService.saveJWT(result)
 
-      const roles = this.getAppRolesFromJwt();
-      if (roles.length > 1) {
+      // @ts-ignore
+      const roles = this.getAppRolesFromJwt(result.body.token);
+      if (roles.length === 0) {
+        this.alertService.showAlert("danger", "Wait for administrator to assign you a role")
+        this.loading = false
+        return;
+      } else if (roles.length > 1) {
         this.chooseRoleModalOpened = true;
       } else {
         this.roleHasBeenChosen(roles[0] || "")
       }
-
+      this.authService.saveJWT(result)
     }, error => {
       this.alertService.showAlert("danger", "Wrong credentials")
       this.loading = false
     })
   }
 
-  getAppRolesFromJwt(): string[] {
-    const decodedJWT = this.authService.decodeJWT(this.authService.getJwtFromStorage()!)
+  getAppRolesFromJwt(jwt?: string): string[] {
+    const decodedJWT = this.authService.decodeJWT(jwt || this.authService.getJwtFromStorage()!)
     let roles: string[] = []
-    decodedJWT.realm_access.roles.forEach((role: string) => {
+    decodedJWT?.realm_access?.roles.forEach((role: string) => {
       role = role.replace("SYLLABUS_", "");
       if (["STUDENT", "TEACHER", "DIRECTOR", "ADMIN"].includes(role)) {
         roles.push(role)

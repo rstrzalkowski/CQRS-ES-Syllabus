@@ -14,11 +14,13 @@ import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.user.CheckTeacher
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.user.RegisterCommand;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.user.UnassignRoleCommand;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.user.UpdateDescriptionCommand;
+import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.user.UpdateProfileImageCommand;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.persistence.user.UserUniqueValuesService;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.RoleAssignedToUserEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.RoleUnassignedFromUserEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.UserCreatedEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.UserDescriptionUpdatedEvent;
+import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.UserProfileImageUpdatedEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.exception.SyllabusCommandExecutionException;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.exception.user.RoleAlreadyAssignedCommandExecutionException;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.exception.user.RoleNotCurrentlyAssignedCommandExecutionException;
@@ -118,6 +120,14 @@ public class User extends AbstractAggregate {
         AggregateLifecycle.apply(new UserDescriptionUpdatedEvent(
                 getId(),
                 cmd.getDescription())
+        );
+    }
+
+    @CommandHandler
+    public void on(UpdateProfileImageCommand cmd) {
+        AggregateLifecycle.apply(new UserProfileImageUpdatedEvent(
+                getId(),
+                cmd.getImageUrl())
         );
     }
 

@@ -10,6 +10,7 @@ import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.RoleAssignedToUserEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.RoleUnassignedFromUserEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.UserCreatedEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.UserDescriptionUpdatedEvent;
+import pl.lodz.p.it.rstrzalkowski.syllabus.shared.event.UserProfileImageUpdatedEvent;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.util.ReadApplicationBean;
 
 @Service
@@ -56,6 +57,15 @@ public class UserProjector {
         UserEntity user = userRepository.findById(event.getUserId()).orElseThrow(UserNotFoundException::new);
 
         user.setDescription(event.getDescription());
+
+        userRepository.save(user);
+    }
+
+    @EventHandler
+    public void on(UserProfileImageUpdatedEvent event) {
+        UserEntity user = userRepository.findById(event.getId()).orElseThrow(UserNotFoundException::new);
+
+        user.setImageUrl(event.getImageUrl());
 
         userRepository.save(user);
     }

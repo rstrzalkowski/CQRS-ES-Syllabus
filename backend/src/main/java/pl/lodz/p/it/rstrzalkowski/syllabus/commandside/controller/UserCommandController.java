@@ -10,14 +10,21 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.user.AssignRoleCommand;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.user.RegisterCommand;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.user.UnassignRoleCommand;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.user.UpdateDescriptionCommand;
+import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.user.UpdateProfileImageCommand;
+import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.util.ImageService;
+import pl.lodz.p.it.rstrzalkowski.syllabus.shared.exception.subject.SubjectImageUpdateCommandExecutionException;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.keycloak.dto.UserInfo;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.util.WriteApplicationBean;
+
+import java.io.IOException;
 
 @RestController
 @RequiredArgsConstructor
@@ -26,6 +33,7 @@ import pl.lodz.p.it.rstrzalkowski.syllabus.shared.util.WriteApplicationBean;
 public class UserCommandController {
 
     private final CommandGateway commandGateway;
+    private final ImageService imageService;
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
@@ -51,5 +59,18 @@ public class UserCommandController {
         UserInfo userInfo = (UserInfo) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         command.setUserId(userInfo.getId());
         commandGateway.sendAndWait(command);
+    }
+
+    @PutMapping("/me/image")
+    @Secured({"STUDENT", "TEACHER", "DIRECTOR", "ADMIN"})
+    public void changeImage(@Valid @RequestParam("image") MultipartFile image) {
+        UserInfo userInfo = (UserInfo) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        try {
+            String imageUrl = imageService.saveImage(image);
+            commandGateway.sendAndWait(new UpdateProfileImageCommand(userInfo.getId(), imageUrl));
+        } catch (IOException e) {
+            throw new SubjectImageUpdateCommandExecutionException();
+        }
     }
 }

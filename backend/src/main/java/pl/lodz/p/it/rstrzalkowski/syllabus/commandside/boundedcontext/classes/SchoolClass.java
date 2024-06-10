@@ -11,6 +11,7 @@ import org.axonframework.modelling.command.AggregateLifecycle;
 import org.axonframework.spring.stereotype.Aggregate;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.boundedcontext.AbstractAggregate;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.boundedcontext.classes.entity.Student;
+import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.boundedcontext.classes.entity.Teacher;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.schoolclass.ArchiveSchoolClassCommand;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.schoolclass.CheckSchoolClassExistenceCommand;
 import pl.lodz.p.it.rstrzalkowski.syllabus.commandside.command.schoolclass.CreateSchoolClassCommand;
@@ -35,7 +36,6 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.UUID;
 
 @EqualsAndHashCode(callSuper = true)
 @Aggregate(snapshotTriggerDefinition = "syllabusSnapshotTriggerDefinition")
@@ -44,7 +44,7 @@ import java.util.UUID;
 @WriteApplicationBean
 public class SchoolClass extends AbstractAggregate {
 
-    private UUID teacherId;
+    private Teacher teacher;
     private Integer level;
     private String name;
     private String fullName;
@@ -114,20 +114,20 @@ public class SchoolClass extends AbstractAggregate {
             throw new ArchivedObjectException();
         }
 
-        if (!Objects.equals(cmd.getTeacherId(), teacherId)) {
+        if (!Objects.equals(cmd.getTeacherId(), teacher.getId())) {
             commandGateway.sendAndWait(new CheckTeacherExistenceCommand(cmd.getTeacherId()));
         }
 
         schoolClassUniqueValuesService.updateSchoolClassLevelAndTeacherId(
                 cmd.getName() != null ? cmd.getName() : this.name,
                 cmd.getLevel() != null ? cmd.getLevel() : this.level,
-                cmd.getTeacherId() != null ? cmd.getTeacherId() : this.teacherId,
+                cmd.getTeacherId() != null ? cmd.getTeacherId() : this.teacher.getId(),
                 getId()
         );
 
         AggregateLifecycle.apply(new SchoolClassUpdatedEvent(
                 getId(),
-                cmd.getTeacherId() != null ? cmd.getTeacherId() : this.teacherId,
+                cmd.getTeacherId() != null ? cmd.getTeacherId() : this.teacher.getId(),
                 cmd.getLevel() != null ? cmd.getLevel() : this.level,
                 cmd.getName() != null ? cmd.getName() : this.name,
                 cmd.getFullName() != null ? cmd.getFullName() : this.fullName)
@@ -158,7 +158,7 @@ public class SchoolClass extends AbstractAggregate {
     public void on(SchoolClassCreatedEvent event) {
         setId(event.getId());
         this.level = event.getLevel();
-        this.teacherId = event.getTeacherId();
+        this.teacher = new Teacher(event.getTeacherId());
         this.name = event.getName();
         this.fullName = event.getFullName();
         this.students = new ArrayList<>();
@@ -167,7 +167,7 @@ public class SchoolClass extends AbstractAggregate {
     @EventSourcingHandler
     public void on(SchoolClassUpdatedEvent event) {
         this.level = event.getLevel();
-        this.teacherId = event.getTeacherId();
+        this.teacher = new Teacher(event.getTeacherId());
         this.name = event.getName();
         this.fullName = event.getFullName();
     }

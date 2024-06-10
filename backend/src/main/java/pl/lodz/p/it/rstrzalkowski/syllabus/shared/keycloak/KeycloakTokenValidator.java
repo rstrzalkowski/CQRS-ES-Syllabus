@@ -18,13 +18,16 @@ public class KeycloakTokenValidator {
     @Value("${keycloak.external.jwks.uri}")
     private String jwksUri;
 
+    @Value("${keycloak.url}")
+    private String keycloakUrl;
+
     public boolean validateToken(DecodedJWT jwt) {
         if (jwt.getExpiresAt().before(Calendar.getInstance().getTime())) {
             return false;
         }
 
         try {
-            JwkProvider provider = new MyJwkProvider(jwksUri);
+            JwkProvider provider = new MyJwkProvider(keycloakUrl + jwksUri);
             Jwk jwk = provider.get(jwt.getKeyId());
 
             Algorithm algorithm = Algorithm.RSA256((RSAPublicKey) jwk.getPublicKey(), null);
