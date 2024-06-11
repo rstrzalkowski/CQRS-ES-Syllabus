@@ -28,6 +28,6 @@ public class RealisationUniqueValuesJpaEntity extends AbstractJpaEntity {
         this.subjectId = subjectId;
         this.schoolClassId = schoolClassId;
         this.year = year;
-        setSubjectId(realisationId);
+        setAggregateId(realisationId);
     }
 }

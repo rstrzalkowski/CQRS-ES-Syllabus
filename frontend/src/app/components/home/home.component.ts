@@ -46,7 +46,7 @@ export class HomeComponent implements OnInit {
     }
 
     if (this.authService.getRole() == "STUDENT" || this.authService.getRole() == "TEACHER")
-      this.realisationService.getRealisedSubjects().subscribe((result) => {
+      this.realisationService.getRealisedSubjects(this.authService.getRole() == "STUDENT").subscribe((result) => {
         this.subjects = result;
       })
   }

@@ -1,6 +1,8 @@
 package pl.lodz.p.it.rstrzalkowski.syllabus.queryside.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.axonframework.messaging.responsetypes.ResponseTypes;
+import org.axonframework.queryhandling.QueryGateway;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.annotation.Secured;
@@ -25,7 +27,8 @@ import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.query.grade.GetOwnGradesByR
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.query.post.GetActivePostsByRealisationQuery;
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.query.realisation.GetActiveRealisationsQuery;
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.query.realisation.GetArchivedRealisationsQuery;
-import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.query.realisation.GetOwnRealisationsQuery;
+import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.query.realisation.GetOwnRealisationsQueryAsStudent;
+import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.query.realisation.GetOwnRealisationsQueryAsTeacher;
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.query.realisation.GetRealisationAverageGradeQuery;
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.query.realisation.GetRealisationInfoByIdQuery;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.keycloak.dto.UserInfo;
@@ -40,6 +43,7 @@ import java.util.UUID;
 @ReadApplicationBean
 public class RealisationQueryController {
 
+    private final QueryGateway queryGateway;
     private final RealisationQueryHandler realisationQueryHandler;
     private final PostQueryHandler postQueryHandler;
     private final ActivityQueryHandler activityQueryHandler;
@@ -102,10 +106,17 @@ public class RealisationQueryController {
         return realisationQueryHandler.handle(new GetRealisationAverageGradeQuery(id, userInfo.getId()));
     }
 
-    @GetMapping("/me")
-    @Secured({"STUDENT", "TEACHER"})
-    public List<SubjectDTO> getOwnRealisations() {
+    @GetMapping("/me/student")
+    @Secured("STUDENT")
+    public List<SubjectDTO> getOwnRealisationsAsStudent() {
         UserInfo userInfo = (UserInfo) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return realisationQueryHandler.handle(new GetOwnRealisationsQuery(userInfo.getId()));
+        return queryGateway.query(new GetOwnRealisationsQueryAsStudent(userInfo.getId()), ResponseTypes.multipleInstancesOf(SubjectDTO.class)).join();
+    }
+
+    @GetMapping("/me/teacher")
+    @Secured("TEACHER")
+    public List<SubjectDTO> getOwnRealisationsAsTeacher() {
+        UserInfo userInfo = (UserInfo) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return queryGateway.query(new GetOwnRealisationsQueryAsTeacher(userInfo.getId()), ResponseTypes.multipleInstancesOf(SubjectDTO.class)).join();
     }
 }

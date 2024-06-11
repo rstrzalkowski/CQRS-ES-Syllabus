@@ -47,7 +47,7 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.authService.getRole() == "STUDENT" || this.authService.getRole() == "TEACHER") {
-      this.subjects$ = this.realisationService.getRealisedSubjects()
+      this.subjects$ = this.realisationService.getRealisedSubjects(this.authService.getRole() == "STUDENT")
 
       this.activityPageNumber$.subscribe(() => {
         this.activities$ = this.activityService.getAllIncomingActivities(this.activityPageNumber$.value)

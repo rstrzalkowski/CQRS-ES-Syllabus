@@ -9,12 +9,12 @@ import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.dto.RealisationDTO;
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.dto.SubjectDTO;
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.entity.GradeEntity;
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.entity.RealisationEntity;
-import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.entity.SchoolClassEntity;
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.entity.UserEntity;
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.exception.realisation.RealisationNotFoundException;
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.query.realisation.GetActiveRealisationsQuery;
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.query.realisation.GetArchivedRealisationsQuery;
-import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.query.realisation.GetOwnRealisationsQuery;
+import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.query.realisation.GetOwnRealisationsQueryAsStudent;
+import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.query.realisation.GetOwnRealisationsQueryAsTeacher;
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.query.realisation.GetRealisationAverageGradeQuery;
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.query.realisation.GetRealisationInfoByIdQuery;
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.repository.GradeRepository;
@@ -22,8 +22,8 @@ import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.repository.RealisationRepos
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.repository.UserRepository;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.util.ReadApplicationBean;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -65,14 +65,24 @@ public class RealisationQueryHandler {
     }
 
     @QueryHandler
-    public List<SubjectDTO> handle(GetOwnRealisationsQuery query) {
-        UserEntity user = userRepository.findById(query.studentId()).orElseThrow();
-        List<RealisationEntity> realisations = new ArrayList<>();
-        SchoolClassEntity schoolClassEntity = user.getSchoolClass();
-        if (schoolClassEntity == null) {
+    public List<SubjectDTO> handle(GetOwnRealisationsQueryAsStudent query) {
+        UserEntity user = userRepository.findById(query.getStudentId()).orElseThrow();
+        UUID schoolClassId = user.getSchoolClass().getId();
+        if (schoolClassId == null) {
             return List.of();
         }
-        realisations = realisationRepository.findAllByArchivedAndSchoolClassId(false, schoolClassEntity.getId());
+        List<RealisationEntity> realisations = realisationRepository.findAllByArchivedAndSchoolClassId(false, schoolClassId);
+
+        return realisations.stream()
+                .map(SubjectDTO::new)
+                .collect(Collectors.toList());
+    }
+
+    @QueryHandler
+    public List<SubjectDTO> handle(GetOwnRealisationsQueryAsTeacher query) {
+        UserEntity user = userRepository.findById(query.studentId()).orElseThrow();
+        List<RealisationEntity> realisations = realisationRepository.findAllByArchivedAndTeacherId(false, user.getId());
+
         return realisations.stream()
                 .map(SubjectDTO::new)
                 .collect(Collectors.toList());

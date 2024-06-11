@@ -3,5 +3,5 @@ package pl.lodz.p.it.rstrzalkowski.syllabus.queryside.query.realisation;
 
 import java.util.UUID;
 
-public record GetOwnRealisationsQuery(UUID studentId) {
+public record GetOwnRealisationsQueryAsTeacher(UUID studentId) {
 }

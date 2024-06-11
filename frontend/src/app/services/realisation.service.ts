@@ -37,8 +37,8 @@ export class RealisationService {
     return this.http.get<RealisationInfoPage>(`${environment.apiUrl}/realisations/archived?page=${page}&size=8`)
   }
 
-  getRealisedSubjects() {
-    return this.http.get<RealisedSubject[]>(`${environment.apiUrl}/realisations/me`)
+  getRealisedSubjects(student: boolean) {
+    return this.http.get<RealisedSubject[]>(`${environment.apiUrl}/realisations/me/${student ? "student" : "teacher"}`)
   }
 
   getRealisationInfo(id: string) {
