@@ -66,7 +66,7 @@ public class RealisationQueryHandler {
 
     @QueryHandler
     public List<SubjectDTO> handle(GetOwnRealisationsQueryAsStudent query) {
-        UserEntity user = userRepository.findById(query.getStudentId()).orElseThrow();
+        UserEntity user = userRepository.findById(query.studentId()).orElseThrow();
         UUID schoolClassId = user.getSchoolClass().getId();
         if (schoolClassId == null) {
             return List.of();

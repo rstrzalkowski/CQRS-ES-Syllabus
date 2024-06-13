@@ -1,8 +1,6 @@
 package pl.lodz.p.it.rstrzalkowski.syllabus.queryside.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.axonframework.messaging.responsetypes.ResponseTypes;
-import org.axonframework.queryhandling.QueryGateway;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.annotation.Secured;
@@ -43,7 +41,6 @@ import java.util.UUID;
 @ReadApplicationBean
 public class RealisationQueryController {
 
-    private final QueryGateway queryGateway;
     private final RealisationQueryHandler realisationQueryHandler;
     private final PostQueryHandler postQueryHandler;
     private final ActivityQueryHandler activityQueryHandler;
@@ -110,13 +107,13 @@ public class RealisationQueryController {
     @Secured("STUDENT")
     public List<SubjectDTO> getOwnRealisationsAsStudent() {
         UserInfo userInfo = (UserInfo) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return queryGateway.query(new GetOwnRealisationsQueryAsStudent(userInfo.getId()), ResponseTypes.multipleInstancesOf(SubjectDTO.class)).join();
+        return realisationQueryHandler.handle(new GetOwnRealisationsQueryAsStudent(userInfo.getId()));
     }
 
     @GetMapping("/me/teacher")
     @Secured("TEACHER")
     public List<SubjectDTO> getOwnRealisationsAsTeacher() {
         UserInfo userInfo = (UserInfo) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return queryGateway.query(new GetOwnRealisationsQueryAsTeacher(userInfo.getId()), ResponseTypes.multipleInstancesOf(SubjectDTO.class)).join();
+        return realisationQueryHandler.handle(new GetOwnRealisationsQueryAsTeacher(userInfo.getId()));
     }
 }

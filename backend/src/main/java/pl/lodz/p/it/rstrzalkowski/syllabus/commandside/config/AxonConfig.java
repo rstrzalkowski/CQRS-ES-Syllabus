@@ -28,7 +28,7 @@ public class AxonConfig {
 
     @Bean
     public SnapshotTriggerDefinition syllabusSnapshotTriggerDefinition(Snapshotter snapshotter) {
-        return new EventCountSnapshotTriggerDefinition(snapshotter, 500);
+        return new EventCountSnapshotTriggerDefinition(snapshotter, 100);
     }
 }
 

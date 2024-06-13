@@ -98,12 +98,12 @@ public class SubjectAggregateTest {
         String name = "Math";
         String abbreviation = "MTH";
 
-        fixture.givenCommands(new CreateSubjectCommand(name, abbreviation, subjectId))
+        fixture.given(new SubjectCreatedEvent(subjectId, name, abbreviation, Timestamp.from(Instant.now())))
                 .when(new ArchiveSubjectCommand(subjectId))
                 .expectSuccessfulHandlerExecution()
                 .expectEvents(new SubjectArchivedEvent(subjectId));
 
-        fixture.givenCommands(new CreateSubjectCommand(name, abbreviation, subjectId), new ArchiveSubjectCommand(subjectId))
+        fixture.given(new SubjectCreatedEvent(subjectId, name, abbreviation, Timestamp.from(Instant.now())), new SubjectArchivedEvent(subjectId))
                 .when(new ArchiveSubjectCommand(subjectId))
                 .expectException(ArchivedObjectException.class);
     }

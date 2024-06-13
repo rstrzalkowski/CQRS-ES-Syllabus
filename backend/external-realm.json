@@ -509,45 +509,6 @@
   "webAuthnPolicyPasswordlessAvoidSameAuthenticatorRegister": false,
   "webAuthnPolicyPasswordlessAcceptableAaguids": [],
   "webAuthnPolicyPasswordlessExtraOrigins": [],
-  "users": [
-    {
-      "id": "ecf15335-c966-4382-8bbc-b6acf9895ffe",
-      "createdTimestamp": 1716835239477,
-      "username": "service-account-service-client",
-      "enabled": true,
-      "totp": false,
-      "emailVerified": false,
-      "serviceAccountClientId": "service-client",
-      "disableableCredentialTypes": [],
-      "requiredActions": [],
-      "realmRoles": [
-        "default-roles-external"
-      ],
-      "clientRoles": {
-        "service-client": [
-          "uma_protection"
-        ],
-        "realm-management": [
-          "query-groups",
-          "manage-users",
-          "manage-realm",
-          "manage-authorization"
-        ],
-        "external-client": [
-          "uma_protection"
-        ],
-        "account": [
-          "view-applications",
-          "view-groups",
-          "view-profile",
-          "manage-account",
-          "manage-account-links"
-        ]
-      },
-      "notBefore": 0,
-      "groups": []
-    }
-  ],
   "scopeMappings": [
     {
       "clientScope": "offline_access",
@@ -2467,5 +2428,72 @@
   },
   "clientPolicies": {
     "policies": []
-  }
+  },
+  "users": [
+    {
+      "id": "05830f84-3db3-42ee-7517-a72fb9e9e4ca",
+      "createdTimestamp": 1708182938312,
+      "username": "admin",
+      "enabled": true,
+      "totp": false,
+      "emailVerified": true,
+      "firstName": "Admin",
+      "lastName": "Admin",
+      "email": "admin@wp.pl",
+      "credentials": [
+        {
+          "id": "65e7a69c-25c8-43f8-8c8f-26270ecd0190",
+          "type": "password",
+          "userLabel": "Password",
+          "createdDate": 1708283377769,
+          "secretData": "{\"value\":\"JrpPu889Nl1bYlbyEH+o+EFpYopyelhVCKdihF2yZTo=\",\"salt\":\"OSKB2kAPwX1bqv4BLQbHsg==\",\"additionalParameters\":{}}",
+          "credentialData": "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}"
+        }
+      ],
+      "disableableCredentialTypes": [],
+      "requiredActions": [],
+      "realmRoles": [
+        "SYLLABUS_ADMIN"
+      ],
+      "notBefore": 0,
+      "groups": []
+    },
+    {
+      "id": "ecf15335-c966-4382-8bbc-b6acf9895ffe",
+      "createdTimestamp": 1716835239477,
+      "username": "service-account-service-client",
+      "enabled": true,
+      "totp": false,
+      "emailVerified": false,
+      "serviceAccountClientId": "service-client",
+      "disableableCredentialTypes": [],
+      "requiredActions": [],
+      "realmRoles": [
+        "default-roles-external"
+      ],
+      "clientRoles": {
+        "service-client": [
+          "uma_protection"
+        ],
+        "realm-management": [
+          "query-groups",
+          "manage-users",
+          "manage-realm",
+          "manage-authorization"
+        ],
+        "external-client": [
+          "uma_protection"
+        ],
+        "account": [
+          "view-applications",
+          "view-groups",
+          "view-profile",
+          "manage-account",
+          "manage-account-links"
+        ]
+      },
+      "notBefore": 0,
+      "groups": []
+    }
+  ]
 }
