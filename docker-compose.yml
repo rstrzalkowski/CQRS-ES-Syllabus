@@ -137,7 +137,7 @@ services:
     ports:
       - "8080"
     healthcheck:
-      test: [ "CMD-SHELL", "curl -f http://localhost:8080/health || exit 1" ]
+      test: [ "CMD-SHELL", "curl -f http://localhost:8080/api/health || exit 1" ]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -163,7 +163,7 @@ services:
     ports:
       - "8080"
     healthcheck:
-      test: [ "CMD-SHELL", "curl -f http://localhost:8080/health || exit 1" ]
+      test: [ "CMD-SHELL", "curl -f http://localhost:8080/api/health || exit 1" ]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -189,7 +189,7 @@ services:
     ports:
       - "8080"
     healthcheck:
-      test: [ "CMD-SHELL", "curl -f http://localhost:8080/health || exit 1" ]
+      test: [ "CMD-SHELL", "curl -f http://localhost:8080/api/health || exit 1" ]
       interval: 30s
       timeout: 10s
       retries: 3
