@@ -9,6 +9,7 @@ import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.dto.RealisationDTO;
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.dto.SubjectDTO;
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.entity.GradeEntity;
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.entity.RealisationEntity;
+import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.entity.SchoolClassEntity;
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.entity.UserEntity;
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.exception.realisation.RealisationNotFoundException;
 import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.query.realisation.GetActiveRealisationsQuery;
@@ -23,7 +24,6 @@ import pl.lodz.p.it.rstrzalkowski.syllabus.queryside.repository.UserRepository;
 import pl.lodz.p.it.rstrzalkowski.syllabus.shared.util.ReadApplicationBean;
 
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -67,11 +67,11 @@ public class RealisationQueryHandler {
     @QueryHandler
     public List<SubjectDTO> handle(GetOwnRealisationsQueryAsStudent query) {
         UserEntity user = userRepository.findById(query.studentId()).orElseThrow();
-        UUID schoolClassId = user.getSchoolClass().getId();
-        if (schoolClassId == null) {
+        SchoolClassEntity schoolClass = user.getSchoolClass();
+        if (schoolClass == null) {
             return List.of();
         }
-        List<RealisationEntity> realisations = realisationRepository.findAllByArchivedAndSchoolClassId(false, schoolClassId);
+        List<RealisationEntity> realisations = realisationRepository.findAllByArchivedAndSchoolClassId(false, schoolClass.getId());
 
         return realisations.stream()
                 .map(SubjectDTO::new)

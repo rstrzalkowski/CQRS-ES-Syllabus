@@ -37,11 +37,12 @@ export class LoginComponent implements OnInit {
         this.loading = false
         return;
       } else if (roles.length > 1) {
+        this.authService.saveJWT(result);
         this.chooseRoleModalOpened = true;
       } else {
+        this.authService.saveJWT(result)
         this.roleHasBeenChosen(roles[0] || "")
       }
-      this.authService.saveJWT(result)
     }, error => {
       this.alertService.showAlert("danger", "Wrong credentials")
       this.loading = false

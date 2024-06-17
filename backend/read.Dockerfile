@@ -9,4 +9,6 @@ ENV SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-read:5432/read_db
 ENV AXON_AXONSERVER_SERVERS=axonserver
 ENV KEYCLOAK_URL=http://keycloak:8080
 
+EXPOSE 8080
+
 ENTRYPOINT ["java", "-jar", "app.jar", "--spring.profiles.active=read"]
