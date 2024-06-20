@@ -9,3 +9,7 @@ keycloak:
       secret: svsrMqyCCb0TZT9ccQS8q8w0ne2YfoJA
     jwks:
       uri: /realms/external/protocol/openid-connect/certs
+
+axon:
+  axonserver:
+    servers: localhost:8124

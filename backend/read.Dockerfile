@@ -1,5 +1,6 @@
-FROM openjdk:17-jdk-slim
+FROM openjdk:17-jdk-alpine
 
+RUN apk --no-cache add bash curl
 ARG JAR_FILE=target/*.jar
 
 COPY ${JAR_FILE} app.jar

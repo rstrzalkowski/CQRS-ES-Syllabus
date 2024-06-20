@@ -12,6 +12,11 @@ services:
       - '8024'
       - '8124'
       - '8224'
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -f http://localhost:8024/actuator/health || exit 1" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
     networks:
       - axon
 
@@ -24,6 +29,13 @@ services:
       POSTGRES_PASSWORD: lookup_password
     ports:
       - "5432"
+    volumes:
+      - postgres-lookup:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
     networks:
       - write
 
@@ -36,8 +48,13 @@ services:
       POSTGRES_PASSWORD: read_password
     ports:
       - "5432"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
     volumes:
-      - postgres:/var/lib/postgresql/data
+      - postgres-read:/var/lib/postgresql/data
     networks:
       - read
 
@@ -48,13 +65,21 @@ services:
       POSTGRES_DB: keycloak_db
       POSTGRES_USER: keycloak_user
       POSTGRES_PASSWORD: keycloak_password
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    volumes:
+      - postgres-keycloak:/var/lib/postgresql/data
     networks:
       - keycloak
 
   keycloak:
     container_name: keycloak
     depends_on:
-      - postgres-keycloak
+      postgres-keycloak:
+        condition: service_healthy
     environment:
       DB_VENDOR: postgres
       DB_ADDR: postgres-keycloak
@@ -63,21 +88,30 @@ services:
       DB_PASSWORD: keycloak_password
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_HEALTH_ENABLED: true
     image: keycloak/keycloak:23.0.1
     ports:
       - "8080"
     volumes:
       - ./backend/external-realm.json:/opt/keycloak/data/import/external-realm.json
     command: start-dev --import-realm
+    healthcheck:
+      test: [ "CMD-SHELL", "exec 3<>/dev/tcp/localhost/8080 && echo -e 'GET /health/ready HTTP/1.1\\r\\nHost: localhost\\r\\nConnection: close\\r\\n\\r\\n' >&3 && cat <&3 | grep -q '200 OK'" ]
+      interval: 30s
+      timeout: 5s
+      retries: 20
     networks:
       - keycloak
 
   nginx:
     container_name: nginx
     depends_on:
-      - read-1
-      - read-2
-      - write
+      read-1:
+        condition: service_healthy
+      read-2:
+        condition: service_healthy
+      write:
+        condition: service_healthy
     image: nginx:latest
     volumes:
       - ./nginx-conf:/etc/nginx
@@ -91,14 +125,22 @@ services:
     container_name: read-1
     hostname: read-1
     depends_on:
-      - axonserver
-      - postgres-read
-      - keycloak
+      axonserver:
+        condition: service_healthy
+      postgres-read:
+        condition: service_healthy
+      keycloak:
+        condition: service_healthy
     build:
       context: backend
       dockerfile: read.Dockerfile
     ports:
       - "8080"
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -f http://localhost:8080/api/health || exit 1" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
     networks:
       - axon
       - keycloak
@@ -109,14 +151,22 @@ services:
     container_name: read-2
     hostname: read-2
     depends_on:
-      - axonserver
-      - postgres-read
-      - keycloak
+      axonserver:
+        condition: service_healthy
+      postgres-read:
+        condition: service_healthy
+      keycloak:
+        condition: service_healthy
     build:
       context: backend
       dockerfile: read.Dockerfile
     ports:
       - "8080"
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -f http://localhost:8080/api/health || exit 1" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
     networks:
       - axon
       - keycloak
@@ -127,14 +177,22 @@ services:
     container_name: write
     hostname: write
     depends_on:
-      - axonserver
-      - postgres-lookup-db
-      - keycloak
+      axonserver:
+        condition: service_healthy
+      postgres-lookup-db:
+        condition: service_healthy
+      keycloak:
+        condition: service_healthy
     build:
       context: backend
       dockerfile: write.Dockerfile
     ports:
       - "8080"
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -f http://localhost:8080/api/health || exit 1" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
     networks:
       - axon
       - keycloak
@@ -160,7 +218,9 @@ volumes:
       type: none
       device: ${PWD}/config
       o: bind
-  postgres:
+  postgres-read:
+  postgres-lookup:
+  postgres-keycloak:
 
 networks:
   axon:
