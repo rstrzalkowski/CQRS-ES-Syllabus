@@ -40,7 +40,6 @@ public class GradeCommandController {
 
     @ResponseStatus(HttpStatus.OK)
     @Secured({"TEACHER", "DIRECTOR", "ADMIN"})
-
     @PutMapping
     public void updateGrade(@Valid @RequestBody UpdateGradeCommand command) {
         commandGateway.sendAndWait(command);

@@ -15,9 +15,5 @@ import java.util.UUID;
 public interface SchoolClassRepository extends JpaRepository<SchoolClassEntity, UUID> {
     Page<SchoolClassEntity> findAllByArchived(boolean archived, Pageable pageable);
 
-    SchoolClassEntity findByArchivedAndNameAndLevel(boolean archived, String name, Integer level);
-
-    Integer countByArchivedAndLevel(boolean archived, Integer level);
-
     List<SchoolClassEntity> findAllByArchived(boolean archived);
 }

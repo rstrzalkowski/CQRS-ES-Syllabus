@@ -31,7 +31,6 @@ public class PostCommandController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @Secured({"TEACHER", "DIRECTOR", "ADMIN"})
-
     @PostMapping
     public UUID createPost(@Valid @RequestBody CreatePostCommand command) {
         UserInfo userInfo = (UserInfo) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -43,7 +42,6 @@ public class PostCommandController {
 
     @ResponseStatus(HttpStatus.OK)
     @Secured({"TEACHER", "DIRECTOR", "ADMIN"})
-
     @PutMapping
     public void updatePost(@Valid @RequestBody UpdatePostCommand command) {
         commandGateway.sendAndWait(command);
@@ -51,7 +49,6 @@ public class PostCommandController {
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Secured({"TEACHER", "DIRECTOR", "ADMIN"})
-
     @DeleteMapping
     public void archiveById(@Valid @RequestBody ArchivePostCommand command) {
         commandGateway.sendAndWait(command);

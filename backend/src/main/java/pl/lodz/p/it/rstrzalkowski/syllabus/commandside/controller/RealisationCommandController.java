@@ -38,7 +38,6 @@ public class RealisationCommandController {
 
     @ResponseStatus(HttpStatus.OK)
     @Secured({"TEACHER", "DIRECTOR", "ADMIN"})
-
     @PutMapping
     public void updateRealisation(@Valid @RequestBody UpdateRealisationCommand command) {
         commandGateway.sendAndWait(command);
@@ -46,7 +45,6 @@ public class RealisationCommandController {
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Secured({"TEACHER", "DIRECTOR", "ADMIN"})
-
     @DeleteMapping
     public void archiveById(@Valid @RequestBody ArchiveRealisationCommand command) {
         commandGateway.sendAndWait(command);

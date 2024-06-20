@@ -37,7 +37,6 @@ public class SubjectCommandController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @Secured({"TEACHER", "DIRECTOR", "ADMIN"})
-
     @PostMapping
     public UUID createSubject(@Valid @RequestBody CreateSubjectCommand command) {
         command.setSubjectId(UUID.randomUUID());
@@ -47,7 +46,6 @@ public class SubjectCommandController {
 
     @ResponseStatus(HttpStatus.OK)
     @Secured({"TEACHER", "DIRECTOR", "ADMIN"})
-
     @PutMapping
     public void updateSubject(@Valid @RequestBody UpdateSubjectCommand command) {
         commandGateway.sendAndWait(command);
@@ -67,7 +65,6 @@ public class SubjectCommandController {
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Secured({"TEACHER", "DIRECTOR", "ADMIN"})
-
     @DeleteMapping
     public void archiveById(@Valid @RequestBody ArchiveSubjectCommand command) {
         commandGateway.sendAndWait(command);
